@@ -1,0 +1,138 @@
+<?php
+
+use Livewire\Volt\Component;
+use Livewire\Attributes\Layout;
+use App\Models\SIS\Course;
+use App\Models\User;
+
+new #[Layout('components.layouts.app')] class extends Component {
+    public $course;
+    public $student;
+    
+    // We'll also store the active lesson for the viewer
+    public $activeLesson = null;
+
+    public function mount(Course $course)
+    {
+        $this->student = User::where('email', 'student1@example.com')->first();
+        
+        // Eager load modules AND their published lessons ordered by sequence
+        $this->course = Course::with([
+            'modules' => function($q) {
+                $q->where('is_published', true)->orderBy('sequence');
+            }, 
+            'modules.lessons' => function($q) {
+                $q->where('is_published', true)->orderBy('sequence');
+            }
+        ])->findOrFail($course->id);
+        
+        // Optionally auto-select the first lesson
+        if ($this->course->modules->isNotEmpty() && $this->course->modules->first()->lessons->isNotEmpty()) {
+            $this->activeLesson = $this->course->modules->first()->lessons->first();
+        }
+    }
+    
+    public function selectLesson($lessonId, $moduleId)
+    {
+        $module = $this->course->modules->firstWhere('id', $moduleId);
+        if ($module) {
+            $this->activeLesson = $module->lessons->firstWhere('id', $lessonId);
+        }
+    }
+}; ?>
+
+<div class="h-[calc(100vh-8rem)] flex shadow-sm border border-zinc-200 rounded-2xl overflow-hidden bg-white">
+    
+    <!-- Left Sidebar: Course Curriculum (Modules and Lessons) -->
+    <div class="w-80 bg-zinc-50 border-r border-zinc-200 flex flex-col hidden md:flex">
+        <div class="p-6 border-b border-zinc-200 bg-white">
+            <h2 class="text-xl font-bold text-zinc-900">{{ $course->name }}</h2>
+            <p class="text-sm text-zinc-500 mt-1">{{ $course->credits }} Credits</p>
+            <a href="{{ route('student.dashboard') }}" class="text-xs font-semibold text-primary-600 hover:text-primary-700 mt-4 inline-flex items-center">
+                &larr; Back to Dashboard
+            </a>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto">
+            @forelse($course->modules as $module)
+                <div class="border-b border-zinc-200">
+                    <div class="bg-zinc-100/50 px-4 py-3 cursor-pointer">
+                        <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1 block">Module {{ $module->sequence }}</span>
+                        <h3 class="text-sm font-bold text-zinc-800">{{ $module->title }}</h3>
+                    </div>
+                    
+                    <div class="bg-white">
+                        @foreach($module->lessons as $lesson)
+                            <button 
+                                wire:click="selectLesson('{{ $lesson->id }}', '{{ $module->id }}')" 
+                                class="w-full text-left px-4 py-3 flex items-start space-x-3 hover:bg-zinc-50 transition-colors {{ $activeLesson?->id === $lesson->id ? 'bg-primary-50 hover:bg-primary-50 border-l-2 border-primary-500' : 'border-l-2 border-transparent' }}"
+                            >
+                                <div class="mt-0.5">
+                                    @if($lesson->type === 'video')
+                                        <svg class="w-4 h-4 text-zinc-400 {{ $activeLesson?->id === $lesson->id ? 'text-primary-500' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    @elseif($lesson->type === 'quiz')
+                                        <svg class="w-4 h-4 text-zinc-400 {{ $activeLesson?->id === $lesson->id ? 'text-primary-500' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    @else
+                                        <svg class="w-4 h-4 text-zinc-400 {{ $activeLesson?->id === $lesson->id ? 'text-primary-500' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    @endif
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <span class="text-sm font-medium {{ $activeLesson?->id === $lesson->id ? 'text-primary-800 font-semibold' : 'text-zinc-700' }} block truncate">
+                                        {{ $lesson->title }}
+                                    </span>
+                                    <span class="text-xs text-zinc-400 capitalize">{{ $lesson->type }}</span>
+                                </div>
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+            @empty
+                <div class="p-6 text-center text-zinc-500 text-sm">
+                    No curriculum modules available yet.
+                </div>
+            @endforelse
+        </div>
+    </div>
+    
+    <!-- Main Content Area: Lesson Viewer -->
+    <div class="flex-1 overflow-y-auto bg-white flex flex-col">
+        @if($activeLesson)
+            <div class="p-8 lg:p-12 max-w-4xl mx-auto w-full">
+                <!-- Lesson Header -->
+                <div class="mb-8 border-b border-zinc-100 pb-8">
+                    <div class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-zinc-100 text-zinc-700 uppercase tracking-wide mb-4">
+                        {{ $activeLesson->type }} Format
+                    </div>
+                    <h1 class="text-3xl font-extrabold text-zinc-900 tracking-tight">{{ $activeLesson->title }}</h1>
+                </div>
+                
+                <!-- Lesson Content -->
+                <div class="prose prose-zinc prose-primary max-w-none">
+                    {!! $activeLesson->content !!}
+                </div>
+                
+                <!-- Additional Material Blocks based on Type -->
+                @if($activeLesson->type === 'video' && $activeLesson->file_url)
+                    <div class="mt-8 bg-zinc-900 aspect-video rounded-xl flex items-center justify-center">
+                        <span class="text-zinc-500">Video Player Placeholder ({{ $activeLesson->file_url }})</span>
+                    </div>
+                @endif
+                
+                @if($activeLesson->type === 'live_session' && $activeLesson->meeting_url)
+                    <div class="mt-8 bg-primary-50 border border-primary-100 rounded-xl p-6 text-center">
+                        <h4 class="text-lg font-bold text-primary-900 mb-2">Live Session Access</h4>
+                        <p class="text-sm text-primary-700 mb-4">This session is conducted via remote meeting.</p>
+                        <a href="{{ $activeLesson->meeting_url }}" target="_blank" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700">
+                            Join Meeting Now
+                        </a>
+                    </div>
+                @endif
+            </div>
+        @else
+            <div class="flex-1 flex items-center justify-center text-zinc-500 flex-col px-6 text-center h-full">
+                <svg class="w-16 h-16 text-zinc-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                <p class="text-lg">Please select a lesson from the curriculum sidebar to begin.</p>
+            </div>
+        @endif
+    </div>
+</div>

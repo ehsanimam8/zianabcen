@@ -1,0 +1,41 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+/* Maximum White and Very Simple Aesthetic Options */
+body, .fi-body {
+    background-color: #ffffff !important;
+}
+
+.fi-main {
+    background-color: #ffffff !important;
+}
+
+/* Remove card shadows and ensure purely subtle borders */
+.fi-ta-content,
+.fi-fo-component,
+.fi-wi-widget {
+    box-shadow: none !important;
+    border: 1px solid #f4f4f5 !important;
+    border-radius: 6px !important;
+}
+
+/* Flatter topbar */
+.fi-topbar {
+    border-bottom: 1px solid #f4f4f5 !important;
+    box-shadow: none !important;
+    background-color: #ffffff !important;
+}
+
+/* Muted sidebar */
+.fi-sidebar {
+    border-right: 1px solid #f4f4f5 !important;
+    background-color: #ffffff !important;
+}
+
+/* Modern flat buttons instead of default shadows */
+.fi-btn {
+    box-shadow: none !important;
+    border-radius: 4px !important;
+}
