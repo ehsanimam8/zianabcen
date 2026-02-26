@@ -33,11 +33,14 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight('3rem')
             ->login()
             ->colors([
-                'primary' => Color::hex('#5d0080'),
+                'primary' => Color::hex('#171717'),
+                'warning' => Color::hex('#D4AF37'),
                 'gray' => Color::Zinc,
             ])
             ->darkMode(false)
-            ->font('Inter')
+            ->font('Fira Sans')
+            ->topNavigation()
+            ->maxContentWidth(\Filament\Support\Enums\Width::Full)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
