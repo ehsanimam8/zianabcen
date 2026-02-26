@@ -62,24 +62,40 @@ class ProgramsTableSeeder extends Seeder
         ];
 
         foreach ($programs as $programData) {
-            $programData['code'] = strtoupper(Str::random(6));
-            $program = Program::create($programData);
+            // Use a slug of the name as a consistent code base if we want to be idempotent
+            $consistentCode = strtoupper(substr(Str::slug($programData['name'], ''), 0, 6));
             
-            $course = \App\Models\SIS\Course::create([
-                'name' => $programData['name'] . ' (Core Course)',
-                'code' => strtoupper(Str::random(6)) . '-C',
-                'credits' => 3,
-                'description' => $programData['description'],
-                'is_active' => true,
-            ]);
+            $program = Program::firstOrCreate(
+                ['name' => $programData['name']],
+                array_merge($programData, ['code' => $consistentCode])
+            );
             
-            \Illuminate\Support\Facades\DB::table('program_courses')->insert([
-                'id' => (string) Str::uuid(),
-                'program_id' => $program->id,
-                'course_id' => $course->id,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            $courseName = $programData['name'] . ' (Core Course)';
+            $course = \App\Models\SIS\Course::firstOrCreate(
+                ['name' => $courseName],
+                [
+                    'code' => $consistentCode . '-C',
+                    'credits' => 3,
+                    'description' => $programData['description'],
+                    'is_active' => true,
+                ]
+            );
+            
+            // Check if link already exists
+            $exists = \Illuminate\Support\Facades\DB::table('program_courses')
+                ->where('program_id', $program->id)
+                ->where('course_id', $course->id)
+                ->exists();
+
+            if (!$exists) {
+                \Illuminate\Support\Facades\DB::table('program_courses')->insert([
+                    'id' => (string) Str::uuid(),
+                    'program_id' => $program->id,
+                    'course_id' => $course->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
         }
     }
 }
