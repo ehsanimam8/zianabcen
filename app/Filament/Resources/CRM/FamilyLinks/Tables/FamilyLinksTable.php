@@ -13,7 +13,9 @@ class FamilyLinksTable
     {
         return $table
             ->columns([
-                //
+                \Filament\Tables\Columns\TextColumn::make('parent.name')->searchable(),
+                \Filament\Tables\Columns\TextColumn::make('student.name')->searchable(),
+                \Filament\Tables\Columns\TextColumn::make('relationship'),
             ])
             ->filters([
                 //

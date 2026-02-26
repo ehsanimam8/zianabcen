@@ -13,7 +13,10 @@ class AttendancesTable
     {
         return $table
             ->columns([
-                //
+                \Filament\Tables\Columns\TextColumn::make('courseSession.session_date')->sortable(),
+                \Filament\Tables\Columns\TextColumn::make('student.name')->searchable(),
+                \Filament\Tables\Columns\TextColumn::make('status'),
+                \Filament\Tables\Columns\TextColumn::make('notes')->limit(50),
             ])
             ->filters([
                 //

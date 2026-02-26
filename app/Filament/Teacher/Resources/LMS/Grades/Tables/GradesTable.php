@@ -13,7 +13,12 @@ class GradesTable
     {
         return $table
             ->columns([
-                //
+                \Filament\Tables\Columns\TextColumn::make('enrollment.user.name')->searchable(),
+                \Filament\Tables\Columns\TextColumn::make('course.name')->searchable(),
+                \Filament\Tables\Columns\TextColumn::make('assessment.title')->searchable(),
+                \Filament\Tables\Columns\TextColumn::make('max_score'),
+                \Filament\Tables\Columns\TextColumn::make('raw_score'),
+                \Filament\Tables\Columns\TextColumn::make('letter_grade'),
             ])
             ->filters([
                 //
