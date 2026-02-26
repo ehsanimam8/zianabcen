@@ -1,10 +1,12 @@
 <?php
 
 use Livewire\Volt\Component;
+use Livewire\Attributes\Layout;
 use App\Models\Communication\Message;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
+#[Layout('components.layouts.app')]
 new class extends Component {
     public $messages = [];
     public $isComposing = false;
