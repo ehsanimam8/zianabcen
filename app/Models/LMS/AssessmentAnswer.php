@@ -12,5 +12,17 @@ class AssessmentAnswer extends Model
 
     protected $guarded = [];
 
-    //
+    protected $casts = [
+        'is_correct' => 'boolean',
+    ];
+
+    public function submission()
+    {
+        return $this->belongsTo(AssessmentSubmission::class, 'submission_id');
+    }
+
+    public function question()
+    {
+        return $this->belongsTo(AssessmentQuestion::class, 'question_id');
+    }
 }

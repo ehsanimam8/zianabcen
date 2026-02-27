@@ -91,7 +91,11 @@ class User extends Authenticatable implements FilamentUser
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
         ];
+    }
+
+    public function notes()
+    {
+        return $this->morphMany(\App\Models\CRM\Note::class, 'notable');
     }
 }

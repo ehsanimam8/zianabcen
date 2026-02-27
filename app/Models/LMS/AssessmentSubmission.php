@@ -12,5 +12,28 @@ class AssessmentSubmission extends Model
 
     protected $guarded = [];
 
-    //
+    protected $casts = [
+        'submitted_at' => 'datetime',
+        'graded_at' => 'datetime',
+    ];
+
+    public function assessment()
+    {
+        return $this->belongsTo(Assessment::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class);
+    }
+
+    public function grader()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'graded_by');
+    }
+
+    public function answers()
+    {
+        return $this->hasMany(AssessmentAnswer::class, 'submission_id');
+    }
 }

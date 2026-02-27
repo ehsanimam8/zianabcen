@@ -12,5 +12,13 @@ class Note extends Model
 
     protected $guarded = [];
 
-    //
+    public function notable()
+    {
+        return $this->morphTo();
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'user_id');
+    }
 }

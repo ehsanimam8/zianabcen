@@ -19,4 +19,14 @@ class Assessment extends Model
     {
         return $this->belongsTo(\App\Models\SIS\Course::class);
     }
+
+    public function questions()
+    {
+        return $this->hasMany(AssessmentQuestion::class);
+    }
+
+    public function submissions()
+    {
+        return $this->hasMany(AssessmentSubmission::class);
+    }
 }

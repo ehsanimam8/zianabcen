@@ -52,9 +52,9 @@ class StripeWebhookController extends Controller
             return;
         }
 
-        $termId = \App\Models\SIS\Term::where('is_current', true)
-            ->first()
-            ->id ?? \App\Models\SIS\Term::latest()->first()->id ?? null;
+        $term = \App\Models\SIS\Term::where('is_current', true)->first() 
+             ?? \App\Models\SIS\Term::latest()->first();
+        $termId = $term ? $term->id : null;
 
         foreach ($programIds as $programId) {
             Enrollment::updateOrCreate(

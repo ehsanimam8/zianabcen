@@ -12,5 +12,17 @@ class AssessmentQuestion extends Model
 
     protected $guarded = [];
 
-    //
+    protected $casts = [
+        'options' => 'json',
+    ];
+
+    public function assessment()
+    {
+        return $this->belongsTo(Assessment::class);
+    }
+
+    public function answers()
+    {
+        return $this->hasMany(AssessmentAnswer::class, 'question_id');
+    }
 }
