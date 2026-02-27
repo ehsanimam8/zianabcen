@@ -37,7 +37,7 @@ class ManageStripeSettings extends Page
     {
         return $form
             ->schema([
-                \Filament\Forms\Components\Section::make('Stripe API Credentials')
+                \Filament\Schemas\Components\Section::make('Stripe API Credentials')
                     ->description('These credentials are required to process live and test payments.')
                     ->schema([
                         \Filament\Forms\Components\TextInput::make('stripe_public_key')

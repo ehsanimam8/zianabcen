@@ -15,7 +15,7 @@ class EventRegistrationForm
                         ->relationship('event', 'id')
                         ->required(),
                     \Filament\Forms\Components\Select::make('contact_id')
-                        ->relationship('contact', 'first_name')
+                        ->relationship('contact', 'name')
                         ->required(),
                     \Filament\Forms\Components\Select::make('status')
                         ->options([

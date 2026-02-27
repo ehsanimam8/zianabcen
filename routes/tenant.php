@@ -36,7 +36,7 @@ Route::middleware([
         ->name('stripe.webhook');
 
     // Student Dashboard Routes
-    Route::group(['prefix' => 'portal'], function () {
+    Route::group(['prefix' => 'portal', 'middleware' => ['auth']], function () {
         \Livewire\Volt\Volt::route('/dashboard', 'student.dashboard')->name('student.dashboard');
         \Livewire\Volt\Volt::route('/calendar', 'student.calendar')->name('student.calendar');
         \Livewire\Volt\Volt::route('/messages', 'student.messages')->name('student.messages');

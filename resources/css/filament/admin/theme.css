@@ -1,11 +1,16 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap');
+
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
 
 /* Maximum White and Very Simple Aesthetic Options */
-body, .fi-body {
+body,
+.fi-body {
     background-color: #ffffff !important;
+    font-family: 'Fira Sans', sans-serif !important;
+    color: #171717 !important;
 }
 
 .fi-main {
@@ -19,6 +24,12 @@ body, .fi-body {
     box-shadow: none !important;
     border: 1px solid #f4f4f5 !important;
     border-radius: 6px !important;
+    transition: all 200ms ease-in-out !important;
+}
+
+.fi-ta-content:hover,
+.fi-fo-component:hover {
+    border-color: #e4e4e7 !important;
 }
 
 /* Flatter topbar */
@@ -37,5 +48,13 @@ body, .fi-body {
 /* Modern flat buttons instead of default shadows */
 .fi-btn {
     box-shadow: none !important;
-    border-radius: 4px !important;
+    border-radius: 6px !important;
+    transition: background-color 200ms ease-in-out, border-color 200ms ease-in-out !important;
+    cursor: pointer !important;
+}
+
+/* Technical Dashboard Elements - Fira Code for tables/metrics */
+.fi-wi-stats-overview-stat-value,
+.fi-ta-cell {
+    font-family: 'Fira Code', monospace !important;
 }

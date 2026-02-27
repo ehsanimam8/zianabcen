@@ -5,6 +5,7 @@ namespace App\Filament\Resources\CRM\Contacts\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class ContactsTable
@@ -13,11 +14,29 @@ class ContactsTable
     {
         return $table
             ->columns([
-                \Filament\Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
-                \Filament\Tables\Columns\TextColumn::make('email')->searchable()->sortable(),
-                \Filament\Tables\Columns\TextColumn::make('phone')->searchable(),
-                \Filament\Tables\Columns\TextColumn::make('contact_type')->badge()->sortable(),
-                \Filament\Tables\Columns\TextColumn::make('user.name')->label('Linked User'),
+                TextColumn::make('id')
+                    ->label('ID'),
+                TextColumn::make('user.name')
+                    ->label('Linked User')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('contact_type')
+                    ->searchable(),
+                TextColumn::make('name')
+                    ->searchable(),
+                TextColumn::make('email')
+                    ->label('Email address')
+                    ->searchable(),
+                TextColumn::make('phone')
+                    ->searchable(),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

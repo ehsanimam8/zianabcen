@@ -14,8 +14,7 @@ new #[Layout('components.layouts.app', ['title' => 'Class Calendar'])] class ext
 
     public function mount()
     {
-        // For demonstration, login as student1
-        $this->student = User::where('email', 'student1@example.com')->first();
+        $this->student = auth()->user();
         
         if ($this->student) {
             $enrollments = Enrollment::where('user_id', $this->student->id)

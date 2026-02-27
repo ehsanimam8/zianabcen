@@ -11,8 +11,7 @@ new #[Layout('components.layouts.app')] class extends Component {
 
     public function mount()
     {
-        // For demonstration, login as student1
-        $this->student = User::where('email', 'student1@example.com')->first();
+        $this->student = auth()->user();
         
         if ($this->student) {
             $this->enrollments = Enrollment::where('user_id', $this->student->id)

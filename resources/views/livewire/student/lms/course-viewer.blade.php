@@ -14,7 +14,7 @@ new #[Layout('components.layouts.app')] class extends Component {
 
     public function mount(Course $course)
     {
-        $this->student = User::where('email', 'student1@example.com')->first();
+        $this->student = auth()->user();
         
         // Eager load modules AND their published lessons ordered by sequence
         $this->course = Course::with([

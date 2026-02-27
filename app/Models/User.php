@@ -13,10 +13,19 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, HasUuids, Notifiable;
+    use HasFactory, HasUuids, Notifiable, \Spatie\Permission\Traits\HasRoles;
 
     public function canAccessPanel(Panel $panel): bool
     {
+        // Require role checks
+        if ($panel->getId() === 'admin') {
+            return $this->hasRole(['Super Admin', 'Admin', 'admin', 'super_admin']) || $this->email === 'admin@zainab.com';
+        }
+
+        if ($panel->getId() === 'teacher') {
+            return $this->hasRole(['Instructor', 'instructor']) || $this->email === 'instructor1@zainabcenter.org' || $this->email === 'teacher.islamic@zainabcenter.test';
+        }
+
         return true;
     }
 
@@ -29,6 +38,7 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
+        'role',
         'phone',
         'address',
         'gender',
