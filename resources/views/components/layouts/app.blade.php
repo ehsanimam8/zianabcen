@@ -63,12 +63,19 @@
                     <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                     Messages
                 </a>
+                <a href="{{ route('student.grades') }}" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('student.grades') ? 'bg-zinc-100 text-primary-700' : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50' }}">
+                    <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Grades
+                </a>
             </nav>
             <div class="p-4 border-t border-zinc-200">
-                <a href="#" class="flex items-center p-2 text-sm font-medium text-zinc-600 rounded-lg hover:bg-zinc-100 group">
-                    <img class="h-8 w-8 rounded-full" src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()?->name ?? 'Student') }}" alt="Profile">
-                    <span class="ml-3 group-hover:text-zinc-900">Sign Out</span>
-                </a>
+                <form method="POST" action="{{ route('student.logout') }}">
+                    @csrf
+                    <button type="submit" class="w-full flex items-center p-2 text-sm font-medium text-zinc-600 rounded-lg hover:bg-zinc-100 group">
+                        <img class="h-8 w-8 rounded-full" src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()?->name ?? 'Student') }}" alt="Profile">
+                        <span class="ml-3 group-hover:text-zinc-900">Sign Out</span>
+                    </button>
+                </form>
             </div>
         </aside>
 

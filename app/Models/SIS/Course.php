@@ -32,4 +32,9 @@ class Course extends Model
     {
         return $this->hasMany(\App\Models\LMS\Module::class);
     }
+
+    public function assessments()
+    {
+        return $this->hasMany(\App\Models\LMS\Assessment::class);
+    }
 }

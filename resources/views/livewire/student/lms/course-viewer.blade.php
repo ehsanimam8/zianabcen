@@ -10,6 +10,7 @@ new #[Layout('components.layouts.app')] class extends Component {
     public $student;
     
     public $activeLesson = null;
+    public $activeAssessment = null;
     public $completedLessonIds = [];
 
     public function mount(Course $course)
@@ -23,6 +24,9 @@ new #[Layout('components.layouts.app')] class extends Component {
             }, 
             'modules.lessons' => function($q) {
                 $q->where('is_published', true)->orderBy('sequence');
+            },
+            'assessments' => function($q) {
+                $q->where('is_published', true)->orderBy('due_date');
             }
         ])->findOrFail($course->id);
         
@@ -62,7 +66,14 @@ new #[Layout('components.layouts.app')] class extends Component {
         $module = $this->course->modules->firstWhere('id', $moduleId);
         if ($module) {
             $this->activeLesson = $module->lessons->firstWhere('id', $lessonId);
+            $this->activeAssessment = null;
         }
+    }
+
+    public function selectAssessment($assessmentId)
+    {
+        $this->activeAssessment = $this->course->assessments->firstWhere('id', $assessmentId);
+        $this->activeLesson = null;
     }
 }; ?>
 
@@ -121,6 +132,36 @@ new #[Layout('components.layouts.app')] class extends Component {
                     No curriculum modules available yet.
                 </div>
             @endforelse
+
+            @if($course->assessments->isNotEmpty())
+                <div class="border-b border-zinc-200 mt-4">
+                    <div class="bg-zinc-100/50 px-4 py-3 cursor-pointer">
+                        <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1 block">Evaluations</span>
+                        <h3 class="text-sm font-bold text-zinc-800">Assessments & Quizzes</h3>
+                    </div>
+                    
+                    <div class="bg-white">
+                        @foreach($course->assessments as $assessment)
+                            <button 
+                                wire:click="selectAssessment('{{ $assessment->id }}')" 
+                                class="w-full text-left px-4 py-3 flex items-start space-x-3 hover:bg-zinc-50 transition-colors {{ $activeAssessment?->id === $assessment->id ? 'bg-indigo-50 hover:bg-indigo-50 border-l-2 border-indigo-500' : 'border-l-2 border-transparent' }}"
+                            >
+                                <div class="mt-0.5">
+                                    <svg class="w-4 h-4 text-zinc-400 {{ $activeAssessment?->id === $assessment->id ? 'text-indigo-500' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                </div>
+                                <div class="flex-1 min-w-0 flex items-center justify-between">
+                                    <div>
+                                        <span class="text-sm font-medium {{ $activeAssessment?->id === $assessment->id ? 'text-indigo-800 font-semibold' : 'text-zinc-700' }} block truncate">
+                                            {{ $assessment->title }}
+                                        </span>
+                                        <span class="text-xs text-zinc-400 capitalize">{{ $assessment->type }}</span>
+                                    </div>
+                                </div>
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
     
@@ -141,10 +182,24 @@ new #[Layout('components.layouts.app')] class extends Component {
                     {!! $activeLesson->content !!}
                 </div>
                 
-                <!-- Additional Material Blocks based on Type -->
                 @if($activeLesson->type === 'video' && $activeLesson->file_url)
-                    <div class="mt-8 bg-zinc-900 aspect-video rounded-xl flex items-center justify-center">
-                        <span class="text-zinc-500">Video Player Placeholder ({{ $activeLesson->file_url }})</span>
+                    @php
+                        $isYoutube = false;
+                        $youtubeId = '';
+                        if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/\s]{11})%i', $activeLesson->file_url, $match)) {
+                            $isYoutube = true;
+                            $youtubeId = $match[1];
+                        }
+                    @endphp
+                    <div class="mt-8 bg-black aspect-video rounded-xl overflow-hidden relative shadow-xl ring-1 ring-zinc-900/5">
+                        @if($isYoutube)
+                            <iframe class="w-full h-full border-0 absolute top-0 left-0" src="https://www.youtube.com/embed/{{ $youtubeId }}?rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        @else
+                            <video class="w-full h-full absolute top-0 left-0 outline-none" controls controlsList="nodownload" preload="metadata">
+                                <source src="{{ route('student.media.stream', ['lesson' => $activeLesson->id]) }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        @endif
                     </div>
                 @endif
                 
@@ -171,6 +226,39 @@ new #[Layout('components.layouts.app')] class extends Component {
                             </button>
                         @endif
                     </div>
+                </div>
+            </div>
+        @elseif($activeAssessment)
+            <div class="p-8 lg:p-12 max-w-4xl mx-auto w-full flex flex-col justify-center items-center h-full text-center">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-indigo-50 mb-6">
+                    <svg class="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                </div>
+                
+                <h2 class="text-3xl font-extrabold text-zinc-900 tracking-tight">{{ $activeAssessment->title }}</h2>
+                <div class="inline-flex items-center px-3 py-1 mt-3 rounded-full text-sm font-semibold bg-zinc-100 text-zinc-700 uppercase tracking-wide">
+                    {{ ucfirst($activeAssessment->type) }}
+                </div>
+                
+                @if($activeAssessment->description)
+                    <p class="mt-4 text-lg text-zinc-600 max-w-2xl">{{ $activeAssessment->description }}</p>
+                @endif
+                
+                <div class="mt-8 flex items-center justify-center space-x-8 text-sm text-zinc-500">
+                    <div class="flex items-center">
+                        <svg class="mr-2 h-5 w-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Time Limit: {{ $activeAssessment->time_limit_minutes ? $activeAssessment->time_limit_minutes . ' mins' : 'None' }}
+                    </div>
+                    <div class="flex items-center">
+                        <svg class="mr-2 h-5 w-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        Max Attempts: {{ $activeAssessment->max_attempts }}
+                    </div>
+                </div>
+                
+                <div class="mt-12">
+                    <button class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-md">
+                        Begin Assessment
+                    </button>
+                    <p class="mt-3 text-sm text-zinc-500">Timer will start immediately.</p>
                 </div>
             </div>
         @else

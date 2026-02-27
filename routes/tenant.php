@@ -52,6 +52,7 @@ Route::middleware([
     Route::group(['prefix' => 'portal', 'middleware' => ['auth']], function () {
         \Livewire\Volt\Volt::route('/dashboard', 'student.dashboard')->name('student.dashboard');
         \Livewire\Volt\Volt::route('/calendar', 'student.calendar')->name('student.calendar');
+        \Livewire\Volt\Volt::route('/grades', 'student.grades')->name('student.grades');
         \Livewire\Volt\Volt::route('/messages', 'student.messages')->name('student.messages');
         \Livewire\Volt\Volt::route('/lms/{course}', 'student.lms.course-viewer')->name('student.course.viewer');
         

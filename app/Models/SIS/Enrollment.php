@@ -16,6 +16,28 @@ class Enrollment extends Model
         'expires_at' => 'date',
         'completed_at' => 'date',
     ];
+    protected static function booted()
+    {
+        static::created(function (Enrollment $enrollment) {
+            if ($enrollment->program) {
+                // Get all courses associated with the program
+                $courses = $enrollment->program->courses;
+                
+                foreach ($courses as $course) {
+                    CourseAccess::updateOrCreate(
+                        [
+                            'enrollment_id' => $enrollment->id,
+                            'course_id' => $course->id,
+                        ],
+                        [
+                            'is_active' => true,
+                            'access_starts_at' => now(),
+                        ]
+                    );
+                }
+            }
+        });
+    }
 
     public function user()
     {
