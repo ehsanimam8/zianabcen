@@ -7,7 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    use HasUuids;
+    use HasUuids, \Spatie\Activitylog\Traits\LogsActivity;
+
+    public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
+    {
+        return \Spatie\Activitylog\LogOptions::defaults()->logAll()->logOnlyDirty();
+    }
 
     protected $guarded = [];
 

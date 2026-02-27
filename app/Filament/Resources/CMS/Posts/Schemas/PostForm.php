@@ -31,6 +31,27 @@ class PostForm
                     \Filament\Forms\Components\RichEditor::make('content')->columnSpanFull(),
                     \Filament\Forms\Components\Textarea::make('excerpt')->columnSpanFull(),
                 ])->columns(2),
+                \Filament\Schemas\Components\Section::make('Taxonomy')->schema([
+                    \Filament\Forms\Components\Select::make('categories')
+                        ->relationship('categories', 'name')
+                        ->multiple()
+                        ->preload(),
+                    \Filament\Forms\Components\Select::make('tags')
+                        ->relationship('tags', 'name')
+                        ->multiple()
+                        ->preload(),
+                ])->columns(2),
+                \Filament\Schemas\Components\Section::make('SEO Settings')->schema([
+                    \Filament\Forms\Components\TextInput::make('meta_title')
+                        ->maxLength(255)
+                        ->placeholder('Optimized Title for Search Engines'),
+                    \Filament\Forms\Components\Textarea::make('meta_description')
+                        ->maxLength(500)
+                        ->placeholder('Brief description for search result snippets'),
+                    \Filament\Forms\Components\TextInput::make('og_image_url')
+                        ->url()
+                        ->placeholder('URL for social media preview image'),
+                ])->columns(2),
             ]);
     }
 }

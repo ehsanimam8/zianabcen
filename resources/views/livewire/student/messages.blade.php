@@ -31,9 +31,22 @@ new class extends Component {
 
     public function getRecipientsProperty()
     {
-        return User::whereHas('roles', function($q) {
-            $q->whereIn('name', ['Admin', 'admin', 'Instructor', 'instructor', 'Super Admin', 'super_admin']);
-        })->where('id', '!=', Auth::id())->orderBy('name')->get();
+        $enrolledCourseIds = \App\Models\SIS\CourseAccess::where('is_active', true)
+            ->whereHas('enrollment', function($q) {
+                $q->where('user_id', Auth::id());
+            })->pluck('course_id');
+
+        $instructorIds = \App\Models\LMS\CourseSession::whereIn('course_id', $enrolledCourseIds)
+            ->whereNotNull('instructor_user_id')
+            ->pluck('instructor_user_id')
+            ->unique();
+
+        return User::where('id', '!=', Auth::id())
+            ->where(function($query) use ($instructorIds) {
+                $query->whereHas('roles', function($q) {
+                    $q->whereIn('name', ['Admin', 'admin', 'Super Admin', 'super_admin']);
+                })->orWhereIn('id', $instructorIds);
+            })->orderBy('name')->get();
     }
 
     public function sendMessage()
@@ -81,7 +94,7 @@ new class extends Component {
                     <select wire:model="recipient_id" class="w-full border-zinc-300 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">Select a user...</option>
                         @foreach($this->recipients as $user)
-                            <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->roles->first()?->name ?? 'Staff' }}</option>
+                            <option value="{{ $user->id }}">{{ $user->privacy_name }}</option>
                         @endforeach
                     </select>
                     @error('recipient_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
@@ -117,11 +130,11 @@ new class extends Component {
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
                                 <span class="h-10 w-10 flex items-center justify-center rounded-full text-white font-bold {{ $msg->sender_id === auth()->id() ? 'bg-zinc-800' : 'bg-primary-600' }}">
-                                    {{ substr($msg->sender_id === auth()->id() ? $msg->recipient?->name : $msg->sender?->name, 0, 1) }}
+                                    {{ substr($msg->sender_id === auth()->id() ? $msg->recipient?->privacy_name : $msg->sender?->privacy_name, 0, 1) }}
                                 </span>
                                 <div>
                                     <p class="text-sm font-medium text-zinc-900">
-                                        {{ $msg->sender_id === auth()->id() ? 'To: ' . $msg->recipient?->name : 'From: ' . $msg->sender?->name }}
+                                        {{ $msg->sender_id === auth()->id() ? 'To: ' . $msg->recipient?->privacy_name : 'From: ' . $msg->sender?->privacy_name }}
                                     </p>
                                     <p class="text-sm text-zinc-500 truncate">{{ $msg->subject }}</p>
                                 </div>

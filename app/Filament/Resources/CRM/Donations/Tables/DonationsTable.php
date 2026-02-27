@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\CRM\Donations\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Table;
 
 class DonationsTable
@@ -13,7 +13,11 @@ class DonationsTable
     {
         return $table
             ->columns([
-                //
+                \Filament\Tables\Columns\TextColumn::make('user.name')->searchable()->sortable()->label('Donor'),
+                \Filament\Tables\Columns\TextColumn::make('amount')->money('usd')->sortable(),
+                \Filament\Tables\Columns\TextColumn::make('type')->searchable(),
+                \Filament\Tables\Columns\TextColumn::make('status')->badge(),
+                \Filament\Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable(),
             ])
             ->filters([
                 //
@@ -21,9 +25,10 @@ class DonationsTable
             ->recordActions([
                 EditAction::make(),
             ])
-            ->toolbarActions([
+            ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    \pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction::make(),
                 ]),
             ]);
     }

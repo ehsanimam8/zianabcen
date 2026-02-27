@@ -43,6 +43,14 @@ class User extends Authenticatable implements FilamentUser
         return true;
     }
 
+    public function getPrivacyNameAttribute()
+    {
+        if ($this->hasRole(['Student', 'student'])) {
+            return 'Student (' . ($this->roll_number ?? 'Unknown') . ')';
+        }
+        return ($this->roles->first()?->name ?? 'Staff') . ' ' . $this->name;
+    }
+
     /**
      * The attributes that are mass assignable.
      *
