@@ -16,6 +16,27 @@ class Event extends Model
         'event_end' => 'datetime',
     ];
 
+    protected $appends = ['status'];
+
+    public function getStatusAttribute()
+    {
+        $now = now();
+        if ($now->isBefore($this->event_start)) {
+            return 'Upcoming';
+        } elseif ($now->isAfter($this->event_end ?? $this->event_start->copy()->addHours(2))) {
+            return 'Past';
+        }
+        return 'Ongoing';
+    }
+
+    public function hasCapacity(): bool
+    {
+        if (is_null($this->capacity)) {
+            return true; // No limit
+        }
+        return $this->registrations()->count() < $this->capacity;
+    }
+
     public function post()
     {
         return $this->belongsTo(Post::class);

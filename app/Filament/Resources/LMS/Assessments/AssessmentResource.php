@@ -20,16 +20,6 @@ class AssessmentResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    public static function getNavigationGroup(): ?string
-    {
-        return 'Learning Management (LMS)';
-    }
-
-
-    
-
-    protected static ?string $recordTitleAttribute = 'title';
-
     public static function form(Schema $schema): Schema
     {
         return AssessmentForm::configure($schema);

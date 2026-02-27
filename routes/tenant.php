@@ -35,11 +35,27 @@ Route::middleware([
         ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class])
         ->name('stripe.webhook');
 
+    // Auth & Registration Routes (with rate limiting built-in via 'throttle')
+    Route::middleware(['throttle:6,1', 'guest'])->group(function () {
+        \Livewire\Volt\Volt::route('/login', 'auth.login')->name('student.login');
+        \Livewire\Volt\Volt::route('/register', 'auth.register')->name('student.register');
+    });
+
+    Route::post('/logout', function() {
+        \Illuminate\Support\Facades\Auth::logout();
+        session()->invalidate();
+        session()->regenerateToken();
+        return redirect()->route('home');
+    })->name('student.logout')->middleware('auth');
+
     // Student Dashboard Routes
     Route::group(['prefix' => 'portal', 'middleware' => ['auth']], function () {
         \Livewire\Volt\Volt::route('/dashboard', 'student.dashboard')->name('student.dashboard');
         \Livewire\Volt\Volt::route('/calendar', 'student.calendar')->name('student.calendar');
         \Livewire\Volt\Volt::route('/messages', 'student.messages')->name('student.messages');
         \Livewire\Volt\Volt::route('/lms/{course}', 'student.lms.course-viewer')->name('student.course.viewer');
+        
+        // Secure media access gating
+        Route::get('/stream/{lesson}', [\App\Http\Controllers\MediaStreamController::class, 'stream'])->name('student.media.stream');
     });
 });

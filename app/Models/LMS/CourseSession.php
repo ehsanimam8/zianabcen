@@ -23,6 +23,31 @@ class CourseSession extends Model
 
     protected static function booted()
     {
+        static::saving(function (CourseSession $session) {
+            if ($session->instructor_user_id && $session->session_date && $session->session_start_time && $session->session_end_time) {
+                // Check for overlapping sessions for this instructor
+                $conflict = static::where('instructor_user_id', $session->instructor_user_id)
+                    ->where('session_date', $session->session_date)
+                    ->where('id', '!=', $session->id ?? 'dummy')
+                    ->where(function ($query) use ($session) {
+                        $query->whereBetween('session_start_time', [$session->session_start_time, $session->session_end_time])
+                              ->orWhereBetween('session_end_time', [$session->session_start_time, $session->session_end_time])
+                              ->orWhere(function ($q) use ($session) {
+                                  $q->where('session_start_time', '<=', $session->session_start_time)
+                                    ->where('session_end_time', '>=', $session->session_end_time);
+                              });
+                    })->exists();
+
+                if ($conflict) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'instructor_user_id' => 'Instructor is already booked for another session during this time.',
+                        'session_start_time' => 'Conflict with another scheduled session.',
+                        'session_end_time' => 'Conflict with another scheduled session.'
+                    ]);
+                }
+            }
+        });
+
         static::created(function (CourseSession $session) {
             $session->generateAttendances();
         });

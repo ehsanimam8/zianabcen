@@ -9,8 +9,8 @@ new #[Layout('components.layouts.app')] class extends Component {
     public $course;
     public $student;
     
-    // We'll also store the active lesson for the viewer
     public $activeLesson = null;
+    public $completedLessonIds = [];
 
     public function mount(Course $course)
     {
@@ -26,10 +26,35 @@ new #[Layout('components.layouts.app')] class extends Component {
             }
         ])->findOrFail($course->id);
         
+        $this->loadProgress();
+
         // Optionally auto-select the first lesson
         if ($this->course->modules->isNotEmpty() && $this->course->modules->first()->lessons->isNotEmpty()) {
             $this->activeLesson = $this->course->modules->first()->lessons->first();
         }
+    }
+    
+    public function loadProgress()
+    {
+        if ($this->student) {
+            $this->completedLessonIds = \App\Models\LMS\LessonProgress::where('user_id', $this->student->id)
+                ->where('status', 'completed')
+                ->whereIn('lesson_id', $this->course->modules->flatMap->lessons->pluck('id'))
+                ->pluck('lesson_id')
+                ->toArray();
+        }
+    }
+
+    public function markAsComplete($lessonId)
+    {
+        if (!$this->student) return;
+
+        \App\Models\LMS\LessonProgress::updateOrCreate(
+            ['user_id' => $this->student->id, 'lesson_id' => $lessonId],
+            ['status' => 'completed', 'completed_at' => now()]
+        );
+
+        $this->loadProgress();
     }
     
     public function selectLesson($lessonId, $moduleId)
@@ -76,11 +101,16 @@ new #[Layout('components.layouts.app')] class extends Component {
                                         <svg class="w-4 h-4 text-zinc-400 {{ $activeLesson?->id === $lesson->id ? 'text-primary-500' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                     @endif
                                 </div>
-                                <div class="flex-1 min-w-0">
-                                    <span class="text-sm font-medium {{ $activeLesson?->id === $lesson->id ? 'text-primary-800 font-semibold' : 'text-zinc-700' }} block truncate">
-                                        {{ $lesson->title }}
-                                    </span>
-                                    <span class="text-xs text-zinc-400 capitalize">{{ $lesson->type }}</span>
+                                <div class="flex-1 min-w-0 flex items-center justify-between">
+                                    <div>
+                                        <span class="text-sm font-medium {{ $activeLesson?->id === $lesson->id ? 'text-primary-800 font-semibold' : 'text-zinc-700' }} block truncate">
+                                            {{ $lesson->title }}
+                                        </span>
+                                        <span class="text-xs text-zinc-400 capitalize">{{ $lesson->type }}</span>
+                                    </div>
+                                    @if(in_array($lesson->id, $completedLessonIds))
+                                        <svg class="h-4 w-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                    @endif
                                 </div>
                             </button>
                         @endforeach
@@ -127,6 +157,21 @@ new #[Layout('components.layouts.app')] class extends Component {
                         </a>
                     </div>
                 @endif
+
+                <div class="mt-12 pt-8 border-t border-zinc-100 flex justify-between items-center">
+                    <div>
+                        @if(in_array($activeLesson->id, $completedLessonIds))
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-800">
+                                <svg class="mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                Completed
+                            </span>
+                        @else
+                            <button wire:click="markAsComplete('{{ $activeLesson->id }}')" class="inline-flex items-center justify-center px-6 py-3 border border-zinc-300 shadow-sm text-sm font-medium rounded-lg text-zinc-700 bg-white hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                                Mark as Complete
+                            </button>
+                        @endif
+                    </div>
+                </div>
             </div>
         @else
             <div class="flex-1 flex items-center justify-center text-zinc-500 flex-col px-6 text-center h-full">

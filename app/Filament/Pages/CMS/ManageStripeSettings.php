@@ -26,10 +26,10 @@ class ManageStripeSettings extends Page
     public function mount(): void
     {
         $this->form->fill([
-            'stripe_public_key' => \App\Models\CMS\Setting::where('key', 'stripe_public_key')->value('value'),
-            'stripe_secret_key' => \App\Models\CMS\Setting::where('key', 'stripe_secret_key')->value('value'),
-            'stripe_webhook_secret' => \App\Models\CMS\Setting::where('key', 'stripe_webhook_secret')->value('value'),
-            'stripe_currency' => \App\Models\CMS\Setting::where('key', 'stripe_currency')->value('value') ?? 'USD',
+            'stripe_public_key' => \App\Models\CMS\Setting::getDecryptedValue('stripe_public_key'),
+            'stripe_secret_key' => \App\Models\CMS\Setting::getDecryptedValue('stripe_secret_key'),
+            'stripe_webhook_secret' => \App\Models\CMS\Setting::getDecryptedValue('stripe_webhook_secret'),
+            'stripe_currency' => \App\Models\CMS\Setting::getDecryptedValue('stripe_currency') ?? 'USD',
         ]);
     }
 

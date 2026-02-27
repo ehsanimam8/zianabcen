@@ -13,7 +13,21 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, HasUuids, Notifiable, \Spatie\Permission\Traits\HasRoles;
+    use HasFactory, HasUuids, Notifiable, \Spatie\Permission\Traits\HasRoles, \Spatie\Activitylog\Traits\LogsActivity;
+
+    public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
+    {
+        return \Spatie\Activitylog\LogOptions::defaults()->logAll()->logOnlyDirty();
+    }
+
+    protected static function booted()
+    {
+        static::creating(function (User $user) {
+            if (empty($user->roll_number)) {
+                $user->roll_number = 'ZC-' . date('Y') . '-' . strtoupper(\Illuminate\Support\Str::random(6));
+            }
+        });
+    }
 
     public function canAccessPanel(Panel $panel): bool
     {

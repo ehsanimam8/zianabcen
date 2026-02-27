@@ -31,7 +31,9 @@ new class extends Component {
 
     public function getRecipientsProperty()
     {
-        return User::where('id', '!=', Auth::id())->orderBy('name')->get();
+        return User::whereHas('roles', function($q) {
+            $q->whereIn('name', ['Admin', 'admin', 'Instructor', 'instructor', 'Super Admin', 'super_admin']);
+        })->where('id', '!=', Auth::id())->orderBy('name')->get();
     }
 
     public function sendMessage()
@@ -79,7 +81,7 @@ new class extends Component {
                     <select wire:model="recipient_id" class="w-full border-zinc-300 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">Select a user...</option>
                         @foreach($this->recipients as $user)
-                            <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
+                            <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->roles->first()?->name ?? 'Staff' }}</option>
                         @endforeach
                     </select>
                     @error('recipient_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror

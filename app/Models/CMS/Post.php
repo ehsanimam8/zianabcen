@@ -27,4 +27,14 @@ class Post extends Model
     {
         return $this->hasOne(Event::class);
     }
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class);
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
+    }
 }

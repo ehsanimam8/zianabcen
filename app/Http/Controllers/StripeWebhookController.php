@@ -15,18 +15,17 @@ class StripeWebhookController extends Controller
     {
         $payload = $request->getContent();
         $sigHeader = $request->header('Stripe-Signature');
-        $endpointSecret = Setting::where('key', 'stripe_webhook_secret')->value('value');
+        $endpointSecret = Setting::getDecryptedValue('stripe_webhook_secret');
+
+        if (!$endpointSecret) {
+            Log::error('Stripe webhook secret is not configured.');
+            return response()->json(['error' => 'Webhook secret not configured'], 500);
+        }
 
         try {
-            if ($endpointSecret) {
-                $event = Webhook::constructEvent(
-                    $payload, $sigHeader, $endpointSecret
-                );
-            } else {
-                $event = \Stripe\Event::constructFrom(
-                    json_decode($payload, true)
-                );
-            }
+            $event = Webhook::constructEvent(
+                $payload, $sigHeader, $endpointSecret
+            );
         } catch (\UnexpectedValueException $e) {
             return response()->json(['error' => 'Invalid payload'], 400);
         } catch (SignatureVerificationException $e) {
@@ -53,7 +52,9 @@ class StripeWebhookController extends Controller
             return;
         }
 
-        $termId = \App\Models\SIS\Term::first()->id ?? null;
+        $termId = \App\Models\SIS\Term::where('is_current', true)
+            ->first()
+            ->id ?? \App\Models\SIS\Term::latest()->first()->id ?? null;
 
         foreach ($programIds as $programId) {
             Enrollment::updateOrCreate(
