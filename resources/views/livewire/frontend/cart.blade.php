@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Session;
 new #[Layout('components.layouts.frontend', ['title' => 'Shopping Cart | Zainab Center', 'description' => 'Securely checkout and enroll in your selected Islamic programs at Zainab Center.'])] class extends Component {
     public $cartItems = [];
     public $subtotal = 0;
+    public $studentAssignments = [];
     
     // Stripe settings check
     public $stripeConfigured = false;
@@ -27,6 +28,11 @@ new #[Layout('components.layouts.frontend', ['title' => 'Shopping Cart | Zainab 
     {
         $cartIds = Session::get('cart', []);
         $this->cartItems = Program::whereIn('id', $cartIds)->get();
+        foreach ($this->cartItems as $item) {
+            if (!isset($this->studentAssignments[$item->id])) {
+                $this->studentAssignments[$item->id] = auth()->user()->name ?? 'Guest';
+            }
+        }
         $this->calculateTotal();
     }
     
@@ -40,6 +46,7 @@ new #[Layout('components.layouts.frontend', ['title' => 'Shopping Cart | Zainab 
         $cartIds = Session::get('cart', []);
         $cartIds = array_filter($cartIds, fn($id) => $id != $programId);
         Session::put('cart', $cartIds);
+        unset($this->studentAssignments[$programId]);
         
         $this->loadCart();
     }
@@ -78,6 +85,8 @@ new #[Layout('components.layouts.frontend', ['title' => 'Shopping Cart | Zainab 
                 'metadata' => [
                     'program_ids' => implode(',', $this->cartItems->pluck('id')->toArray()),
                     'user_id' => $userId,
+                    'is_family_billing' => 1,
+                    'student_assignments' => json_encode($this->studentAssignments),
                 ],
             ]);
 
@@ -152,9 +161,13 @@ new #[Layout('components.layouts.frontend', ['title' => 'Shopping Cart | Zainab 
                             <p class="text-sm text-zinc-500 line-clamp-2">Complete access to all courses aligned within this program framework.</p>
                         </div>
                         
-                        <div class="mt-4 sm:mt-0 flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto border-t sm:border-0 border-zinc-100 pt-4 sm:pt-0">
-                            <div class="text-2xl font-bold text-zinc-900">${{ number_format($item->price, 2) }}</div>
-                            <button wire:click="removeItem('{{ $item->id }}')" class="text-sm font-medium text-red-500 hover:text-red-700 mt-2 flex items-center transition-colors">
+                        <div class="mt-4 sm:mt-0 flex flex-col items-end justify-between w-full sm:w-auto border-t sm:border-0 border-zinc-100 pt-4 sm:pt-0">
+                            <div class="text-2xl font-bold text-zinc-900 mb-2">${{ number_format($item->price, 2) }}</div>
+                            <div class="mb-4 text-right w-full">
+                                <label class="block text-xs font-semibold text-zinc-500 mb-1">Assign to Student:</label>
+                                <input type="text" wire:model.live="studentAssignments.{{ $item->id }}" class="w-full sm:w-48 text-sm px-3 py-1.5 border border-zinc-300 rounded focus:ring-primary-500 focus:border-primary-500 shadow-sm" placeholder="Student Name">
+                            </div>
+                            <button wire:click="removeItem('{{ $item->id }}')" class="text-sm font-medium text-red-500 hover:text-red-700 flex items-center transition-colors">
                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                 Remove
                             </button>

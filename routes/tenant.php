@@ -58,5 +58,9 @@ Route::middleware([
         
         // Secure media access gating
         Route::get('/stream/{lesson}', [\App\Http\Controllers\MediaStreamController::class, 'stream'])->name('student.media.stream');
+        
+        // PDF Generators
+        Route::get('/transcript/{student}', [\App\Http\Controllers\PdfController::class, 'transcript'])->name('student.transcript.download');
+        Route::get('/certificate/{student}/{type}/{id}', [\App\Http\Controllers\PdfController::class, 'certificate'])->name('student.certificate.download');
     });
 });

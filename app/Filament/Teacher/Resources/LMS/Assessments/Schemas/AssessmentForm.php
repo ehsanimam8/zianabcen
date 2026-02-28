@@ -14,7 +14,7 @@ class AssessmentForm
     {
         return $schema
             ->components([
-                \Filament\Forms\Components\Section::make('Assessment Details')->schema([
+                \Filament\Schemas\Components\Section::make('Assessment Details')->schema([
                     \Filament\Forms\Components\Select::make('course_id')
                         ->relationship('course', 'name')
                         ->required(),
@@ -41,7 +41,7 @@ class AssessmentForm
                         ->required(),
                 ])->columns(2),
 
-                \Filament\Forms\Components\Section::make('Questions')->schema([
+                \Filament\Schemas\Components\Section::make('Questions')->schema([
                     \Filament\Forms\Components\Repeater::make('questions')
                         ->relationship()
                         ->reorderableWithDragAndDrop(false)
@@ -68,7 +68,7 @@ class AssessmentForm
                                     TextInput::make('text')->required(),
                                     Toggle::make('is_correct')->inline(false),
                                 ])
-                                ->visible(fn (\Filament\Forms\Get $get) => $get('question_type') === 'multiple_choice')
+                                ->visible(fn ($get) => $get('question_type') === 'multiple_choice')
                                 ->columnSpanFull(),
 
                             // Simple answer for True/False
@@ -77,14 +77,14 @@ class AssessmentForm
                                     'true' => 'True',
                                     'false' => 'False',
                                 ])
-                                ->visible(fn (\Filament\Forms\Get $get) => $get('question_type') === 'true_false')
-                                ->required(fn (\Filament\Forms\Get $get) => $get('question_type') === 'true_false'),
+                                ->visible(fn ($get) => $get('question_type') === 'true_false')
+                                ->required(fn ($get) => $get('question_type') === 'true_false'),
 
                             // Text matching for Short Answer
                             TextInput::make('correct_answer')
                                 ->label('Exact Correct Answer')
-                                ->visible(fn (\Filament\Forms\Get $get) => $get('question_type') === 'short_answer')
-                                ->required(fn (\Filament\Forms\Get $get) => $get('question_type') === 'short_answer'),
+                                ->visible(fn ($get) => $get('question_type') === 'short_answer')
+                                ->required(fn ($get) => $get('question_type') === 'short_answer'),
                                 
                             TextInput::make('points')
                                 ->numeric()

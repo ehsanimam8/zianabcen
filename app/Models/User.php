@@ -31,13 +31,14 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        // Require role checks
+        $isAdmin = $this->hasRole(['Super Admin', 'Admin', 'admin', 'super_admin']) || str_ends_with($this->email, '@zainab.com');
+
         if ($panel->getId() === 'admin') {
-            return $this->hasRole(['Super Admin', 'Admin', 'admin', 'super_admin']) || $this->email === 'admin@zainab.com';
+            return $isAdmin;
         }
 
         if ($panel->getId() === 'teacher') {
-            return $this->hasRole(['Instructor', 'instructor']) || $this->email === 'instructor1@zainabcenter.org' || $this->email === 'teacher.islamic@zainabcenter.test';
+            return $isAdmin || $this->hasRole(['Instructor', 'instructor', 'Teacher', 'teacher']) || str_starts_with($this->email, 'instructor') || str_starts_with($this->email, 'teacher');
         }
 
         return true;

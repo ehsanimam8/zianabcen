@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\SIS\Enrollments\Tables;
 
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Tables\Table;
 
 class EnrollmentsTable
@@ -27,8 +27,8 @@ class EnrollmentsTable
             ])
 
             ->bulkActions([
-                \Filament\Tables\Actions\BulkActionGroup::make([
-                    \Filament\Tables\Actions\DeleteBulkAction::make(),
+                \Filament\Actions\BulkActionGroup::make([
+                    \Filament\Actions\DeleteBulkAction::make(),
                     \pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction::make(),
                 ]),
             ]);

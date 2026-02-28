@@ -11,7 +11,7 @@ class AttendanceForm
         return $schema
             ->components([
                 \Filament\Forms\Components\Select::make('course_session_id')
-                    ->relationship('courseSession', 'session_date')
+                    ->relationship('session', 'session_date')
                     ->required(),
                 \Filament\Forms\Components\Select::make('student_user_id')
                     ->relationship('student', 'name')
