@@ -22,6 +22,7 @@ class EventForm
                         ->maxLength(255),
                     \Filament\Forms\Components\FileUpload::make('image')
                         ->image()
+                        ->disk('public')
                         ->directory('events')
                         ->columnSpanFull(),
                     \Filament\Forms\Components\RichEditor::make('description')
