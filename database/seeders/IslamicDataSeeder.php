@@ -5,11 +5,18 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 class IslamicDataSeeder extends Seeder
 {
     public function run(): void
     {
+        // Ensure all required roles exist before assigning them
+        $guardName = 'web';
+        foreach (['Super Admin', 'Admin', 'Instructor', 'Student'] as $roleName) {
+            Role::firstOrCreate(['name' => $roleName, 'guard_name' => $guardName]);
+        }
+
         // Create Teacher
         $teacher = \App\Models\User::firstOrCreate(
             ['email' => 'teacher.islamic@zainabcenter.test'],
@@ -23,11 +30,11 @@ class IslamicDataSeeder extends Seeder
 
         // Create Islamic Students
         $studentsData = [
-            ['name' => 'Aisha Rahman',  'email' => 'aisha@zainabcenter.test',  'gender' => 'Female'],
-            ['name' => 'Fatima Ali',    'email' => 'fatima@zainabcenter.test',  'gender' => 'Female'],
-            ['name' => 'Khaled Sayed',  'email' => 'khaled@zainabcenter.test',  'gender' => 'Male'],
-            ['name' => 'Zainab Qasim',  'email' => 'zainab@zainabcenter.test',  'gender' => 'Female'],
-            ['name' => 'Omar Farooq',   'email' => 'omar@zainabcenter.test',    'gender' => 'Male'],
+            ['name' => 'Aisha Rahman', 'email' => 'aisha@zainabcenter.test', 'gender' => 'Female'],
+            ['name' => 'Fatima Ali',   'email' => 'fatima@zainabcenter.test', 'gender' => 'Female'],
+            ['name' => 'Khaled Sayed', 'email' => 'khaled@zainabcenter.test', 'gender' => 'Male'],
+            ['name' => 'Zainab Qasim', 'email' => 'zainab@zainabcenter.test', 'gender' => 'Female'],
+            ['name' => 'Omar Farooq',  'email' => 'omar@zainabcenter.test',   'gender' => 'Male'],
         ];
 
         $students = collect();
@@ -74,58 +81,33 @@ class IslamicDataSeeder extends Seeder
         $courses = [
             \App\Models\SIS\Course::firstOrCreate(
                 ['name' => 'Aqeedah 101'],
-                [
-                    'code'          => 'AQ101',
-                    'description'   => 'Introduction to Islamic Theology',
-                    'credits'       => 3,
-                    'capacity'      => 50,
-                    'price'         => 500.00,
-                    'billing_cycle' => 'once',
-                    'is_active'     => true,
-                ]
+                ['code' => 'AQ101', 'description' => 'Introduction to Islamic Theology', 'credits' => 3, 'capacity' => 50, 'price' => 500.00, 'billing_cycle' => 'once', 'is_active' => true]
             ),
             \App\Models\SIS\Course::firstOrCreate(
                 ['name' => 'Tafseer Al-Quran'],
-                [
-                    'code'          => 'TAF101',
-                    'description'   => 'Exegesis of Juz Amma',
-                    'credits'       => 3,
-                    'capacity'      => 50,
-                    'price'         => 500.00,
-                    'billing_cycle' => 'once',
-                    'is_active'     => true,
-                ]
+                ['code' => 'TAF101', 'description' => 'Exegesis of Juz Amma', 'credits' => 3, 'capacity' => 50, 'price' => 500.00, 'billing_cycle' => 'once', 'is_active' => true]
             ),
             \App\Models\SIS\Course::firstOrCreate(
                 ['name' => 'Fiqh of Worship'],
-                [
-                    'code'          => 'FIQ101',
-                    'description'   => 'Rules of Purification and Prayer',
-                    'credits'       => 3,
-                    'capacity'      => 50,
-                    'price'         => 500.00,
-                    'billing_cycle' => 'once',
-                    'is_active'     => true,
-                ]
+                ['code' => 'FIQ101', 'description' => 'Rules of Purification and Prayer', 'credits' => 3, 'capacity' => 50, 'price' => 500.00, 'billing_cycle' => 'once', 'is_active' => true]
             ),
         ];
 
-        // Link courses to program via pivot (ignore duplicates)
+        // Link courses to program via pivot (guard duplicates)
         foreach ($courses as $index => $course) {
             $exists = DB::table('program_courses')
                 ->where('program_id', $program->id)
                 ->where('course_id', $course->id)
                 ->exists();
-
             if (!$exists) {
                 DB::table('program_courses')->insert([
-                    'id'         => (string) Str::uuid(),
-                    'program_id' => $program->id,
-                    'course_id'  => $course->id,
-                    'sequence'   => $index + 1,
+                    'id'          => (string) Str::uuid(),
+                    'program_id'  => $program->id,
+                    'course_id'   => $course->id,
+                    'sequence'    => $index + 1,
                     'is_required' => true,
-                    'created_at' => now(),
-                    'updated_at' => now(),
+                    'created_at'  => now(),
+                    'updated_at'  => now(),
                 ]);
             }
         }
@@ -133,10 +115,7 @@ class IslamicDataSeeder extends Seeder
         // Assign teacher to course sessions
         foreach ($courses as $course) {
             \App\Models\LMS\CourseSession::firstOrCreate(
-                [
-                    'course_id'    => $course->id,
-                    'session_date' => now()->addDays(rand(1, 10))->format('Y-m-d'),
-                ],
+                ['course_id' => $course->id, 'session_date' => now()->addDays(rand(1, 10))->format('Y-m-d')],
                 [
                     'instructor_user_id' => $teacher->id,
                     'session_start_time' => '18:00:00',
@@ -154,11 +133,7 @@ class IslamicDataSeeder extends Seeder
 
         foreach ($students as $index => $student) {
             \App\Models\SIS\Enrollment::firstOrCreate(
-                [
-                    'user_id'   => $student->id,
-                    'course_id' => $primaryCourse->id,
-                    'term_id'   => $term->id,
-                ],
+                ['user_id' => $student->id, 'course_id' => $primaryCourse->id, 'term_id' => $term->id],
                 [
                     'status'         => $statuses[$index],
                     'enrolled_at'    => now(),

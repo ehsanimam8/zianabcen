@@ -15,16 +15,23 @@ use App\Models\SIS\Term;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
+use Spatie\Permission\Models\Role;
 
 class TenantSampleDataSeeder extends Seeder
 {
     public function run()
     {
+        // Ensure all required roles exist before assigning them
+        $guardName = 'web';
+        foreach (['Super Admin', 'Admin', 'Instructor', 'Student'] as $roleName) {
+            Role::firstOrCreate(['name' => $roleName, 'guard_name' => $guardName]);
+        }
+
         // Add Admin user
         $admin = User::firstOrCreate(
             ['email' => 'admin@zainab.com'],
             [
-                'name' => 'Admin',
+                'name'     => 'Admin',
                 'password' => bcrypt('password'),
             ]
         );
@@ -34,8 +41,8 @@ class TenantSampleDataSeeder extends Seeder
         $instructor1 = User::firstOrCreate(
             ['email' => 'instructor1@zainabcenter.org'],
             [
-                'name' => 'Shaykh Ahmad',
-                'password' => bcrypt('password123'),
+                'name'        => 'Shaykh Ahmad',
+                'password'    => bcrypt('password123'),
                 'roll_number' => 'INS-001',
             ]
         );
@@ -44,8 +51,8 @@ class TenantSampleDataSeeder extends Seeder
         $instructor2 = User::firstOrCreate(
             ['email' => 'instructor2@zainabcenter.org'],
             [
-                'name' => 'Ustadha Fatima',
-                'password' => bcrypt('password123'),
+                'name'        => 'Ustadha Fatima',
+                'password'    => bcrypt('password123'),
                 'roll_number' => 'INS-002',
             ]
         );
@@ -54,8 +61,8 @@ class TenantSampleDataSeeder extends Seeder
         $student1 = User::firstOrCreate(
             ['email' => 'student1@example.com'],
             [
-                'name' => 'Ali Raza',
-                'password' => bcrypt('password123'),
+                'name'        => 'Ali Raza',
+                'password'    => bcrypt('password123'),
                 'roll_number' => 'STU-1001',
             ]
         );
@@ -64,8 +71,8 @@ class TenantSampleDataSeeder extends Seeder
         $student2 = User::firstOrCreate(
             ['email' => 'student2@example.com'],
             [
-                'name' => 'Sara Khan',
-                'password' => bcrypt('password123'),
+                'name'        => 'Sara Khan',
+                'password'    => bcrypt('password123'),
                 'roll_number' => 'STU-1002',
             ]
         );
@@ -81,7 +88,7 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        // Term
+        // Terms
         $termFall = Term::firstOrCreate(
             ['academic_year_id' => $year->id, 'name' => 'Fall 2024'],
             [
@@ -100,7 +107,7 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        // Program (no price/billing_cycle — those live on Course now)
+        // Program (no price — lives on Course now)
         $program1 = Program::firstOrCreate(
             ['code' => 'UA1'],
             [
@@ -141,7 +148,7 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        // Enrollment — now course-level (course_id, not program_id)
+        // Enrollment — course-level (course_id, not program_id)
         $enrollment1 = Enrollment::firstOrCreate(
             [
                 'user_id'   => $student1->id,
@@ -156,15 +163,12 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        // Course Access (also created by Enrollment::booted, but safe to upsert here)
         CourseAccess::firstOrCreate(
             [
                 'enrollment_id' => $enrollment1->id,
                 'course_id'     => $course1->id,
             ],
-            [
-                'is_active' => true,
-            ]
+            ['is_active' => true]
         );
 
         // Module
