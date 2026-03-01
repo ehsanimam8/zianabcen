@@ -18,9 +18,13 @@ new #[Layout('components.layouts.frontend')] class extends Component {
 
     public function mount($slug)
     {
-        $this->event = Event::where('slug', $slug)
-            ->orWhere('id', $slug)
-            ->firstOrFail();
+        $query = Event::where('slug', $slug);
+        
+        if (\Illuminate\Support\Str::isUuid($slug)) {
+            $query->orWhere('id', $slug);
+        }
+        
+        $this->event = $query->firstOrFail();
 
         if ($this->event->status === 'Past') {
             abort(404, 'Event is no longer active.');
