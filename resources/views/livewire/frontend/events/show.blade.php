@@ -71,6 +71,20 @@ new #[Layout('components.layouts.frontend')] class extends Component {
                     @endif
                 </div>
 
+                @if($event->status !== 'Past')
+                <div class="mb-8 p-6 bg-primary-50 border border-primary-200 rounded-xl flex flex-col sm:flex-row items-center justify-between shadow-sm">
+                    <div>
+                        <h3 class="text-lg font-bold text-primary-900">Are you ready to join us?</h3>
+                        <p class="text-sm text-primary-700">Secure your spot for this beautiful event.</p>
+                    </div>
+                    <div class="mt-4 sm:mt-0">
+                        <a href="{{ route('frontend.events.register', $event->slug ?? $event->id) }}" class="inline-flex justify-center rounded-md border border-transparent bg-primary-800 py-3 px-6 text-sm font-bold text-white shadow hover:bg-primary-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all">
+                            Register Now
+                        </a>
+                    </div>
+                </div>
+                @endif
+
                 <div class="prose prose-zinc prose-a:text-primary-600 max-w-none">
                     {!! str($event->description)->markdown() !!}
                 </div>
