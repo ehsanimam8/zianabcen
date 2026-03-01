@@ -9,8 +9,7 @@ new #[Layout('components.layouts.frontend', ['title' => 'Upcoming Events | Zaina
 
     public function mount()
     {
-        $this->events = Event::with('post')
-            ->where('event_start', '>=', now())
+        $this->events = Event::where('event_start', '>=', now())
             ->orderBy('event_start', 'asc')
             ->get();
     }
@@ -35,8 +34,8 @@ new #[Layout('components.layouts.frontend', ['title' => 'Upcoming Events | Zaina
             @foreach($events as $event)
                 <div class="bg-white rounded-2xl shadow-sm border border-zinc-100 overflow-hidden hover:shadow-md transition-shadow flex flex-col">
                     <div class="h-48 bg-zinc-100 relative">
-                        @if(optional($event->post)->featured_image_url)
-                            <img src="{{ $event->post->featured_image_url }}" alt="{{ $event->post->title ?? 'Event' }}" class="w-full h-full object-cover">
+                        @if($event->image)
+                            <img src="{{ Storage::url($event->image) }}" alt="{{ $event->title }}" class="w-full h-full object-cover">
                         @else
                             <div class="absolute inset-0 flex items-center justify-center bg-primary-800 opacity-90 text-white">
                                 <span class="text-lg font-bold tracking-widest uppercase">Zainab Center</span>
@@ -62,9 +61,18 @@ new #[Layout('components.layouts.frontend', ['title' => 'Upcoming Events | Zaina
                             @endif
                         </div>
                         
-                        <h3 class="text-xl font-bold text-zinc-900 mb-3 line-clamp-2">{{ optional($event->post)->title ?? 'Untitled Event' }}</h3>
+                        <h3 class="text-xl font-bold text-zinc-900 mb-3 line-clamp-2">
+                            <a href="{{ route('frontend.events.show', $event->slug) }}" class="hover:text-primary-700 transition-colors">
+                                {{ $event->title ?? 'Untitled Event' }}
+                            </a>
+                        </h3>
                         <div class="prose prose-sm text-zinc-500 mb-6 flex-grow line-clamp-3">
-                            {!! strip_tags(optional($event->post)->content ?? '') !!}
+                            {!! strip_tags($event->description ?? '') !!}
+                        </div>
+                        <div class="mt-auto">
+                            <a href="{{ route('frontend.events.show', $event->slug) }}" class="inline-flex items-center text-sm font-bold text-primary-600 hover:text-primary-800">
+                                View Details &rarr;
+                            </a>
                         </div>
                     </div>
                 </div>

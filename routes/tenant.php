@@ -27,6 +27,7 @@ Route::middleware([
     \Livewire\Volt\Volt::route('/programs', 'frontend.programs.index')->name('frontend.programs.index');
     \Livewire\Volt\Volt::route('/programs/{id}', 'frontend.programs.show')->name('frontend.programs.show');
     \Livewire\Volt\Volt::route('/events', 'frontend.events.index')->name('frontend.events.index');
+    \Livewire\Volt\Volt::route('/events/{slug}', 'frontend.events.show')->name('frontend.events.show');
     \Livewire\Volt\Volt::route('/announcements', 'frontend.posts.index')->name('frontend.posts.index');
     \Livewire\Volt\Volt::route('/announcements/{slug}', 'frontend.posts.show')->name('frontend.posts.show');
     \Livewire\Volt\Volt::route('/about/{slug}', 'frontend.pages.show')->name('frontend.pages.show');
