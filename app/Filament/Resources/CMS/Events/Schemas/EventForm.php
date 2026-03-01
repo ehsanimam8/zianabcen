@@ -11,10 +11,21 @@ class EventForm
         return $schema
             ->components([
                 \Filament\Schemas\Components\Section::make('Event Details')->schema([
-                    \Filament\Forms\Components\Select::make('post_id')
-                        ->relationship('post', 'title')
+                    \Filament\Forms\Components\TextInput::make('title')
                         ->required()
-                        ->label('Associated Content/Post'),
+                        ->maxLength(255)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(fn (string $operation, $state, \Filament\Forms\Set $set) => $operation === 'create' ? $set('slug', \Illuminate\Support\Str::slug($state)) : null),
+                    \Filament\Forms\Components\TextInput::make('slug')
+                        ->required()
+                        ->unique(ignoreRecord: true)
+                        ->maxLength(255),
+                    \Filament\Forms\Components\FileUpload::make('image')
+                        ->image()
+                        ->directory('events')
+                        ->columnSpanFull(),
+                    \Filament\Forms\Components\RichEditor::make('description')
+                        ->columnSpanFull(),
                     \Filament\Forms\Components\DateTimePicker::make('event_start')
                         ->required(),
                     \Filament\Forms\Components\DateTimePicker::make('event_end')

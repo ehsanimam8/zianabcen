@@ -37,10 +37,7 @@ class Event extends Model
         return $this->registrations()->count() < $this->capacity;
     }
 
-    public function post()
-    {
-        return $this->belongsTo(Post::class);
-    }
+
 
     public function registrations()
     {
