@@ -14,6 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="/logo.png" as="image">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
         tailwind.config = {
@@ -115,33 +116,43 @@
                 <!-- Column 3: Social Media -->
                 <div>
                     <h3 class="text-lg font-bold text-primary-800 mb-4">Connect With Us</h3>
-                    <div class="custom">
-                        <div id="socialstreams" class="flex flex-wrap gap-2">
-                          <a title="Youtube" href="https://youtube.com/zainabcenter" target="_blank" rel="noopener"> 
-                            <img src="/images/youtube.png" width="35" height="35" loading="lazy" alt="YouTube" class="hover:opacity-80 transition-opacity" /> </a> 
-                          <a title="Instagram" href="https://instagram.com/zainabcenter" target="_blank" rel="noopener"> 
-                            <img src="/images/instagram.png" width="35" height="35" loading="lazy" alt="Instagram" class="hover:opacity-80 transition-opacity" /></a> 
-                          <a title="TikTok" href="https://www.tiktok.com/@zainabcenter" target="_blank" rel="noopener"> 
-                            <img src="/images/tiktok.png" width="35" height="35" loading="lazy" alt="TikTok" class="hover:opacity-80 transition-opacity" /> </a> 
-                            <a title="Facebook" href="https://facebook.com/zainabcenter" target="_blank" rel="noopener"> 
-                              <img src="/images/facebook.png" width="35" height="35" loading="lazy" alt="Facebook" class="hover:opacity-80 transition-opacity" /></a> 
-                          <a title="Twitter" href="https://twitter.com/zainabcenter" target="_blank" rel="noopener"> 
-                            <img src="/images/twitter.png" width="35" height="35" loading="lazy" alt="Twitter" class="hover:opacity-80 transition-opacity" /> </a> 
-                          <a title="Telegram" href="https://t.me/zainabcenter" target="_blank" rel="noopener"> 
-                            <img src="/images/telegram.png" width="35" height="35" loading="lazy" alt="Telegram" class="hover:opacity-80 transition-opacity" /> </a> 
-                          <a title="Twitch" href="https://twitch.tv/zainabcenter" target="_blank" rel="noopener"> 
-                            <img src="/images/twitch.png" width="35" height="35" loading="lazy" alt="Twitch" class="hover:opacity-80 transition-opacity" /> </a> 
-                          <a title="Mixlr" href="https://zainabcenter.mixlr.com" target="_blank" rel="noopener"> 
-                            <img src="/images/mixlr.png" width="35" height="35" loading="lazy" alt="Mixlr" class="hover:opacity-80 transition-opacity" /> </a> 
-                          <a title="Linkedin" href="https://www.linkedin.com/company/zainabcenter" target="_blank" rel="noopener"> 
-                            <img src="/images/linkedin.png" width="35" height="35" loading="lazy" alt="LinkedIn" class="hover:opacity-80 transition-opacity" /></a>
-                          <a title="Threads" href="https://www.threads.net/@zainabcenter" target="_blank" rel="noopener"> 
-                            <img src="/images/threads.png" width="35" height="35" loading="lazy" alt="Threads" class="hover:opacity-80 transition-opacity" /></a>
-                          <a title="BlueSky" href="https://bsky.app/profile/zainabcenter.bsky.social" target="_blank" rel="noopener"> 
-                            <img src="/images/bluesky.png" width="35" height="35" loading="lazy" alt="BlueSky" class="hover:opacity-80 transition-opacity" /></a>
-                          <a title="Pinterest" href="https://www.pinterest.com/zainabcenterinternational" target="_blank" rel="noopener"> 
-                            <img src="/images/pinterest.png" width="35" height="35" loading="lazy" alt="Pinterest" class="hover:opacity-80 transition-opacity" /></a>
-                        </div>
+                    <div class="flex flex-wrap gap-4">
+                        <a title="YouTube" href="https://youtube.com/zainabcenter" target="_blank" rel="noopener" class="text-zinc-400 hover:text-red-600 transition-colors"> 
+                            <i class="fa-brands fa-youtube text-2xl"></i>
+                        </a> 
+                        <a title="Instagram" href="https://instagram.com/zainabcenter" target="_blank" rel="noopener" class="text-zinc-400 hover:text-pink-600 transition-colors"> 
+                            <i class="fa-brands fa-instagram text-2xl"></i>
+                        </a> 
+                        <a title="TikTok" href="https://www.tiktok.com/@zainabcenter" target="_blank" rel="noopener" class="text-zinc-400 hover:text-black transition-colors"> 
+                            <i class="fa-brands fa-tiktok text-2xl"></i>
+                        </a> 
+                        <a title="Facebook" href="https://facebook.com/zainabcenter" target="_blank" rel="noopener" class="text-zinc-400 hover:text-blue-600 transition-colors"> 
+                            <i class="fa-brands fa-facebook text-2xl"></i>
+                        </a> 
+                        <a title="X (Twitter)" href="https://twitter.com/zainabcenter" target="_blank" rel="noopener" class="text-zinc-400 hover:text-black transition-colors"> 
+                            <i class="fa-brands fa-x-twitter text-2xl"></i>
+                        </a> 
+                        <a title="Telegram" href="https://t.me/zainabcenter" target="_blank" rel="noopener" class="text-zinc-400 hover:text-blue-500 transition-colors"> 
+                            <i class="fa-brands fa-telegram text-2xl"></i>
+                        </a> 
+                        <a title="Twitch" href="https://twitch.tv/zainabcenter" target="_blank" rel="noopener" class="text-zinc-400 hover:text-purple-600 transition-colors"> 
+                            <i class="fa-brands fa-twitch text-2xl"></i>
+                        </a> 
+                        <a title="Mixlr" href="https://zainabcenter.mixlr.com" target="_blank" rel="noopener" class="text-zinc-400 hover:text-orange-500 transition-colors"> 
+                            <i class="fa-solid fa-podcast text-2xl"></i>
+                        </a> 
+                        <a title="LinkedIn" href="https://www.linkedin.com/company/zainabcenter" target="_blank" rel="noopener" class="text-zinc-400 hover:text-blue-700 transition-colors"> 
+                            <i class="fa-brands fa-linkedin text-2xl"></i>
+                        </a>
+                        <a title="Threads" href="https://www.threads.net/@zainabcenter" target="_blank" rel="noopener" class="text-zinc-400 hover:text-black transition-colors"> 
+                            <i class="fa-brands fa-threads text-2xl"></i>
+                        </a>
+                        <a title="BlueSky" href="https://bsky.app/profile/zainabcenter.bsky.social" target="_blank" rel="noopener" class="text-zinc-400 hover:text-blue-400 transition-colors"> 
+                            <i class="fa-brands fa-bluesky text-2xl"></i>
+                        </a>
+                        <a title="Pinterest" href="https://www.pinterest.com/zainabcenterinternational" target="_blank" rel="noopener" class="text-zinc-400 hover:text-red-600 transition-colors"> 
+                            <i class="fa-brands fa-pinterest text-2xl"></i>
+                        </a>
                     </div>
                 </div>
             </div>
