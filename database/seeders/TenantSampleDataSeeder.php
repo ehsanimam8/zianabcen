@@ -21,13 +21,14 @@ class TenantSampleDataSeeder extends Seeder
     public function run()
     {
         // Add Admin user
-        User::firstOrCreate(
+        $admin = User::firstOrCreate(
             ['email' => 'admin@zainab.com'],
             [
                 'name' => 'Admin',
                 'password' => bcrypt('password'),
             ]
         );
+        $admin->assignRole('Admin');
 
         // Add sample users
         $instructor1 = User::firstOrCreate(
@@ -38,6 +39,7 @@ class TenantSampleDataSeeder extends Seeder
                 'roll_number' => 'INS-001',
             ]
         );
+        $instructor1->assignRole('Instructor');
 
         $instructor2 = User::firstOrCreate(
             ['email' => 'instructor2@zainabcenter.org'],
@@ -47,6 +49,7 @@ class TenantSampleDataSeeder extends Seeder
                 'roll_number' => 'INS-002',
             ]
         );
+        $instructor2->assignRole('Instructor');
 
         $student1 = User::firstOrCreate(
             ['email' => 'student1@example.com'],
@@ -56,6 +59,7 @@ class TenantSampleDataSeeder extends Seeder
                 'roll_number' => 'STU-1001',
             ]
         );
+        $student1->assignRole('Student');
 
         $student2 = User::firstOrCreate(
             ['email' => 'student2@example.com'],
@@ -65,14 +69,15 @@ class TenantSampleDataSeeder extends Seeder
                 'roll_number' => 'STU-1002',
             ]
         );
+        $student2->assignRole('Student');
 
         // Academic Year
         $year = AcademicYear::firstOrCreate(
             ['name' => '2024-2025'],
             [
                 'start_date' => Carbon::parse('2024-09-01'),
-                'end_date' => Carbon::parse('2025-06-30'),
-                'is_active' => true,
+                'end_date'   => Carbon::parse('2025-06-30'),
+                'is_active'  => true,
             ]
         );
 
@@ -81,7 +86,7 @@ class TenantSampleDataSeeder extends Seeder
             ['academic_year_id' => $year->id, 'name' => 'Fall 2024'],
             [
                 'start_date' => Carbon::parse('2024-09-01'),
-                'end_date' => Carbon::parse('2024-12-15'),
+                'end_date'   => Carbon::parse('2024-12-15'),
                 'is_current' => false,
             ]
         );
@@ -90,70 +95,72 @@ class TenantSampleDataSeeder extends Seeder
             ['academic_year_id' => $year->id, 'name' => 'Spring 2025'],
             [
                 'start_date' => Carbon::parse('2025-01-10'),
-                'end_date' => Carbon::parse('2025-05-30'),
+                'end_date'   => Carbon::parse('2025-05-30'),
                 'is_current' => true,
             ]
         );
 
-        // Program
+        // Program (no price/billing_cycle — those live on Course now)
         $program1 = Program::firstOrCreate(
             ['code' => 'UA1'],
             [
-                'name' => 'Urdu Aama 1',
-                'description' => 'First year of the foundational Alim course.',
-                'price' => 500.00,
-                'billing_cycle' => 'monthly',
+                'name'            => 'Urdu Aama 1',
+                'description'     => 'First year of the foundational Alim course.',
                 'duration_months' => 9,
-                'level' => 'Beginner',
-                'is_active' => true,
+                'level'           => 'Beginner',
+                'is_active'       => true,
             ]
         );
 
-        // Courses
+        // Courses (price lives here)
         $course1 = Course::firstOrCreate(
             ['code' => 'TAF101'],
             [
-                'name' => 'Tafseer Introduction',
-                'description' => 'Introduction to the sciences of the Quran.',
-                'credits' => 3,
-                'capacity' => 50,
-                'term_id' => $termSpring->id,
-                'is_active' => true,
+                'name'          => 'Tafseer Introduction',
+                'description'   => 'Introduction to the sciences of the Quran.',
+                'credits'       => 3,
+                'capacity'      => 50,
+                'term_id'       => $termSpring->id,
+                'price'         => 100.00,
+                'billing_cycle' => 'monthly',
+                'is_active'     => true,
             ]
         );
 
         $course2 = Course::firstOrCreate(
             ['code' => 'HAD101'],
             [
-                'name' => 'Hadith Principles',
-                'description' => 'Study of Usul al-Hadith and memorization.',
-                'credits' => 3,
-                'capacity' => 50,
-                'term_id' => $termSpring->id,
-                'is_active' => true,
+                'name'          => 'Hadith Principles',
+                'description'   => 'Study of Usul al-Hadith and memorization.',
+                'credits'       => 3,
+                'capacity'      => 50,
+                'term_id'       => $termSpring->id,
+                'price'         => 100.00,
+                'billing_cycle' => 'monthly',
+                'is_active'     => true,
             ]
         );
 
-        // Enrollment
+        // Enrollment — now course-level (course_id, not program_id)
         $enrollment1 = Enrollment::firstOrCreate(
             [
-                'user_id' => $student1->id,
-                'program_id' => $program1->id,
-                'term_id' => $termSpring->id,
+                'user_id'   => $student1->id,
+                'course_id' => $course1->id,
+                'term_id'   => $termSpring->id,
             ],
             [
-                'status' => 'Enrolled',
-                'enrolled_at' => Carbon::now(),
-                'amount_paid' => 100.00,
+                'status'         => 'Enrolled',
+                'enrolled_at'    => Carbon::now(),
+                'amount_paid'    => 100.00,
                 'payment_method' => 'stripe_online',
             ]
         );
 
-        // Course Access
+        // Course Access (also created by Enrollment::booted, but safe to upsert here)
         CourseAccess::firstOrCreate(
             [
                 'enrollment_id' => $enrollment1->id,
-                'course_id' => $course1->id,
+                'course_id'     => $course1->id,
             ],
             [
                 'is_active' => true,
@@ -164,8 +171,8 @@ class TenantSampleDataSeeder extends Seeder
         $module1 = Module::firstOrCreate(
             ['course_id' => $course1->id, 'title' => 'Revelation (Wahy)'],
             [
-                'description' => 'Understanding how revelation descends and its categorizations.',
-                'sequence' => 1,
+                'description'  => 'Understanding how revelation descends and its categorizations.',
+                'sequence'     => 1,
                 'is_published' => true,
             ]
         );
@@ -174,9 +181,9 @@ class TenantSampleDataSeeder extends Seeder
         Lesson::firstOrCreate(
             ['module_id' => $module1->id, 'title' => 'The First Revelation'],
             [
-                'content' => '<p>Overview of Surah Al-Alaq and the historical event in Cave Hira.</p>',
-                'type' => 'text',
-                'sequence' => 1,
+                'content'      => '<p>Overview of Surah Al-Alaq and the historical event in Cave Hira.</p>',
+                'type'         => 'text',
+                'sequence'     => 1,
                 'is_published' => true,
             ]
         );
@@ -185,11 +192,11 @@ class TenantSampleDataSeeder extends Seeder
         Post::firstOrCreate(
             ['slug' => 'welcome-spring-2025'],
             [
-                'title' => 'Welcome to Spring 2025 Semester!',
-                'post_type' => 'post',
-                'content' => '<p>We are excited to welcome all new and returning students to the Spring term.</p>',
-                'status' => 'published',
-                'published_at' => Carbon::now(),
+                'title'          => 'Welcome to Spring 2025 Semester!',
+                'post_type'      => 'post',
+                'content'        => '<p>We are excited to welcome all new and returning students to the Spring term.</p>',
+                'status'         => 'published',
+                'published_at'   => Carbon::now(),
                 'author_user_id' => $instructor1->id,
             ]
         );
@@ -198,9 +205,9 @@ class TenantSampleDataSeeder extends Seeder
         Contact::firstOrCreate(
             ['email' => 'parent@example.com'],
             [
-                'name' => 'Ahmad Raza',
+                'name'         => 'Ahmad Raza',
                 'contact_type' => 'Parent',
-                'phone' => '+1234567890',
+                'phone'        => '+1234567890',
             ]
         );
     }

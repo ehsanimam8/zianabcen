@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -31,24 +30,25 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        $isAdmin = $this->hasRole(['Super Admin', 'Admin', 'admin', 'super_admin']) || str_ends_with($this->email, '@zainab.com');
+        $isAdmin = $this->hasRole(['Super Admin', 'Admin']);
 
         if ($panel->getId() === 'admin') {
             return $isAdmin;
         }
 
         if ($panel->getId() === 'teacher') {
-            return $isAdmin || $this->hasRole(['Instructor', 'instructor', 'Teacher', 'teacher']) || str_starts_with($this->email, 'instructor') || str_starts_with($this->email, 'teacher');
+            return $isAdmin || $this->hasRole(['Instructor', 'Teacher']);
         }
 
         return true;
     }
 
-    public function getPrivacyNameAttribute()
+    public function getPrivacyNameAttribute(): string
     {
-        if ($this->hasRole(['Student', 'student'])) {
+        if ($this->hasRole('Student')) {
             return 'Student (' . ($this->roll_number ?? 'Unknown') . ')';
         }
+
         return ($this->roles->first()?->name ?? 'Staff') . ' ' . $this->name;
     }
 
@@ -61,7 +61,6 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
-        'role',
         'phone',
         'address',
         'gender',

@@ -22,15 +22,15 @@
 </head>
 <body>
     <div class="certificate-container">
-        
+
         <div class="header">
             <div class="org-name">{{ $tenant->name ?? 'Zainab Center' }}</div>
         </div>
 
         <div class="presents">Hereby Presents This</div>
-        
+
         <div class="cert-title">Certificate of Completion</div>
-        
+
         <div class="presents">To</div>
 
         <div class="student-name">{{ $student->name }}</div>
@@ -50,9 +50,9 @@
                 <div class="signature-line">Authorized Signature</div>
             </div>
         </div>
-        
+
         <div class="cert-id">
-            No: CERT-{{ date('Y') }}-{{ strtoupper(\Illuminate\Support\Str::random(10)) }}<br>
+            No: {{ $certificate_number }}<br>
             Student ID: {{ $student->roll_number ?? 'N/A' }}
         </div>
     </div>

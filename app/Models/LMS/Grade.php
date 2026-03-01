@@ -25,6 +25,11 @@ class Grade extends Model
         return $this->belongsTo(\App\Models\SIS\Course::class);
     }
 
+    public function assessment()
+    {
+        return $this->belongsTo(Assessment::class);
+    }
+
     public function recorder()
     {
         return $this->belongsTo(\App\Models\User::class, 'recorded_by_user_id');

@@ -2,41 +2,38 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\SIS\Course;
 use Filament\Widgets\ChartWidget;
-use App\Models\SIS\Program;
-use App\Models\SIS\Enrollment;
 
 class EnrollmentsChartWidget extends ChartWidget
 {
-    protected ?string $heading = 'Enrollments By Program';
+    protected ?string $heading = 'Enrollments By Course';
     protected static ?int $sort = 3;
-    protected int | string | array $columnSpan = 'half';
+    protected int|string|array $columnSpan = 'half';
 
     protected function getData(): array
     {
-        $programs = Program::withCount([
-            'enrollments' => function ($query) {
-                $query->where('status', 'Enrolled');
-            }
+        $courses = Course::withCount([
+            'enrollments' => fn ($query) => $query->where('status', 'Enrolled'),
         ])
-        ->orderBy('enrollments_count', 'desc')
-        ->take(5)
-        ->get();
+            ->orderBy('enrollments_count', 'desc')
+            ->take(5)
+            ->get();
 
         $labels = [];
-        $data = [];
-        
-        foreach ($programs as $program) {
-            $labels[] = str()->limit($program->name, 20); // truncate long titles
-            $data[] = $program->enrollments_count;
+        $data   = [];
+
+        foreach ($courses as $course) {
+            $labels[] = str()->limit($course->name, 20);
+            $data[]   = $course->enrollments_count;
         }
 
         return [
             'datasets' => [
                 [
-                    'label' => 'Active Enrollments',
-                    'data' => $data,
-                    'backgroundColor' => '#171717', // primary color matching theme
+                    'label'           => 'Active Enrollments',
+                    'data'            => $data,
+                    'backgroundColor' => '#171717',
                 ],
             ],
             'labels' => $labels,
