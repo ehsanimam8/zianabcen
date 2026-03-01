@@ -62,7 +62,7 @@ new #[Layout('components.layouts.frontend', ['title' => 'Upcoming Events | Zaina
                         </div>
                         
                         <h3 class="text-xl font-bold text-zinc-900 mb-3 line-clamp-2">
-                            <a href="{{ route('frontend.events.show', $event->slug) }}" class="hover:text-primary-700 transition-colors">
+                            <a href="{{ route('frontend.events.show', $event->slug ?? $event->id) }}" class="hover:text-primary-700 transition-colors">
                                 {{ $event->title ?? 'Untitled Event' }}
                             </a>
                         </h3>
@@ -70,7 +70,7 @@ new #[Layout('components.layouts.frontend', ['title' => 'Upcoming Events | Zaina
                             {!! strip_tags($event->description ?? '') !!}
                         </div>
                         <div class="mt-auto">
-                            <a href="{{ route('frontend.events.show', $event->slug) }}" class="inline-flex items-center text-sm font-bold text-primary-600 hover:text-primary-800">
+                            <a href="{{ route('frontend.events.show', $event->slug ?? $event->id) }}" class="inline-flex items-center text-sm font-bold text-primary-600 hover:text-primary-800">
                                 View Details &rarr;
                             </a>
                         </div>

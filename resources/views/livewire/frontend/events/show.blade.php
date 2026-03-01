@@ -9,7 +9,9 @@ new #[Layout('components.layouts.frontend')] class extends Component {
 
     public function mount($slug)
     {
-        $this->event = Event::where('slug', $slug)->firstOrFail();
+        $this->event = Event::where('slug', $slug)
+            ->orWhere('id', $slug)
+            ->firstOrFail();
     }
     
     public function rendering($view)
