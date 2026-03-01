@@ -12,7 +12,7 @@ class Course extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'is_active' => 'boolean',
+        'is_active'     => 'boolean',
         'custom_fields' => 'json',
     ];
 
@@ -27,6 +27,11 @@ class Course extends Model
     public function term()
     {
         return $this->belongsTo(Term::class);
+    }
+
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
     }
 
     public function modules()
