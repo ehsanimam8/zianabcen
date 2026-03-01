@@ -3,6 +3,7 @@
 use Livewire\Volt\Component;
 use Livewire\Attributes\Layout;
 use App\Models\SIS\Program;
+use Illuminate\Support\Facades\Session;
 
 new #[Layout('components.layouts.frontend', ['title' => 'Islamic Programs | Zainab Center', 'description' => 'Explore our comprehensive Islamic programs, designed to guide students through classical curriculums and structured learning.'])] class extends Component {
     public $programs;
@@ -10,6 +11,18 @@ new #[Layout('components.layouts.frontend', ['title' => 'Islamic Programs | Zain
     public function mount()
     {
         $this->programs = Program::where('is_active', true)->get();
+    }
+    
+    public function enroll($programId)
+    {
+        $cartIds = Session::get('cart', []);
+        
+        if (!in_array($programId, $cartIds)) {
+            $cartIds[] = $programId;
+            Session::put('cart', $cartIds);
+        }
+        
+        return redirect()->route('frontend.cart');
     }
 }; ?>
 
@@ -34,6 +47,11 @@ new #[Layout('components.layouts.frontend', ['title' => 'Islamic Programs | Zain
                     <div>
                         <div class="text-2xl font-bold text-primary-800">${{ number_format($program->price, 2) }}</div>
                         <div class="text-xs text-zinc-500 uppercase font-medium mt-1">{{ Str::title(str_replace('_', ' ', $program->billing_cycle)) }}</div>
+                    </div>
+                    <div>
+                        <a href="{{ route('frontend.programs.show', $program->id) }}" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium text-sm transition-colors flex items-center">
+                            View Courses <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </a>
                     </div>
                 </div>
             </div>

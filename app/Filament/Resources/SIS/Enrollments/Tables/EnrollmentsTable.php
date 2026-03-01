@@ -14,7 +14,7 @@ class EnrollmentsTable
         return $table
             ->columns([
                 \Filament\Tables\Columns\TextColumn::make('user.name')->searchable()->sortable()->label('Student'),
-                \Filament\Tables\Columns\TextColumn::make('program.name')->searchable()->sortable(),
+                \Filament\Tables\Columns\TextColumn::make('course.name')->searchable()->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('term.name')->searchable()->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('status')->badge(),
                 \Filament\Tables\Columns\TextColumn::make('enrolled_at')->date()->sortable(),

@@ -63,7 +63,7 @@ new class extends Component {
             </h2>
             <p class="mt-2 text-center text-sm text-zinc-600">
                 Already have an account?
-                <a href="{{ route('student.login') }}" wire:navigate class="font-medium text-primary-600 hover:text-primary-500 transition">
+                <a href="{{ route('login') }}" wire:navigate class="font-medium text-primary-600 hover:text-primary-500 transition">
                     Sign in here
                 </a>
             </p>

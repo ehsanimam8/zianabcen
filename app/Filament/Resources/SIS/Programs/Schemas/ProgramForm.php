@@ -22,14 +22,7 @@ class ProgramForm
                     \Filament\Forms\Components\Textarea::make('prerequisites')->columnSpanFull(),
                 ])->columns(2),
 
-                \Filament\Schemas\Components\Section::make('Billing & Duration')->schema([
-                    \Filament\Forms\Components\TextInput::make('price')->numeric()->prefix('$')->required(),
-                    \Filament\Forms\Components\Select::make('billing_cycle')->options([
-                        'one_time' => 'One-time',
-                        'monthly' => 'Monthly',
-                        'quarterly' => 'Quarterly',
-                        'annually' => 'Annually',
-                    ])->required(),
+                \Filament\Schemas\Components\Section::make('Duration')->schema([
                     \Filament\Forms\Components\TextInput::make('duration_months')->numeric()->required(),
                     \Filament\Forms\Components\Toggle::make('is_active')->default(true),
                 ])->columns(2),

@@ -19,7 +19,13 @@ class Program extends Model
     public function courses()
     {
         return $this->belongsToMany(Course::class, 'program_courses')
+            ->using(ProgramCourse::class)
             ->withPivot(['sequence', 'is_required'])
             ->withTimestamps();
+    }
+
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
     }
 }

@@ -19,22 +19,17 @@ class Enrollment extends Model
     protected static function booted()
     {
         static::created(function (Enrollment $enrollment) {
-            if ($enrollment->program) {
-                // Get all courses associated with the program
-                $courses = $enrollment->program->courses;
-                
-                foreach ($courses as $course) {
-                    CourseAccess::updateOrCreate(
-                        [
-                            'enrollment_id' => $enrollment->id,
-                            'course_id' => $course->id,
-                        ],
-                        [
-                            'is_active' => true,
-                            'access_starts_at' => now(),
-                        ]
-                    );
-                }
+            if ($enrollment->course) {
+                CourseAccess::updateOrCreate(
+                    [
+                        'enrollment_id' => $enrollment->id,
+                        'course_id' => $enrollment->course->id,
+                    ],
+                    [
+                        'is_active' => true,
+                        'access_starts_at' => now(),
+                    ]
+                );
             }
         });
     }
@@ -44,9 +39,9 @@ class Enrollment extends Model
         return $this->belongsTo(\App\Models\User::class);
     }
 
-    public function program()
+    public function course()
     {
-        return $this->belongsTo(Program::class);
+        return $this->belongsTo(Course::class);
     }
 
     public function term()

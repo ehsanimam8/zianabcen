@@ -16,7 +16,6 @@ class ProgramsTable
                 \Filament\Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('code')->searchable(),
                 \Filament\Tables\Columns\TextColumn::make('level')->badge(),
-                \Filament\Tables\Columns\TextColumn::make('price')->money('USD')->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('duration_months')->numeric()->label('Duration (mo)'),
                 \Filament\Tables\Columns\IconColumn::make('is_active')->boolean(),
             ])

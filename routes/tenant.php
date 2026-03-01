@@ -29,6 +29,7 @@ Route::middleware([
     \Livewire\Volt\Volt::route('/events', 'frontend.events.index')->name('frontend.events.index');
     \Livewire\Volt\Volt::route('/announcements', 'frontend.posts.index')->name('frontend.posts.index');
     \Livewire\Volt\Volt::route('/announcements/{slug}', 'frontend.posts.show')->name('frontend.posts.show');
+    \Livewire\Volt\Volt::route('/about/{slug}', 'frontend.pages.show')->name('frontend.pages.show');
     \Livewire\Volt\Volt::route('/cart', 'frontend.cart')->name('frontend.cart');
 
     Route::post('/stripe/webhook', [\App\Http\Controllers\StripeWebhookController::class, 'handle'])
@@ -37,7 +38,7 @@ Route::middleware([
 
     // Auth & Registration Routes (with rate limiting built-in via 'throttle')
     Route::middleware(['throttle:6,1', 'guest'])->group(function () {
-        \Livewire\Volt\Volt::route('/login', 'auth.login')->name('student.login');
+        \Livewire\Volt\Volt::route('/login', 'auth.login')->name('login');
         \Livewire\Volt\Volt::route('/register', 'auth.register')->name('student.register');
     });
 

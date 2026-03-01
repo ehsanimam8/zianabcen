@@ -3,7 +3,7 @@
 use Livewire\Volt\Component;
 use Livewire\Attributes\Layout;
 use App\Models\User;
-use App\Models\SIS\Program;
+use App\Models\SIS\Course;
 use App\Models\CMS\Setting;
 use Illuminate\Support\Facades\Session;
 
@@ -27,7 +27,7 @@ new #[Layout('components.layouts.frontend', ['title' => 'Shopping Cart | Zainab 
     public function loadCart()
     {
         $cartIds = Session::get('cart', []);
-        $this->cartItems = Program::whereIn('id', $cartIds)->get();
+        $this->cartItems = Course::whereIn('id', $cartIds)->get();
         foreach ($this->cartItems as $item) {
             if (!isset($this->studentAssignments[$item->id])) {
                 $this->studentAssignments[$item->id] = auth()->user()->name ?? 'Guest';
@@ -41,12 +41,12 @@ new #[Layout('components.layouts.frontend', ['title' => 'Shopping Cart | Zainab 
         $this->subtotal = $this->cartItems->sum('price');
     }
     
-    public function removeItem($programId)
+    public function removeItem($courseId)
     {
         $cartIds = Session::get('cart', []);
-        $cartIds = array_filter($cartIds, fn($id) => $id != $programId);
+        $cartIds = array_filter($cartIds, fn($id) => $id != $courseId);
         Session::put('cart', $cartIds);
-        unset($this->studentAssignments[$programId]);
+        unset($this->studentAssignments[$courseId]);
         
         $this->loadCart();
     }
@@ -83,7 +83,7 @@ new #[Layout('components.layouts.frontend', ['title' => 'Shopping Cart | Zainab 
                 'success_url' => route('home') . '?session_id={CHECKOUT_SESSION_ID}',
                 'cancel_url' => route('frontend.cart'),
                 'metadata' => [
-                    'program_ids' => implode(',', $this->cartItems->pluck('id')->toArray()),
+                    'course_ids' => implode(',', $this->cartItems->pluck('id')->toArray()),
                     'user_id' => $userId,
                     'is_family_billing' => 1,
                     'student_assignments' => json_encode($this->studentAssignments),
@@ -137,9 +137,9 @@ new #[Layout('components.layouts.frontend', ['title' => 'Shopping Cart | Zainab 
                 <svg class="w-12 h-12 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
             </div>
             <h3 class="text-xl font-bold text-zinc-900 mb-2">Your cart is empty</h3>
-            <p class="text-zinc-500 mb-8 max-w-sm mx-auto">Looks like you haven't added any programs to your cart yet.</p>
-            <a href="#" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 shadow-sm transition-colors">
-                Browse Programs
+            <p class="text-zinc-500 mb-8 max-w-sm mx-auto">Looks like you haven't added any courses to your cart yet.</p>
+            <a href="{{ route('frontend.programs.index') }}" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 shadow-sm transition-colors">
+                Browse Programs & Courses
             </a>
         </div>
     @else
@@ -151,14 +151,14 @@ new #[Layout('components.layouts.frontend', ['title' => 'Shopping Cart | Zainab 
                         <div class="flex-1 pr-6">
                             <div class="flex items-center mb-2">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
-                                    {{ $item->level ?? 'Program' }}
+                                    {{ $item->level ?? 'Course' }}
                                 </span>
                                 <span class="ml-3 text-xs text-zinc-500 font-medium border border-zinc-200 px-2 py-0.5 rounded">
                                     {{ Str::title(str_replace('_', ' ', $item->billing_cycle)) }}
                                 </span>
                             </div>
                             <h3 class="text-xl font-bold text-zinc-900 leading-tight mb-1">{{ $item->name }}</h3>
-                            <p class="text-sm text-zinc-500 line-clamp-2">Complete access to all courses aligned within this program framework.</p>
+                            <p class="text-sm text-zinc-500 line-clamp-2">{{ strip_tags($item->description) }}</p>
                         </div>
                         
                         <div class="mt-4 sm:mt-0 flex flex-col items-end justify-between w-full sm:w-auto border-t sm:border-0 border-zinc-100 pt-4 sm:pt-0">

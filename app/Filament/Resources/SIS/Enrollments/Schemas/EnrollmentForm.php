@@ -12,7 +12,7 @@ class EnrollmentForm
             ->components([
                 \Filament\Schemas\Components\Section::make('Enrollment Details')->schema([
                     \Filament\Forms\Components\Select::make('user_id')->relationship('user', 'name')->required()->label('Student'),
-                    \Filament\Forms\Components\Select::make('program_id')->relationship('program', 'name')->required(),
+                    \Filament\Forms\Components\Select::make('course_id')->relationship('course', 'name')->required(),
                     \Filament\Forms\Components\Select::make('term_id')->relationship('term', 'name')->required(),
                     \Filament\Forms\Components\Select::make('status')->options([
                         'Pending' => 'Pending',

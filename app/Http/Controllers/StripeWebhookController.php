@@ -43,12 +43,12 @@ class StripeWebhookController extends Controller
     protected function handleCheckoutSession($session)
     {
         $userId = $session->metadata->user_id ?? null;
-        $programIds = array_filter(explode(',', $session->metadata->program_ids ?? ''));
+        $courseIds = array_filter(explode(',', $session->metadata->course_ids ?? ''));
         $studentAssignments = isset($session->metadata->student_assignments) 
             ? json_decode($session->metadata->student_assignments, true) 
             : [];
 
-        if (!$userId || empty($programIds)) {
+        if (!$userId || empty($courseIds)) {
             Log::warning('Stripe webhook received checkout.session.completed but missing metadata', [
                 'session_id' => $session->id,
             ]);
@@ -58,14 +58,14 @@ class StripeWebhookController extends Controller
         $term = \App\Models\SIS\Term::where('is_current', true)->first() 
              ?? \App\Models\SIS\Term::latest()->first();
         $termId = $term ? $term->id : null;
-        $amountPaidPerProgram = ($session->amount_total / 100) / count($programIds);
+        $amountPaidPerCourse = ($session->amount_total / 100) / count($courseIds);
 
-        foreach ($programIds as $programId) {
+        foreach ($courseIds as $courseId) {
             $enrolledUserId = $userId;
             
             // Handle family billing / specific student assignment
-            if (!empty($studentAssignments[$programId])) {
-                $studentName = $studentAssignments[$programId];
+            if (!empty($studentAssignments[$courseId])) {
+                $studentName = $studentAssignments[$courseId];
                 $parentUser = \App\Models\User::find($userId);
                 
                 // If the specified name is not the parent's own name, create a child account
@@ -92,7 +92,7 @@ class StripeWebhookController extends Controller
             Enrollment::updateOrCreate(
                 [
                     'user_id' => $enrolledUserId,
-                    'program_id' => $programId,
+                    'course_id' => $courseId,
                     'term_id' => $termId,
                 ],
                 [
@@ -100,7 +100,7 @@ class StripeWebhookController extends Controller
                     'enrolled_at' => now(),
                     'payment_method' => 'Stripe',
                     'stripe_payment_intent_id' => $session->payment_intent,
-                    'amount_paid' => $amountPaidPerProgram,
+                    'amount_paid' => $amountPaidPerCourse,
                 ]
             );
         }
