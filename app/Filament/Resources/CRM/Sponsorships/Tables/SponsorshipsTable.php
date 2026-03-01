@@ -28,7 +28,6 @@ class SponsorshipsTable
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
-                    \pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction::make(),
                 ]),
             ]);
     }

@@ -29,7 +29,6 @@ class GradesTable
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
-                    \pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction::make(),
                 ]),
             ]);
     }
