@@ -14,6 +14,9 @@ class EventsTable
         return $table
             ->columns([
                 \Filament\Tables\Columns\ImageColumn::make('image')
+                    ->state(function ($record) {
+                        return $record->image ? tenant_asset($record->image) : null;
+                    })
                     ->circular(),
                 \Filament\Tables\Columns\TextColumn::make('title')
                     ->searchable()
