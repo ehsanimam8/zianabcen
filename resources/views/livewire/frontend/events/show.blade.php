@@ -37,7 +37,7 @@ new #[Layout('components.layouts.frontend')] class extends Component {
         <div class="bg-white rounded-2xl shadow-sm border border-zinc-100 overflow-hidden">
             @if($event->image)
                 <div class="h-64 sm:h-80 w-full relative">
-                    <img src="{{ Storage::url($event->image) }}" alt="{{ $event->title }}" class="w-full h-full object-cover">
+                    <img src="{{ tenant_asset($event->image) }}" alt="{{ $event->title }}" class="w-full h-full object-cover">
                 </div>
             @endif
             

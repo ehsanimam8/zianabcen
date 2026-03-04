@@ -35,7 +35,7 @@ new #[Layout('components.layouts.frontend', ['title' => 'Upcoming Events | Zaina
                 <div class="bg-white rounded-2xl shadow-sm border border-zinc-100 overflow-hidden hover:shadow-md transition-shadow flex flex-col">
                     <div class="h-48 bg-zinc-100 relative">
                         @if($event->image)
-                            <img src="{{ Storage::url($event->image) }}" alt="{{ $event->title }}" class="w-full h-full object-cover">
+                            <img src="{{ tenant_asset($event->image) }}" alt="{{ $event->title }}" class="w-full h-full object-cover">
                         @else
                             <div class="absolute inset-0 flex items-center justify-center bg-primary-800 opacity-90 text-white">
                                 <span class="text-lg font-bold tracking-widest uppercase">Zainab Center</span>
