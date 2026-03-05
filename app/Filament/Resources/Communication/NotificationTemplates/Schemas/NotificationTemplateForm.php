@@ -14,11 +14,22 @@ class NotificationTemplateForm
                     \Filament\Forms\Components\TextInput::make('name')
                         ->required()
                         ->maxLength(255),
-                    \Filament\Forms\Components\TextInput::make('trigger_event')
+                    \Filament\Forms\Components\Select::make('trigger_event')
                         ->required()
                         ->unique(ignoreRecord: true)
-                        ->maxLength(255)
-                        ->helperText('The system event that triggers this notification (e.g., student.enrolled).'),
+                        ->options([
+                            'user.registered' => 'New User Registered',
+                            'enrollment.enrolled' => 'New Course Enrollment',
+                            'enrollment.completed' => 'Course Completed',
+                            'donation.received' => 'Donation Received',
+                            'sponsorship.started' => 'Sponsorship Activated',
+                            'event.registered' => 'Event Registration',
+                            'assessment.submitted' => 'Assessment Submitted',
+                            'assessment.graded' => 'Assessment Graded',
+                            'contact.created' => 'New CRM Contact Created',
+                        ])
+                        ->searchable()
+                        ->helperText('Select the system event that triggers this notification.'),
                     \Filament\Forms\Components\TextInput::make('subject')
                         ->required()
                         ->maxLength(255),
