@@ -15,10 +15,6 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::firstOrCreate(
-            ['email' => 'test@example.com'],
-            ['name' => 'Test User', 'password' => bcrypt('password')]
-        );
 
         $tenantId = 'zainab_center';
         $tenant = \App\Models\Tenant::find($tenantId);

@@ -37,6 +37,15 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
         $admin->assignRole('Admin');
+ 
+        // General test user
+        $testUser = User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name'     => 'Test User',
+                'password' => bcrypt('password'),
+            ]
+        );
 
         // Add sample users
         $instructor1 = User::firstOrCreate(
