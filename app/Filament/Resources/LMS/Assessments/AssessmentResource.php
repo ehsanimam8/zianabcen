@@ -18,9 +18,9 @@ class AssessmentResource extends Resource
 {
     protected static ?string $model = Assessment::class;
 
-    protected static ?string $navigationGroup = 'LMS';
+    protected static string|\UnitEnum|null $navigationGroup = 'LMS';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
 
     public static function form(Schema $schema): Schema
     {

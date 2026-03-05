@@ -22,7 +22,7 @@ class DonationsTable
             ->filters([
                 //
             ])
-            ->recordActions([
+            ->actions([
                 EditAction::make(),
             ])
             ->bulkActions([

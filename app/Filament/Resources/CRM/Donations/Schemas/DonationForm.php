@@ -10,7 +10,7 @@ class DonationForm
     {
         return $schema
             ->components([
-                \Filament\Forms\Components\Section::make()->schema([
+                \Filament\Schemas\Components\Section::make()->schema([
                     \Filament\Forms\Components\Select::make('user_id')
                         ->relationship('user', 'name')
                         ->searchable()

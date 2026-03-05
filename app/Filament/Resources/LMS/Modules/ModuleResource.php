@@ -20,11 +20,11 @@ class ModuleResource extends Resource
 {
     protected static ?string $model = Module::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Learning Management (LMS)';
+        return 'LMS';
     }
 
 

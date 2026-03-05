@@ -18,14 +18,14 @@ class SponsorshipResource extends Resource
 {
     protected static ?string $model = Sponsorship::class;
 
-    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-heart';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-heart';
 
     public static function getNavigationGroup(): ?string
     {
         return 'CRM';
     }
 
-        public static function form(Schema $schema): Schema
+    public static function form(Schema $schema): Schema
     {
         return SponsorshipForm::configure($schema);
     }

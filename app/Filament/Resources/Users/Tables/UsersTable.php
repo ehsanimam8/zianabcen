@@ -45,7 +45,7 @@ class UsersTable
             ->filters([
                 //
             ])
-            ->recordActions([
+            ->actions([
                 EditAction::make(),
             ])
             ->bulkActions([

@@ -18,7 +18,7 @@ class NotificationTemplateResource extends Resource
 {
     protected static ?string $model = NotificationTemplate::class;
 
-    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-envelope-open';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-envelope-open';
 
     public static function getNavigationGroup(): ?string
     {

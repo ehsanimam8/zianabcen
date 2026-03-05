@@ -22,7 +22,7 @@ class EnrollmentsTable
             ->filters([
                 //
             ])
-            ->recordActions([
+            ->actions([
                 EditAction::make(),
             ])
 

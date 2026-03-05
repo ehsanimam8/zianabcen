@@ -10,7 +10,7 @@ class SponsorshipForm
     {
         return $schema
             ->components([
-                \Filament\Forms\Components\Section::make()->schema([
+                \Filament\Schemas\Components\Section::make()->schema([
                     \Filament\Forms\Components\Select::make('sponsor_id')
                         ->relationship('sponsor', 'name')
                         ->required()

@@ -22,7 +22,7 @@ class SponsorshipsTable
             ->filters([
                 //
             ])
-            ->recordActions([
+            ->actions([
                 EditAction::make(),
             ])
             ->bulkActions([
