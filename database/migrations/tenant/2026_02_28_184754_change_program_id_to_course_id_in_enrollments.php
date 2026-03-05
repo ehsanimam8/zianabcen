@@ -11,10 +11,29 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // First handle renaming and dropping the old foreign key
         Schema::table('enrollments', function (Blueprint $table) {
             $table->dropForeign(['program_id']);
             $table->renameColumn('program_id', 'course_id');
-            $table->foreign('course_id')->references('id')->on('courses')->cascadeOnDelete();
+        });
+
+        // After renaming to course_id, we MUST ensure the data is consistent
+        // Before adding the foreign key to the courses table.
+        // We delete any records that don't exist in the courses table.
+        \Illuminate\Support\Facades\DB::table('enrollments')
+            ->whereNotExists(function ($query) {
+                $query->select(\Illuminate\Support\Facades\DB::raw(1))
+                    ->from('courses')
+                    ->whereRaw('courses.id = enrollments.course_id');
+            })
+            ->delete();
+
+        // Now we can safely add the foreign key
+        Schema::table('enrollments', function (Blueprint $table) {
+            $table->foreign('course_id')
+                ->references('id')
+                ->on('courses')
+                ->cascadeOnDelete();
         });
     }
 
