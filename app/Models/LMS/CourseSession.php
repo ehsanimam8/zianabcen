@@ -28,7 +28,7 @@ class CourseSession extends Model
                 // Check for overlapping sessions for this instructor
                 $conflict = static::where('instructor_user_id', $session->instructor_user_id)
                     ->where('session_date', $session->session_date)
-                    ->where('id', '!=', $session->id ?? 'dummy')
+                    ->when($session->id, fn ($query) => $query->where('id', '!=', $session->id))
                     ->where(function ($query) use ($session) {
                         $query->whereBetween('session_start_time', [$session->session_start_time, $session->session_end_time])
                               ->orWhereBetween('session_end_time', [$session->session_start_time, $session->session_end_time])
