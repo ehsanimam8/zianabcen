@@ -11,24 +11,27 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // First handle renaming and dropping the old foreign key
-        Schema::table('enrollments', function (Blueprint $table) {
-            $table->dropForeign(['program_id']);
-            $table->renameColumn('program_id', 'course_id');
-        });
+        $connection = Schema::getConnection();
 
-        // After renaming to course_id, we MUST ensure the data is consistent
-        // Before adding the foreign key to the courses table.
-        // We delete any records that don't exist in the courses table.
-        \Illuminate\Support\Facades\DB::table('enrollments')
-            ->whereNotExists(function ($query) {
-                $query->select(\Illuminate\Support\Facades\DB::raw(1))
-                    ->from('courses')
-                    ->whereRaw('courses.id = enrollments.course_id');
-            })
-            ->delete();
+        // 1. Handle renaming logic safely
+        if (Schema::hasColumn('enrollments', 'program_id')) {
+            Schema::table('enrollments', function (Blueprint $table) {
+                // Drop the foreign key if it exists
+                try {
+                    $table->dropForeign(['program_id']);
+                } catch (\Exception $e) {
+                    // Ignore if constraint doesn't exist
+                }
+                
+                $table->renameColumn('program_id', 'course_id');
+            });
+        }
 
-        // Now we can safely add the foreign key
+        // 2. Clean up invalid data using a direct statement to avoid any query builder scoping issues
+        // This ensures the enrollments table is clean before adding the foreign key.
+        $connection->statement('DELETE FROM enrollments WHERE course_id NOT IN (SELECT id FROM courses)');
+
+        // 3. Now we can safely add the foreign key
         Schema::table('enrollments', function (Blueprint $table) {
             $table->foreign('course_id')
                 ->references('id')
