@@ -50,7 +50,9 @@ new #[Layout('components.layouts.frontend')] class extends Component {
                     <h1 class="text-4xl sm:text-5xl font-bold text-zinc-900 leading-tight">{{ $program->name }}</h1>
                     <div class="mt-6 flex flex-wrap gap-4 text-sm text-zinc-500 font-medium">
                         <span class="flex items-center"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>{{ $program->duration_months }} Months</span>
+                        @if($program->price > 0)
                         <span class="flex items-center"><svg class="w-4 h-4 mr-1 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>{{ Str::title(str_replace('_', ' ', $program->billing_cycle)) }}</span>
+                        @endif
                     </div>
                 </div>
                 

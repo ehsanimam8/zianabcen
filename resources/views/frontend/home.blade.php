@@ -16,7 +16,7 @@
                 <a href="{{ route('frontend.programs.index') }}" class="px-8 py-3.5 border border-primary-200 bg-white hover:border-primary-300 text-primary-800 text-sm font-bold rounded-lg shadow-sm transition-all text-center min-w-[160px]">
                     Explore Programs
                 </a>
-                <a href="/admin" class="px-8 py-3.5 bg-primary-700 hover:bg-primary-800 text-white text-sm font-bold rounded-lg shadow-sm transition-all text-center min-w-[160px]">
+                <a href="{{ route('login') }}" class="px-8 py-3.5 bg-primary-700 hover:bg-primary-800 text-white text-sm font-bold rounded-lg shadow-sm transition-all text-center min-w-[160px]">
                     Student Portal &rarr;
                 </a>
             </div>
