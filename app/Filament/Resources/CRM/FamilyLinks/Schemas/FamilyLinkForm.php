@@ -13,11 +13,21 @@ class FamilyLinkForm
                 \Filament\Forms\Components\Select::make('parent_user_id')
                     ->relationship('parent', 'name')
                     ->searchable()
-                    ->required(),
+                    ->required()
+                    ->createOptionForm([
+                        \Filament\Forms\Components\TextInput::make('name')->required(),
+                        \Filament\Forms\Components\TextInput::make('email')->email()->required()->unique('users', 'email'),
+                        \Filament\Forms\Components\TextInput::make('password')->password()->required(),
+                    ]),
                 \Filament\Forms\Components\Select::make('student_user_id')
                     ->relationship('student', 'name')
                     ->searchable()
-                    ->required(),
+                    ->required()
+                    ->createOptionForm([
+                        \Filament\Forms\Components\TextInput::make('name')->required(),
+                        \Filament\Forms\Components\TextInput::make('email')->email()->required()->unique('users', 'email'),
+                        \Filament\Forms\Components\TextInput::make('password')->password()->required(),
+                    ]),
                 \Filament\Forms\Components\Select::make('relationship')
                     ->options([
                         'father' => 'Father',
