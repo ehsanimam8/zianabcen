@@ -11,6 +11,10 @@ class CourseScheduleForm
         return $schema
             ->components([
                 \Filament\Schemas\Components\Section::make('Schedule Info')->schema([
+                    \Filament\Forms\Components\TextInput::make('name')
+                        ->maxLength(255)
+                        ->placeholder('e.g. Morning Batch, Winter Semester')
+                        ->columnSpanFull(),
                     \Filament\Forms\Components\Select::make('course_id')
                         ->relationship('course', 'name')
                         ->required(),

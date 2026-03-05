@@ -12,7 +12,10 @@ class CourseSessionForm
             ->components([
                 \Filament\Schemas\Components\Section::make('Session Info')->schema([
                     \Filament\Forms\Components\Select::make('course_id')->relationship('course', 'name')->required(),
-                    \Filament\Forms\Components\Select::make('course_schedule_id')->relationship('schedule', 'id'),
+                    \Filament\Forms\Components\Select::make('course_schedule_id')
+                        ->relationship('schedule', 'name')
+                        ->getOptionLabelFromRecordUsing(fn ($record) => $record->name ?? "Schedule #{$record->id}")
+                        ->placeholder('Select a schedule if applicable'),
                     \Filament\Forms\Components\Select::make('instructor_user_id')
                         ->relationship('instructor', 'name')
                         ->required()
