@@ -23,7 +23,8 @@ class TenantSampleDataSeeder extends Seeder
     {
         // Ensure all required roles exist before assigning them
         $guardName = 'web';
-        foreach (['Super Admin', 'Admin', 'Instructor', 'Student'] as $roleName) {
+        $rolesAvailable = ['Super Admin', 'Admin', 'Instructor', 'Student', 'super_admin', 'admin', 'instructor', 'student', 'teacher', 'Teacher'];
+        foreach ($rolesAvailable as $roleName) {
             Role::firstOrCreate(['name' => $roleName, 'guard_name' => $guardName]);
         }
 

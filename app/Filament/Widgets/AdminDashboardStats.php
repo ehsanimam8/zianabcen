@@ -9,7 +9,9 @@ class AdminDashboardStats extends StatsOverviewWidget
 {
     protected function getStats(): array
     {
-        $totalStudents = \App\Models\User::role(['Student', 'student'])->count();
+        $totalStudents = \App\Models\User::whereHas('roles', function ($query) {
+            $query->whereIn('name', ['Student', 'student']);
+        })->count();
         $activeClasses = \App\Models\SIS\Course::where('is_active', true)->count();
         $totalPayments = \App\Models\SIS\Enrollment::sum('amount_paid') + \App\Models\CRM\Donation::where('status', 'completed')->sum('amount') + \App\Models\CRM\Sponsorship::where('status', 'active')->sum('amount');
         
