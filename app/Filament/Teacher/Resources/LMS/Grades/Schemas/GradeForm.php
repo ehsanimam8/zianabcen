@@ -43,7 +43,7 @@ class GradeForm
                     ->searchable()
                     ->nullable(),
 
-                \Filament\Forms\Components\Grid::make(3)->schema([
+                \Filament\Schemas\Components\Grid::make(3)->schema([
                     \Filament\Forms\Components\TextInput::make('percentage')
                         ->numeric()
                         ->suffix('%')
