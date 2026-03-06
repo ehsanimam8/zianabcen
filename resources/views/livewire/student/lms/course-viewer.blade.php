@@ -16,6 +16,16 @@ new #[Layout('components.layouts.app')] class extends Component {
     public function mount(Course $course)
     {
         $this->student = auth()->user();
+
+        // Security check: Student must have an active enrollment in this course
+        $isEnrolled = Enrollment::active()
+            ->where('user_id', $this->student->id)
+            ->where('course_id', $course->id)
+            ->exists();
+
+        if (!$isEnrolled) {
+            return redirect()->route('student.dashboard')->with('error', 'You are not enrolled in this course.');
+        }
         
         // Eager load modules AND their published lessons ordered by sequence
         $this->course = Course::with([

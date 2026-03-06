@@ -14,19 +14,19 @@ class CourseSessionsTable
         return $table
             ->columns([
                 \Filament\Tables\Columns\TextColumn::make('course.name')->searchable(),
-                \Filament\Tables\Columns\TextColumn::make('instructor.name')->searchable(),
                 \Filament\Tables\Columns\TextColumn::make('session_date')->date()->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('session_start_time')->time(),
+                \Filament\Tables\Columns\TextColumn::make('topic')->searchable(),
                 \Filament\Tables\Columns\TextColumn::make('platform'),
                 \Filament\Tables\Columns\IconColumn::make('is_cancelled')->boolean(),
             ])
             ->filters([
                 //
             ])
-            ->recordActions([
+            ->actions([
                 EditAction::make(),
             ])
-            ->toolbarActions([
+            ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

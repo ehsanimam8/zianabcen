@@ -15,40 +15,24 @@ class AssessmentsTable
     {
         return $table
             ->columns([
-                TextColumn::make('id')
-                    ->label('ID'),
-                TextColumn::make('course_id'),
+                TextColumn::make('course.name')
+                    ->label('Course')
+                    ->sortable(),
                 TextColumn::make('title')
                     ->searchable(),
                 TextColumn::make('type')
-                    ->searchable(),
+                    ->badge(),
                 TextColumn::make('due_date')
                     ->dateTime()
                     ->sortable(),
-                TextColumn::make('time_limit_minutes')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('max_attempts')
-                    ->numeric()
-                    ->sortable(),
                 IconColumn::make('is_published')
+                    ->label('Published')
                     ->boolean(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                //
-            ])
-            ->recordActions([
+            ->actions([
                 EditAction::make(),
             ])
-            ->toolbarActions([
+            ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

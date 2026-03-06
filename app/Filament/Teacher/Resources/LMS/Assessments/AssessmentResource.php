@@ -37,6 +37,15 @@ class AssessmentResource extends Resource
         ];
     }
 
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->whereIn('course_id', function ($query) {
+            $query->select('course_id')
+                ->from('course_sessions')
+                ->where('instructor_user_id', auth()->id());
+        });
+    }
+
     public static function getPages(): array
     {
         return [

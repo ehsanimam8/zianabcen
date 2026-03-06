@@ -16,7 +16,11 @@ class AssessmentForm
             ->components([
                 \Filament\Schemas\Components\Section::make('Assessment Details')->schema([
                     \Filament\Forms\Components\Select::make('course_id')
-                        ->relationship('course', 'name')
+                        ->label('Course')
+                        ->options(fn () => 
+                            \App\Models\SIS\Course::whereIn('id', \App\Models\LMS\CourseSession::where('instructor_user_id', auth()->id())->pluck('course_id'))
+                            ->pluck('name', 'id')
+                        )
                         ->required(),
                     TextInput::make('title')
                         ->required(),
