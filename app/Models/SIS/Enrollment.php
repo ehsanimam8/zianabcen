@@ -16,24 +16,6 @@ class Enrollment extends Model
         'expires_at' => 'date',
         'completed_at' => 'date',
     ];
-    protected static function booted()
-    {
-        static::created(function (Enrollment $enrollment) {
-            if ($enrollment->course) {
-                CourseAccess::updateOrCreate(
-                    [
-                        'enrollment_id' => $enrollment->id,
-                        'course_id' => $enrollment->course->id,
-                    ],
-                    [
-                        'is_active' => true,
-                        'access_starts_at' => now(),
-                    ]
-                );
-            }
-        });
-    }
-
     public function user()
     {
         return $this->belongsTo(\App\Models\User::class);
@@ -47,10 +29,5 @@ class Enrollment extends Model
     public function term()
     {
         return $this->belongsTo(Term::class);
-    }
-
-    public function courseAccess()
-    {
-        return $this->hasMany(CourseAccess::class);
     }
 }
