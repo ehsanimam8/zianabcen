@@ -98,4 +98,9 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->morphMany(\App\Models\CRM\Note::class, 'notable');
     }
+
+    public function enrollments()
+    {
+        return $this->hasMany(\App\Models\SIS\Enrollment::class);
+    }
 }
