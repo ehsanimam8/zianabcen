@@ -21,6 +21,11 @@ class Donation extends Model
         return $this->belongsTo(\App\Models\User::class);
     }
 
+    public function sponsoredStudent()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'sponsored_student_id');
+    }
+
     public function scopeCompleted($query)
     {
         return $query->where('status', 'completed');

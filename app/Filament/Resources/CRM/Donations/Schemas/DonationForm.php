@@ -17,6 +17,12 @@ class DonationForm
                         ->label('Donor')
                         ->placeholder('Anonymous')
                         ->nullable(),
+                    \Filament\Forms\Components\Select::make('sponsored_student_id')
+                        ->relationship('sponsoredStudent', 'name')
+                        ->searchable()
+                        ->label('Sponsored Student')
+                        ->placeholder('None (General Donation)')
+                        ->nullable(),
                     \Filament\Forms\Components\TextInput::make('amount')
                         ->required()
                         ->numeric()

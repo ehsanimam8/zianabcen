@@ -14,6 +14,11 @@ class DonationsTable
         return $table
             ->columns([
                 \Filament\Tables\Columns\TextColumn::make('user.name')->searchable()->sortable()->label('Donor'),
+                \Filament\Tables\Columns\TextColumn::make('sponsoredStudent.name')
+                    ->label('Sponsored Student')
+                    ->searchable()
+                    ->sortable()
+                    ->placeholder('General Support'),
                 \Filament\Tables\Columns\TextColumn::make('amount')->money('usd')->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('type')->searchable(),
                 \Filament\Tables\Columns\TextColumn::make('status')->badge(),
