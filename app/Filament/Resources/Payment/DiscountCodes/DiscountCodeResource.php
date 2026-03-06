@@ -25,6 +25,11 @@ class DiscountCodeResource extends Resource
         return 'Settings & Configuration';
     }
 
+    public static function getNavigationSort(): ?int
+    {
+        return 999;
+    }
+
         public static function form(Schema $schema): Schema
     {
         return DiscountCodeForm::configure($schema);

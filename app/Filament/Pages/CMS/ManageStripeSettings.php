@@ -17,6 +17,11 @@ class ManageStripeSettings extends Page
         return 'Settings & Configuration';
     }
 
+    public static function getNavigationSort(): ?int
+    {
+        return 999;
+    }
+
     protected static ?string $title = 'Stripe Settings';
 
     protected string $view = 'filament.pages.c-m-s.manage-stripe-settings';
