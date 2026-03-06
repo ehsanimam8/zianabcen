@@ -481,15 +481,18 @@ class TenantSampleDataSeeder extends Seeder
         $schedule = CourseSchedule::updateOrCreate(
             ['course_id' => $courseTafseer->id, 'name' => 'Spring 2025 Weekly Schedule'],
             [
-                'instructor_user_id' => $shaykh->id,
-                'recurrence_type'    => 'weekly',
-                'recurrence_days'    => json_encode(['Saturday']),
-                'start_time'         => '10:00',
-                'end_time'           => '11:30',
-                'platform'           => 'Zoom',
-                'meeting_url'        => 'https://zoom.us/j/999000111',
-                'start_date'         => Carbon::parse('2025-01-11'),
-                'end_date'           => Carbon::parse('2025-05-31'),
+                'pattern_type'        => 'weekly_recurring',
+                'pattern_config'      => [
+                    'days_of_week'       => ['6'], // Saturday is 6 in Carbon (0-6)
+                    'start_time'         => '10:00:00',
+                    'end_time'           => '11:30:00',
+                    'instructor_user_id' => $shaykh->id,
+                    'platform'           => 'Zoom',
+                    'meeting_url'        => 'https://zoom.us/j/999000111',
+                ],
+                'timezone'            => 'America/New_York',
+                'schedule_start_date' => Carbon::parse('2025-01-11'),
+                'schedule_end_date'   => Carbon::parse('2025-05-31'),
             ]
         );
 
@@ -501,6 +504,7 @@ class TenantSampleDataSeeder extends Seeder
                 'course_schedule_id' => $schedule->id,
                 'session_start_time' => '10:00:00',
                 'session_end_time'   => '11:30:00',
+                'timezone'           => 'America/New_York',
                 'platform'           => 'Zoom',
                 'meeting_url'        => 'https://zoom.us/j/999000111',
                 'topic'              => 'Introduction to Tafseer & Course Overview',
@@ -515,9 +519,25 @@ class TenantSampleDataSeeder extends Seeder
                 'course_schedule_id' => $schedule->id,
                 'session_start_time' => '10:00:00',
                 'session_end_time'   => '11:30:00',
+                'timezone'           => 'America/New_York',
                 'platform'           => 'Zoom',
                 'meeting_url'        => 'https://zoom.us/j/999000111',
                 'topic'              => 'The First Revelation — Cave of Hira',
+                'is_cancelled'       => false,
+            ]
+        );
+
+        // Add a session for Hadith so Shaykh has 2 courses
+        CourseSession::updateOrCreate(
+            ['course_id' => $courseHadith->id, 'session_date' => '2025-01-20'],
+            [
+                'instructor_user_id' => $shaykh->id,
+                'session_start_time' => '14:00:00',
+                'session_end_time'   => '15:30:00',
+                'timezone'           => 'America/New_York',
+                'platform'           => 'Zoom',
+                'meeting_url'        => 'https://zoom.us/j/999000111',
+                'topic'              => 'The Significance of Isnad',
                 'is_cancelled'       => false,
             ]
         );
