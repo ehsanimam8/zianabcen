@@ -178,7 +178,6 @@ class TenantSampleDataSeeder extends Seeder
         $courseTafseer = Course::updateOrCreate(
             ['code' => 'TAF101'],
             [
-                'program_id'    => $programAlim->id,
                 'name'          => 'Tafseer — Introduction to Quranic Exegesis',
                 'description'   => 'An in-depth exploration of the sciences of the Quran, including Asbab al-Nuzool and various schools of Tafseer.',
                 'credits'       => 3,
@@ -187,14 +186,13 @@ class TenantSampleDataSeeder extends Seeder
                 'price'         => 120.00,
                 'billing_cycle' => 'monthly',
                 'is_active'     => true,
-                'instructor_user_id' => $shaykh->id,
             ]
         );
+        $courseTafseer->programs()->sync([$programAlim->id]);
 
         $courseHadith = Course::updateOrCreate(
             ['code' => 'HAD101'],
             [
-                'program_id'    => $programAlim->id,
                 'name'          => 'Hadith Principles — Usul al-Hadith',
                 'description'   => 'A rigorous study of the chain of narration (isnad) and text criticism in Islamic hadith science.',
                 'credits'       => 3,
@@ -203,14 +201,13 @@ class TenantSampleDataSeeder extends Seeder
                 'price'         => 120.00,
                 'billing_cycle' => 'monthly',
                 'is_active'     => true,
-                'instructor_user_id' => $shaykh->id,
             ]
         );
+        $courseHadith->programs()->sync([$programAlim->id]);
 
         $courseFiqh = Course::updateOrCreate(
             ['code' => 'FQH101'],
             [
-                'program_id'    => $programAlim->id,
                 'name'          => 'Islamic Jurisprudence — Fiqh Fundamentals',
                 'description'   => 'Covers the four major schools of Fiqh, their founders, and foundational rulings in worship.',
                 'credits'       => 3,
@@ -219,9 +216,9 @@ class TenantSampleDataSeeder extends Seeder
                 'price'         => 100.00,
                 'billing_cycle' => 'monthly',
                 'is_active'     => true,
-                'instructor_user_id' => $ustadha->id,
             ]
         );
+        $courseFiqh->programs()->sync([$programAlim->id]);
 
         // ─────────────────────────────────────────────
         // ENROLLMENTS
