@@ -16,6 +16,15 @@ class EventRegistration extends Model
         'custom_fields' => 'json',
     ];
 
+    // ─── Accessors ──────────────────────────────────────────────────────────────
+
+    public function getFullNameAttribute(): string
+    {
+        return trim($this->first_name . ' ' . $this->last_name);
+    }
+
+    // ─── Relationships ──────────────────────────────────────────────────────────
+
     public function event()
     {
         return $this->belongsTo(Event::class);
@@ -26,3 +35,4 @@ class EventRegistration extends Model
         return $this->belongsTo(\App\Models\CRM\Contact::class);
     }
 }
+

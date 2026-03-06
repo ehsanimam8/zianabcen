@@ -16,17 +16,23 @@ class EventRegistrationsTable
                 \Filament\Tables\Columns\TextColumn::make('event.post.title')
                     ->label('Event')
                     ->searchable()
-                    ->sortable(),
-                \Filament\Tables\Columns\TextColumn::make('contact.name')
-                    ->label('Registrant')
+                    ->sortable()
+                    ->placeholder('—'),
+                \Filament\Tables\Columns\TextColumn::make('first_name')
+                    ->label('First Name')
                     ->searchable()
                     ->sortable(),
-                \Filament\Tables\Columns\TextColumn::make('status')
-                    ->badge()
+                \Filament\Tables\Columns\TextColumn::make('last_name')
+                    ->label('Last Name')
+                    ->searchable()
+                    ->sortable(),
+                \Filament\Tables\Columns\TextColumn::make('email')
+                    ->searchable(),
+                \Filament\Tables\Columns\BadgeColumn::make('status')
                     ->colors([
                         'primary' => 'registered',
                         'success' => 'attended',
-                        'danger' => 'cancelled',
+                        'danger'  => 'cancelled',
                     ])
                     ->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('registered_at')
