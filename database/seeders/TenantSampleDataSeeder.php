@@ -368,7 +368,6 @@ class TenantSampleDataSeeder extends Seeder
                 'type'         => 'quiz',
                 'description'  => 'A short quiz covering Module 1: Revelation (Wahy).',
                 'due_date'     => Carbon::parse('2025-02-10 23:59:00'),
-                'max_score'    => 100,
                 'is_published' => true,
             ]
         );
