@@ -55,17 +55,16 @@ class CourseSession extends Model
 
     public function generateAttendances()
     {
-        $enrolledStudents = \App\Models\SIS\CourseAccess::join('enrollments', 'course_access.enrollment_id', '=', 'enrollments.id')
-            ->where('course_access.course_id', $this->course_id)
-            ->where('course_access.is_active', true)
+        $enrolledStudents = \App\Models\SIS\Enrollment::active()
+            ->where('course_id', $this->course_id)
             ->distinct()
-            ->pluck('enrollments.user_id');
+            ->pluck('user_id');
 
         foreach ($enrolledStudents as $studentId) {
             $this->attendances()->firstOrCreate([
                 'student_user_id' => $studentId,
             ], [
-                'status' => 'pending', // Use a default pending/absent status
+                'status' => 'pending', 
             ]);
         }
     }

@@ -340,23 +340,23 @@ class TenantSampleDataSeeder extends Seeder
         // ─────────────────────────────────────────────
         LessonProgress::updateOrCreate(
             ['user_id' => $ali->id, 'lesson_id' => $lessonWahy1->id],
-            ['completed_at' => Carbon::parse('2025-01-20 10:00:00'), 'time_spent_seconds' => 720]
+            ['completed_at' => Carbon::parse('2025-01-20 10:00:00'), 'status' => 'completed']
         );
 
         LessonProgress::updateOrCreate(
             ['user_id' => $ali->id, 'lesson_id' => $lessonWahy2->id],
-            ['completed_at' => Carbon::parse('2025-01-27 11:30:00'), 'time_spent_seconds' => 900]
+            ['completed_at' => Carbon::parse('2025-01-27 11:30:00'), 'status' => 'completed']
         );
 
         LessonProgress::updateOrCreate(
             ['user_id' => $ali->id, 'lesson_id' => $lessonIsnad1->id],
-            ['completed_at' => Carbon::parse('2025-02-03 09:15:00'), 'time_spent_seconds' => 600]
+            ['completed_at' => Carbon::parse('2025-02-03 09:15:00'), 'status' => 'completed']
         );
 
         // Sara has started but not finished lesson 1
         LessonProgress::updateOrCreate(
             ['user_id' => $sara->id, 'lesson_id' => $lessonMakki->id],
-            ['completed_at' => null, 'time_spent_seconds' => 200]
+            ['completed_at' => null, 'status' => 'in_progress']
         );
 
         // ─────────────────────────────────────────────
@@ -376,44 +376,44 @@ class TenantSampleDataSeeder extends Seeder
         $q1 = AssessmentQuestion::updateOrCreate(
             ['assessment_id' => $assessTafseer->id, 'question_text' => 'What was the first Surah revealed to the Prophet ﷺ?'],
             [
-                'type'           => 'multiple_choice',
+                'question_type'  => 'multiple_choice',
                 'options'        => json_encode(['Al-Fatiha', 'Al-Alaq', 'Al-Ikhlas', 'Al-Baqarah']),
                 'correct_answer' => 'Al-Alaq',
-                'marks'          => 25,
-                'sequence'       => 1,
+                'points'         => 25,
+                'sort_order'     => 1,
             ]
         );
 
         $q2 = AssessmentQuestion::updateOrCreate(
             ['assessment_id' => $assessTafseer->id, 'question_text' => 'Where did the first revelation occur?'],
             [
-                'type'           => 'multiple_choice',
+                'question_type'  => 'multiple_choice',
                 'options'        => json_encode(['Cave of Thawr', 'Cave of Hira', 'Mount Sinai', 'Masjid al-Haram']),
                 'correct_answer' => 'Cave of Hira',
-                'marks'          => 25,
-                'sequence'       => 2,
+                'points'         => 25,
+                'sort_order'     => 2,
             ]
         );
 
         $q3 = AssessmentQuestion::updateOrCreate(
             ['assessment_id' => $assessTafseer->id, 'question_text' => 'What does "Iqra" mean?'],
             [
-                'type'           => 'multiple_choice',
+                'question_type'  => 'multiple_choice',
                 'options'        => json_encode(['Pray', 'Fast', 'Read/Recite', 'Submit']),
                 'correct_answer' => 'Read/Recite',
-                'marks'          => 25,
-                'sequence'       => 3,
+                'points'         => 25,
+                'sort_order'     => 3,
             ]
         );
 
         $q4 = AssessmentQuestion::updateOrCreate(
             ['assessment_id' => $assessTafseer->id, 'question_text' => 'How many Ayat does Surah Al-Alaq have?'],
             [
-                'type'           => 'multiple_choice',
+                'question_type'  => 'multiple_choice',
                 'options'        => json_encode(['10', '14', '19', '20']),
                 'correct_answer' => '19',
-                'marks'          => 25,
-                'sequence'       => 4,
+                'points'         => 25,
+                'sort_order'     => 4,
             ]
         );
 
@@ -435,19 +435,19 @@ class TenantSampleDataSeeder extends Seeder
         // Ali's individual answers
         AssessmentAnswer::updateOrCreate(
             ['submission_id' => $submission->id, 'question_id' => $q1->id],
-            ['answer_text' => 'Al-Alaq', 'is_correct' => true, 'marks_awarded' => 25]
+            ['student_answer' => 'Al-Alaq', 'is_correct' => true, 'points_awarded' => 25]
         );
         AssessmentAnswer::updateOrCreate(
             ['submission_id' => $submission->id, 'question_id' => $q2->id],
-            ['answer_text' => 'Cave of Hira', 'is_correct' => true, 'marks_awarded' => 25]
+            ['student_answer' => 'Cave of Hira', 'is_correct' => true, 'points_awarded' => 25]
         );
         AssessmentAnswer::updateOrCreate(
             ['submission_id' => $submission->id, 'question_id' => $q3->id],
-            ['answer_text' => 'Read/Recite', 'is_correct' => true, 'marks_awarded' => 25]
+            ['student_answer' => 'Read/Recite', 'is_correct' => true, 'points_awarded' => 25]
         );
         AssessmentAnswer::updateOrCreate(
             ['submission_id' => $submission->id, 'question_id' => $q4->id],
-            ['answer_text' => '14', 'is_correct' => false, 'marks_awarded' => 0]  // wrong answer
+            ['student_answer' => '14', 'is_correct' => false, 'points_awarded' => 0]  // wrong answer
         );
 
         // ─────────────────────────────────────────────
