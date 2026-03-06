@@ -22,7 +22,7 @@ class DiscountCodeResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Settings & Payments';
+        return 'Settings & Configuration';
     }
 
         public static function form(Schema $schema): Schema

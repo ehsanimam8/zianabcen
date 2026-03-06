@@ -14,7 +14,7 @@ class ManageStripeSettings extends Page
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Settings & Payments';
+        return 'Settings & Configuration';
     }
 
     protected static ?string $title = 'Stripe Settings';

@@ -22,7 +22,7 @@ class NotificationTemplateResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Communication';
+        return 'Settings & Configuration';
     }
 
         public static function form(Schema $schema): Schema
