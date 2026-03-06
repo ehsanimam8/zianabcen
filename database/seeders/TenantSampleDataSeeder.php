@@ -42,7 +42,7 @@ class TenantSampleDataSeeder extends Seeder
         // ─────────────────────────────────────────────
         // PERSONA 1: ADMIN
         // ─────────────────────────────────────────────
-        $admin = User::firstOrCreate(
+        $admin = User::updateOrCreate(
             ['email' => 'admin@zainab.com'],
             ['name' => 'Sister Mariam (Admin)', 'password' => bcrypt('password')]
         );
@@ -51,7 +51,10 @@ class TenantSampleDataSeeder extends Seeder
         // ─────────────────────────────────────────────
         // PERSONA 2: TEACHER — Shaykh Ahmad
         // ─────────────────────────────────────────────
-        $shaykh = User::firstOrCreate(
+        // IDEMPOTENCY FIX: Clear anyone else who might have THIS roll number
+        User::where('roll_number', 'INS-001')->where('email', '!=', 'shaykh.ahmad@zainabcenter.org')->update(['roll_number' => null]);
+        
+        $shaykh = User::updateOrCreate(
             ['email' => 'shaykh.ahmad@zainabcenter.org'],
             [
                 'name'        => 'Shaykh Ahmad',
@@ -66,7 +69,9 @@ class TenantSampleDataSeeder extends Seeder
         // ─────────────────────────────────────────────
         // PERSONA 3: TEACHER — Ustadha Fatima
         // ─────────────────────────────────────────────
-        $ustadha = User::firstOrCreate(
+        User::where('roll_number', 'INS-002')->where('email', '!=', 'ustadha.fatima@zainabcenter.org')->update(['roll_number' => null]);
+
+        $ustadha = User::updateOrCreate(
             ['email' => 'ustadha.fatima@zainabcenter.org'],
             [
                 'name'        => 'Ustadha Fatima',
@@ -81,7 +86,9 @@ class TenantSampleDataSeeder extends Seeder
         // ─────────────────────────────────────────────
         // PERSONA 4: STUDENT — Ali Raza (Diligent student, good grades)
         // ─────────────────────────────────────────────
-        $ali = User::firstOrCreate(
+        User::where('roll_number', 'STU-1001')->where('email', '!=', 'ali.raza@example.com')->update(['roll_number' => null]);
+
+        $ali = User::updateOrCreate(
             ['email' => 'ali.raza@example.com'],
             [
                 'name'        => 'Ali Raza',
@@ -96,7 +103,9 @@ class TenantSampleDataSeeder extends Seeder
         // ─────────────────────────────────────────────
         // PERSONA 5: STUDENT — Sara Khan (New student, just started)
         // ─────────────────────────────────────────────
-        $sara = User::firstOrCreate(
+        User::where('roll_number', 'STU-1002')->where('email', '!=', 'sara.khan@example.com')->update(['roll_number' => null]);
+
+        $sara = User::updateOrCreate(
             ['email' => 'sara.khan@example.com'],
             [
                 'name'        => 'Sara Khan',
@@ -111,7 +120,7 @@ class TenantSampleDataSeeder extends Seeder
         // ─────────────────────────────────────────────
         // ACADEMIC YEAR & TERMS
         // ─────────────────────────────────────────────
-        $year = AcademicYear::firstOrCreate(
+        $year = AcademicYear::updateOrCreate(
             ['name' => '2024-2025'],
             [
                 'start_date' => Carbon::parse('2024-09-01'),
@@ -120,7 +129,7 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        $termFall = Term::firstOrCreate(
+        $termFall = Term::updateOrCreate(
             ['academic_year_id' => $year->id, 'name' => 'Fall 2024'],
             [
                 'start_date' => Carbon::parse('2024-09-01'),
@@ -129,7 +138,7 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        $termSpring = Term::firstOrCreate(
+        $termSpring = Term::updateOrCreate(
             ['academic_year_id' => $year->id, 'name' => 'Spring 2025'],
             [
                 'start_date' => Carbon::parse('2025-01-10'),
@@ -141,7 +150,7 @@ class TenantSampleDataSeeder extends Seeder
         // ─────────────────────────────────────────────
         // PROGRAMS
         // ─────────────────────────────────────────────
-        $programAlim = Program::firstOrCreate(
+        $programAlim = Program::updateOrCreate(
             ['code' => 'ALIM-1'],
             [
                 'name'            => 'Alim Programme – Year 1',
@@ -152,7 +161,7 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        $programQuran = Program::firstOrCreate(
+        $programQuran = Program::updateOrCreate(
             ['code' => 'QUR-1'],
             [
                 'name'            => 'Quranic Sciences',
@@ -166,9 +175,10 @@ class TenantSampleDataSeeder extends Seeder
         // ─────────────────────────────────────────────
         // COURSES
         // ─────────────────────────────────────────────
-        $courseTafseer = Course::firstOrCreate(
+        $courseTafseer = Course::updateOrCreate(
             ['code' => 'TAF101'],
             [
+                'program_id'    => $programAlim->id,
                 'name'          => 'Tafseer — Introduction to Quranic Exegesis',
                 'description'   => 'An in-depth exploration of the sciences of the Quran, including Asbab al-Nuzool and various schools of Tafseer.',
                 'credits'       => 3,
@@ -181,9 +191,10 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        $courseHadith = Course::firstOrCreate(
+        $courseHadith = Course::updateOrCreate(
             ['code' => 'HAD101'],
             [
+                'program_id'    => $programAlim->id,
                 'name'          => 'Hadith Principles — Usul al-Hadith',
                 'description'   => 'A rigorous study of the chain of narration (isnad) and text criticism in Islamic hadith science.',
                 'credits'       => 3,
@@ -196,9 +207,10 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        $courseFiqh = Course::firstOrCreate(
+        $courseFiqh = Course::updateOrCreate(
             ['code' => 'FQH101'],
             [
+                'program_id'    => $programAlim->id,
                 'name'          => 'Islamic Jurisprudence — Fiqh Fundamentals',
                 'description'   => 'Covers the four major schools of Fiqh, their founders, and foundational rulings in worship.',
                 'credits'       => 3,
@@ -216,7 +228,7 @@ class TenantSampleDataSeeder extends Seeder
         // Ali → Tafseer + Hadith (both with Shaykh Ahmad)
         // Sara → Fiqh (with Ustadha Fatima, new student)
         // ─────────────────────────────────────────────
-        $enrollAliTafseer = Enrollment::firstOrCreate(
+        $enrollAliTafseer = Enrollment::updateOrCreate(
             ['user_id' => $ali->id, 'course_id' => $courseTafseer->id],
             [
                 'term_id'        => $termSpring->id,
@@ -227,7 +239,7 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        $enrollAliHadith = Enrollment::firstOrCreate(
+        $enrollAliHadith = Enrollment::updateOrCreate(
             ['user_id' => $ali->id, 'course_id' => $courseHadith->id],
             [
                 'term_id'        => $termSpring->id,
@@ -238,7 +250,7 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        $enrollSaraFiqh = Enrollment::firstOrCreate(
+        $enrollSaraFiqh = Enrollment::updateOrCreate(
             ['user_id' => $sara->id, 'course_id' => $courseFiqh->id],
             [
                 'term_id'        => $termSpring->id,
@@ -252,7 +264,7 @@ class TenantSampleDataSeeder extends Seeder
         // ─────────────────────────────────────────────
         // MODULES & LESSONS — Tafseer Course
         // ─────────────────────────────────────────────
-        $modWahy = Module::firstOrCreate(
+        $modWahy = Module::updateOrCreate(
             ['course_id' => $courseTafseer->id, 'title' => 'Revelation (Wahy)'],
             [
                 'description'  => 'Understanding divine revelation, its categories, and its preservation.',
@@ -261,7 +273,7 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        $lessonWahy1 = Lesson::firstOrCreate(
+        $lessonWahy1 = Lesson::updateOrCreate(
             ['module_id' => $modWahy->id, 'title' => 'The First Revelation'],
             [
                 'content'      => '<p>Surah Al-Alaq was the first revelation received by the Prophet ﷺ in the Cave of Hira. This lesson examines the historical context and the significance of the command "Iqra" (Read/Recite).</p>',
@@ -272,7 +284,7 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        $lessonWahy2 = Lesson::firstOrCreate(
+        $lessonWahy2 = Lesson::updateOrCreate(
             ['module_id' => $modWahy->id, 'title' => 'Types of Revelation'],
             [
                 'content'      => '<p>Revelation came to the Prophet ﷺ in multiple forms: the ringing of a bell, the form of a man, and direct inspiration. This lesson details each type and when they occurred.</p>',
@@ -283,7 +295,7 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        $modMakki = Module::firstOrCreate(
+        $modMakki = Module::updateOrCreate(
             ['course_id' => $courseTafseer->id, 'title' => 'Makki & Madani Surahs'],
             [
                 'description'  => 'Distinguishing Surahs revealed in Makkah from those in Madinah and their thematic differences.',
@@ -292,7 +304,7 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        $lessonMakki = Lesson::firstOrCreate(
+        $lessonMakki = Lesson::updateOrCreate(
             ['module_id' => $modMakki->id, 'title' => 'Definitions and Criteria'],
             [
                 'content'      => '<p>Scholars have defined Makki and Madani Surahs using three criteria: time, place, and content. This lesson covers each criterion in detail.</p>',
@@ -306,7 +318,7 @@ class TenantSampleDataSeeder extends Seeder
         // ─────────────────────────────────────────────
         // MODULES & LESSONS — Hadith Course
         // ─────────────────────────────────────────────
-        $modIsnad = Module::firstOrCreate(
+        $modIsnad = Module::updateOrCreate(
             ['course_id' => $courseHadith->id, 'title' => 'The Chain of Narration (Isnad)'],
             [
                 'description'  => 'Understanding why the isnad is the backbone of hadith scholarship.',
@@ -315,7 +327,7 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        $lessonIsnad1 = Lesson::firstOrCreate(
+        $lessonIsnad1 = Lesson::updateOrCreate(
             ['module_id' => $modIsnad->id, 'title' => 'Introduction to Isnad'],
             [
                 'content'      => '<p>The isnad system is unique to Islamic scholarship. This lesson introduces students to how scholars over generations preserved the sayings of the Prophet ﷺ.</p>',
@@ -329,23 +341,23 @@ class TenantSampleDataSeeder extends Seeder
         // ─────────────────────────────────────────────
         // LESSON PROGRESS — Ali has completed lessons
         // ─────────────────────────────────────────────
-        LessonProgress::firstOrCreate(
+        LessonProgress::updateOrCreate(
             ['user_id' => $ali->id, 'lesson_id' => $lessonWahy1->id],
             ['completed_at' => Carbon::parse('2025-01-20 10:00:00'), 'time_spent_seconds' => 720]
         );
 
-        LessonProgress::firstOrCreate(
+        LessonProgress::updateOrCreate(
             ['user_id' => $ali->id, 'lesson_id' => $lessonWahy2->id],
             ['completed_at' => Carbon::parse('2025-01-27 11:30:00'), 'time_spent_seconds' => 900]
         );
 
-        LessonProgress::firstOrCreate(
+        LessonProgress::updateOrCreate(
             ['user_id' => $ali->id, 'lesson_id' => $lessonIsnad1->id],
             ['completed_at' => Carbon::parse('2025-02-03 09:15:00'), 'time_spent_seconds' => 600]
         );
 
         // Sara has started but not finished lesson 1
-        LessonProgress::firstOrCreate(
+        LessonProgress::updateOrCreate(
             ['user_id' => $sara->id, 'lesson_id' => $lessonMakki->id],
             ['completed_at' => null, 'time_spent_seconds' => 200]
         );
@@ -353,7 +365,7 @@ class TenantSampleDataSeeder extends Seeder
         // ─────────────────────────────────────────────
         // ASSESSMENTS — Shaykh Ahmad gives an assignment in Tafseer
         // ─────────────────────────────────────────────
-        $assessTafseer = Assessment::firstOrCreate(
+        $assessTafseer = Assessment::updateOrCreate(
             ['course_id' => $courseTafseer->id, 'title' => 'Week 3 Quiz — Revelation'],
             [
                 'type'         => 'quiz',
@@ -364,7 +376,7 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        $q1 = AssessmentQuestion::firstOrCreate(
+        $q1 = AssessmentQuestion::updateOrCreate(
             ['assessment_id' => $assessTafseer->id, 'question_text' => 'What was the first Surah revealed to the Prophet ﷺ?'],
             [
                 'type'           => 'multiple_choice',
@@ -375,7 +387,7 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        $q2 = AssessmentQuestion::firstOrCreate(
+        $q2 = AssessmentQuestion::updateOrCreate(
             ['assessment_id' => $assessTafseer->id, 'question_text' => 'Where did the first revelation occur?'],
             [
                 'type'           => 'multiple_choice',
@@ -386,7 +398,7 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        $q3 = AssessmentQuestion::firstOrCreate(
+        $q3 = AssessmentQuestion::updateOrCreate(
             ['assessment_id' => $assessTafseer->id, 'question_text' => 'What does "Iqra" mean?'],
             [
                 'type'           => 'multiple_choice',
@@ -397,7 +409,7 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        $q4 = AssessmentQuestion::firstOrCreate(
+        $q4 = AssessmentQuestion::updateOrCreate(
             ['assessment_id' => $assessTafseer->id, 'question_text' => 'How many Ayat does Surah Al-Alaq have?'],
             [
                 'type'           => 'multiple_choice',
@@ -409,9 +421,9 @@ class TenantSampleDataSeeder extends Seeder
         );
 
         // ─────────────────────────────────────────────
-        // ASSESSMENT SUBMISSION — Ali completes the quiz (scores 90%)
+        // ASSESSMENT SUBMISSION — Ali completes the quiz (scores 75%)
         // ─────────────────────────────────────────────
-        $submission = AssessmentSubmission::firstOrCreate(
+        $submission = AssessmentSubmission::updateOrCreate(
             ['assessment_id' => $assessTafseer->id, 'user_id' => $ali->id],
             [
                 'submitted_at'        => Carbon::parse('2025-02-09 18:30:00'),
@@ -424,19 +436,19 @@ class TenantSampleDataSeeder extends Seeder
         );
 
         // Ali's individual answers
-        AssessmentAnswer::firstOrCreate(
+        AssessmentAnswer::updateOrCreate(
             ['submission_id' => $submission->id, 'question_id' => $q1->id],
             ['answer_text' => 'Al-Alaq', 'is_correct' => true, 'marks_awarded' => 25]
         );
-        AssessmentAnswer::firstOrCreate(
+        AssessmentAnswer::updateOrCreate(
             ['submission_id' => $submission->id, 'question_id' => $q2->id],
             ['answer_text' => 'Cave of Hira', 'is_correct' => true, 'marks_awarded' => 25]
         );
-        AssessmentAnswer::firstOrCreate(
+        AssessmentAnswer::updateOrCreate(
             ['submission_id' => $submission->id, 'question_id' => $q3->id],
             ['answer_text' => 'Read/Recite', 'is_correct' => true, 'marks_awarded' => 25]
         );
-        AssessmentAnswer::firstOrCreate(
+        AssessmentAnswer::updateOrCreate(
             ['submission_id' => $submission->id, 'question_id' => $q4->id],
             ['answer_text' => '14', 'is_correct' => false, 'marks_awarded' => 0]  // wrong answer
         );
@@ -444,7 +456,7 @@ class TenantSampleDataSeeder extends Seeder
         // ─────────────────────────────────────────────
         // GRADES — Shaykh Ahmad records final grades for Fall 2024
         // ─────────────────────────────────────────────
-        Grade::firstOrCreate(
+        Grade::updateOrCreate(
             ['enrollment_id' => $enrollAliTafseer->id, 'course_id' => $courseTafseer->id],
             [
                 'letter_grade'        => 'A',
@@ -455,7 +467,7 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        Grade::firstOrCreate(
+        Grade::updateOrCreate(
             ['enrollment_id' => $enrollAliHadith->id, 'course_id' => $courseHadith->id],
             [
                 'letter_grade'        => 'B+',
@@ -469,7 +481,7 @@ class TenantSampleDataSeeder extends Seeder
         // ─────────────────────────────────────────────
         // COURSE SCHEDULE & SESSIONS — Tafseer Live classes
         // ─────────────────────────────────────────────
-        $schedule = CourseSchedule::firstOrCreate(
+        $schedule = CourseSchedule::updateOrCreate(
             ['course_id' => $courseTafseer->id, 'name' => 'Spring 2025 Weekly Schedule'],
             [
                 'instructor_user_id' => $shaykh->id,
@@ -484,8 +496,8 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        // Two past sessions and one upcoming
-        $session1 = CourseSession::firstOrCreate(
+        // Past sessions
+        CourseSession::updateOrCreate(
             ['course_id' => $courseTafseer->id, 'session_date' => '2025-01-18'],
             [
                 'instructor_user_id' => $shaykh->id,
@@ -499,7 +511,7 @@ class TenantSampleDataSeeder extends Seeder
             ]
         );
 
-        $session2 = CourseSession::firstOrCreate(
+        $session2 = CourseSession::updateOrCreate(
             ['course_id' => $courseTafseer->id, 'session_date' => '2025-02-01'],
             [
                 'instructor_user_id' => $shaykh->id,
@@ -514,18 +526,9 @@ class TenantSampleDataSeeder extends Seeder
         );
 
         // ─────────────────────────────────────────────
-        // ATTENDANCE — Ali attended both, Sara missed session 2
+        // ATTENDANCE — Ali attended both
         // ─────────────────────────────────────────────
-        Attendance::firstOrCreate(
-            ['course_session_id' => $session1->id, 'student_user_id' => $ali->id],
-            [
-                'status'              => 'present',
-                'marked_at'           => Carbon::parse('2025-01-18 10:05:00'),
-                'marked_by_user_id'   => $shaykh->id,
-            ]
-        );
-
-        Attendance::firstOrCreate(
+        Attendance::updateOrCreate(
             ['course_session_id' => $session2->id, 'student_user_id' => $ali->id],
             [
                 'status'              => 'present',
@@ -535,37 +538,26 @@ class TenantSampleDataSeeder extends Seeder
         );
 
         // ─────────────────────────────────────────────
-        // COURSE ANNOUNCEMENT — Teacher posts update for students
+        // COURSE ANNOUNCEMENTS
         // ─────────────────────────────────────────────
-        CourseAnnouncement::firstOrCreate(
+        CourseAnnouncement::updateOrCreate(
             ['course_id' => $courseTafseer->id, 'title' => 'Week 3 Assignment Released'],
             [
-                'content'              => 'Assalamu Alaikum students. The Week 3 Quiz on Revelation is now live. You have until February 10th to complete it. Remember to review the lesson on Types of Revelation. Jazakum Allahu Khairan.',
+                'content'              => 'Assalamu Alaikum students. The Week 3 Quiz on Revelation is now live. You have until February 10th to complete it. Jazakum Allahu Khairan.',
                 'instructor_user_id'   => $shaykh->id,
                 'is_published'         => true,
-                'send_email_notification' => false,
-            ]
-        );
-
-        CourseAnnouncement::firstOrCreate(
-            ['course_id' => $courseTafseer->id, 'title' => 'Quiz Results Posted'],
-            [
-                'content'              => 'Alhamdulillah, quiz results have been posted to your Grades page. Overall the class performed very well. Please review the feedback on your submission.',
-                'instructor_user_id'   => $shaykh->id,
-                'is_published'         => true,
-                'send_email_notification' => false,
             ]
         );
 
         // ─────────────────────────────────────────────
-        // CMS POST — Welcome blog post
+        // CMS POST
         // ─────────────────────────────────────────────
-        Post::firstOrCreate(
+        Post::updateOrCreate(
             ['slug' => 'welcome-spring-2025'],
             [
                 'title'          => 'Welcome to Spring 2025 Semester at Zainab Center!',
                 'post_type'      => 'post',
-                'content'        => '<p>Bismillah. We are excited to welcome all new and returning students to the Spring 2025 term. This semester we are offering courses in Tafseer, Hadith, and Islamic Jurisprudence. May Allah make this journey of knowledge beneficial for all of us.</p>',
+                'content'        => '<p>Bismillah. We are excited to welcome all new and returning students to the Spring 2025 term.</p>',
                 'status'         => 'published',
                 'published_at'   => Carbon::parse('2025-01-08'),
                 'author_user_id' => $admin->id,
@@ -573,15 +565,14 @@ class TenantSampleDataSeeder extends Seeder
         );
 
         // ─────────────────────────────────────────────
-        // CRM CONTACT — Community member / parent
+        // CRM CONTACT
         // ─────────────────────────────────────────────
-        Contact::firstOrCreate(
+        Contact::updateOrCreate(
             ['email' => 'ahmad.raza.parent@example.com'],
             [
                 'name'         => 'Ahmad Raza (Parent)',
                 'contact_type' => 'Parent',
                 'phone'        => '+1-312-555-0190',
-                'address'      => '123 Oak Street, Chicago, IL 60601',
             ]
         );
 
@@ -589,7 +580,7 @@ class TenantSampleDataSeeder extends Seeder
         $this->command->info('   👤 Admin: admin@zainab.com / password');
         $this->command->info('   👨‍🏫 Teacher: shaykh.ahmad@zainabcenter.org / password');
         $this->command->info('   👩‍🏫 Teacher: ustadha.fatima@zainabcenter.org / password');
-        $this->command->info('   🎓 Student: ali.raza@example.com / password (enrolled in Tafseer + Hadith, has grades)');
-        $this->command->info('   🎓 Student: sara.khan@example.com / password (enrolled in Fiqh, new student)');
+        $this->command->info('   🎓 Student: ali.raza@example.com / password');
+        $this->command->info('   🎓 Student: sara.khan@example.com / password');
     }
 }
