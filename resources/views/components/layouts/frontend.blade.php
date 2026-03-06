@@ -48,6 +48,17 @@
 </head>
 <body class="bg-zinc-50 flex flex-col min-h-screen text-zinc-900">
 
+@php
+    $navPages = \App\Models\CMS\Post::where('post_type', 'page')
+                    ->where('status', 'published')
+                    ->whereNotNull('custom_fields->navigation_menu')
+                    ->where('custom_fields->navigation_menu', '!=', 'none')
+                    ->get()
+                    ->groupBy(function($item) {
+                        return $item->custom_fields['navigation_menu'] ?? 'none';
+                    });
+@endphp
+
     <!-- Navigation -->
     <nav class="bg-white border-b border-zinc-200 sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -61,15 +72,35 @@
                         <button @click="open = !open" @click.away="open = false" class="text-zinc-500 hover:text-primary-800 text-sm font-medium transition-colors flex items-center gap-1">
                             About <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
-                        <div x-show="open" x-transition.opacity class="absolute left-0 mt-2 w-48 bg-white border border-zinc-200 rounded-lg shadow-lg py-2" style="display: none;">
-                            <a href="{{ url('/about/about-us') }}" class="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 hover:text-primary-600">About Us</a>
-                            <a href="{{ url('/about/our-founders') }}" class="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 hover:text-primary-600">Our Founders</a>
-                            <a href="{{ url('/about/our-faculty') }}" class="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 hover:text-primary-600">Our Faculty</a>
-                            <a href="{{ url('/about/our-services') }}" class="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 hover:text-primary-600">Our Services</a>
-                            <a href="{{ url('/about/faqs') }}" class="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 hover:text-primary-600">FAQs</a>
+                        <div x-show="open" x-transition.opacity class="absolute left-0 mt-2 w-48 bg-white border border-zinc-200 rounded-lg shadow-lg py-2 flex flex-col" style="display: none;">
+                            @forelse($navPages->get('about', []) as $page)
+                                <a href="{{ route('frontend.pages.show', $page->slug) }}" class="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 hover:text-primary-600">{{ $page->title }}</a>
+                            @empty
+                                <!-- Fallback Defaults if no CMS pages are assigned to About -->
+                                <a href="{{ url('/about/about-us') }}" class="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 hover:text-primary-600">About Us</a>
+                                <a href="{{ url('/about/our-founders') }}" class="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 hover:text-primary-600">Our Founders</a>
+                                <a href="{{ url('/about/our-faculty') }}" class="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 hover:text-primary-600">Our Faculty</a>
+                                <a href="{{ url('/about/our-services') }}" class="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 hover:text-primary-600">Our Services</a>
+                                <a href="{{ url('/about/faqs') }}" class="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 hover:text-primary-600">FAQs</a>
+                            @endforelse
                         </div>
                     </div>
-                    <a href="{{ route('frontend.programs.index') }}" class="text-zinc-500 hover:text-primary-800 text-sm font-medium transition-colors">Programs</a>
+                    
+                    <div x-data="{ open: false }" class="relative z-50 flex items-center h-full">
+                        <a href="{{ route('frontend.programs.index') }}" class="text-zinc-500 hover:text-primary-800 text-sm font-medium transition-colors">Programs</a>
+                        
+                        @if($navPages->get('programs', collect())->count() > 0)
+                            <button @click="open = !open" @click.away="open = false" class="ml-1 text-zinc-500 hover:text-primary-800 text-sm font-medium transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div x-show="open" x-transition.opacity class="absolute top-12 left-0 w-48 bg-white border border-zinc-200 rounded-lg shadow-lg py-2 flex flex-col" style="display: none;">
+                                @foreach($navPages->get('programs', []) as $page)
+                                    <a href="{{ route('frontend.pages.show', $page->slug) }}" class="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 hover:text-primary-600">{{ $page->title }}</a>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                    
                     <a href="{{ route('frontend.events.index') }}" class="text-zinc-500 hover:text-primary-800 text-sm font-medium transition-colors">Events</a>
                     <a href="{{ route('frontend.posts.index') }}" class="text-zinc-500 hover:text-primary-800 text-sm font-medium transition-colors">Announcements</a>
                     <div class="pl-4 border-l border-zinc-200 flex items-center space-x-4">
@@ -160,8 +191,13 @@
             <div class="border-t border-zinc-200 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-zinc-500">
                 <p>&copy; {{ date('Y') }} Zainab Center. Assalamu Alaikum Warahmatullah.</p>
                 <div class="flex space-x-6 mt-4 md:mt-0">
-                    <a href="#" class="hover:text-primary-800 transition-colors">Privacy Policy</a>
-                    <a href="#" class="hover:text-primary-800 transition-colors">Terms of Service</a>
+                    @foreach($navPages->get('footer', []) as $page)
+                        <a href="{{ route('frontend.pages.show', $page->slug) }}" class="hover:text-primary-800 transition-colors">{{ $page->title }}</a>
+                    @endforeach
+                    @if($navPages->get('footer', collect())->isEmpty())
+                        <a href="#" class="hover:text-primary-800 transition-colors">Privacy Policy</a>
+                        <a href="#" class="hover:text-primary-800 transition-colors">Terms of Service</a>
+                    @endif
                 </div>
             </div>
         </div>

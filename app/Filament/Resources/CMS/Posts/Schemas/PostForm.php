@@ -15,7 +15,17 @@ class PostForm
                         'page' => 'Page',
                         'post' => 'Post',
                         'event' => 'Event',
-                    ])->required()->default('post'),
+                    ])->required()->default('post')->live(),
+                    \Filament\Forms\Components\Select::make('custom_fields.navigation_menu')
+                        ->label('Show in Navigation Menu')
+                        ->options([
+                            'about' => 'Under "About"',
+                            'programs' => 'Under "Programs"',
+                            'footer' => 'Footer Links',
+                            'none' => 'Do not show in navigation'
+                        ])
+                        ->default('none')
+                        ->visible(fn ($get) => $get('post_type') === 'page'),
                     \Filament\Forms\Components\TextInput::make('title')->required()->maxLength(255),
                     \Filament\Forms\Components\TextInput::make('slug')->required()->maxLength(255)->unique(ignoreRecord: true),
                     \Filament\Forms\Components\TextInput::make('featured_image_url')->url()->maxLength(255),

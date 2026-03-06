@@ -24,6 +24,11 @@ class PostsTable
                 //
             ])
             ->actions([
+                \Filament\Tables\Actions\Action::make('preview')
+                    ->icon('heroicon-m-eye')
+                    ->color('success')
+                    ->url(fn ($record) => route($record->post_type === 'page' ? 'frontend.pages.show' : 'frontend.posts.show', $record->slug))
+                    ->openUrlInNewTab(),
                 EditAction::make(),
             ])
             ->bulkActions([

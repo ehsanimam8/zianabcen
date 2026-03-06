@@ -10,8 +10,8 @@ new #[Layout('components.layouts.frontend')] class extends Component {
     public function mount($slug)
     {
         $this->page = Post::where('slug', $slug)
-                          ->where('post_type', 'Page')
-                          ->where('status', 'Published')
+                          ->where('post_type', 'page')
+                          ->where('status', 'published')
                           ->firstOrFail();
     }
     
