@@ -39,6 +39,11 @@ class Event extends Model
 
 
 
+    public function post()
+    {
+        return $this->belongsTo(Post::class);
+    }
+
     public function registrations()
     {
         return $this->hasMany(EventRegistration::class);

@@ -13,7 +13,25 @@ class EventRegistrationsTable
     {
         return $table
             ->columns([
-                //
+                \Filament\Tables\Columns\TextColumn::make('event.post.title')
+                    ->label('Event')
+                    ->searchable()
+                    ->sortable(),
+                \Filament\Tables\Columns\TextColumn::make('contact.name')
+                    ->label('Registrant')
+                    ->searchable()
+                    ->sortable(),
+                \Filament\Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->colors([
+                        'primary' => 'registered',
+                        'success' => 'attended',
+                        'danger' => 'cancelled',
+                    ])
+                    ->sortable(),
+                \Filament\Tables\Columns\TextColumn::make('registered_at')
+                    ->dateTime()
+                    ->sortable(),
             ])
             ->filters([
                 //
