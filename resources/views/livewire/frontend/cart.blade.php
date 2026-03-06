@@ -5,7 +5,6 @@ use Livewire\Attributes\Layout;
 use App\Models\User;
 use App\Models\SIS\Course;
 use App\Models\CMS\Setting;
-use Illuminate\Support\Facades\Session;
 
 new #[Layout('components.layouts.frontend', ['title' => 'Shopping Cart | Zainab Center', 'description' => 'Securely checkout and enroll in your selected Islamic programs at Zainab Center.'])] class extends Component {
     public $cartItems = [];
@@ -25,7 +24,7 @@ new #[Layout('components.layouts.frontend', ['title' => 'Shopping Cart | Zainab 
     
     public function loadCart()
     {
-        $cartIds = Session::get('cart', []);
+        $cartIds = session('cart', []);
         $this->cartItems = Course::whereIn('id', $cartIds)->get();
         $this->calculateTotal();
     }
@@ -37,9 +36,9 @@ new #[Layout('components.layouts.frontend', ['title' => 'Shopping Cart | Zainab 
     
     public function removeItem($courseId)
     {
-        $cartIds = Session::get('cart', []);
+        $cartIds = session('cart', []);
         $cartIds = array_filter($cartIds, fn($id) => $id != $courseId);
-        Session::put('cart', $cartIds);
+        session(['cart' => array_values($cartIds)]);
         $this->loadCart();
     }
     

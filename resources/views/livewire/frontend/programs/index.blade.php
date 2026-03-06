@@ -3,7 +3,6 @@
 use Livewire\Volt\Component;
 use Livewire\Attributes\Layout;
 use App\Models\SIS\Program;
-use Illuminate\Support\Facades\Session;
 
 new #[Layout('components.layouts.frontend', ['title' => 'Islamic Programs | Zainab Center', 'description' => 'Explore our comprehensive Islamic programs, designed to guide students through classical curriculums and structured learning.'])] class extends Component {
     public $programs;
@@ -15,11 +14,11 @@ new #[Layout('components.layouts.frontend', ['title' => 'Islamic Programs | Zain
     
     public function enroll($programId)
     {
-        $cartIds = Session::get('cart', []);
+        $cartIds = session('cart', []);
         
         if (!in_array($programId, $cartIds)) {
             $cartIds[] = $programId;
-            Session::put('cart', $cartIds);
+            session(['cart' => $cartIds]);
         }
         
         return redirect()->route('frontend.cart');

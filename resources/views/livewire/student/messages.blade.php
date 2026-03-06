@@ -30,10 +30,9 @@ new #[Layout('components.layouts.app')] class extends Component {
 
     public function getRecipientsProperty()
     {
-        $enrolledCourseIds = \App\Models\SIS\CourseAccess::where('is_active', true)
-            ->whereHas('enrollment', function($q) {
-                $q->where('user_id', Auth::id());
-            })->pluck('course_id');
+        $enrolledCourseIds = \App\Models\SIS\Enrollment::active()
+            ->where('user_id', Auth::id())
+            ->pluck('course_id');
 
         $instructorIds = \App\Models\LMS\CourseSession::whereIn('course_id', $enrolledCourseIds)
             ->whereNotNull('instructor_user_id')
@@ -41,8 +40,8 @@ new #[Layout('components.layouts.app')] class extends Component {
             ->unique();
 
         return User::where('id', '!=', Auth::id())
-            ->where(function($query) use ($instructorIds) {
-                $query->whereHas('roles', function($q) {
+            ->where(function ($query) use ($instructorIds) {
+                $query->whereHas('roles', function ($q) {
                     $q->whereIn('name', ['Admin', 'admin', 'Super Admin', 'super_admin']);
                 })->orWhereIn('id', $instructorIds);
             })->orderBy('name')->get();

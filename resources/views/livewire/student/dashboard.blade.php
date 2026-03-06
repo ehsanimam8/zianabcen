@@ -14,8 +14,8 @@ new #[Layout('components.layouts.app')] class extends Component {
         $this->student = auth()->user();
         
         if ($this->student) {
-            $this->enrollments = Enrollment::where('user_id', $this->student->id)
-                ->whereIn('status', ['Enrolled', 'Active', 'enrolled', 'active'])
+            $this->enrollments = Enrollment::active()
+                ->where('user_id', $this->student->id)
                 ->with(['course.modules', 'term'])
                 ->get();
         } else {

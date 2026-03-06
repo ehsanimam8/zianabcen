@@ -14,11 +14,11 @@ new #[Layout('components.layouts.frontend')] class extends Component {
     
     public function enroll($courseId)
     {
-        $cartIds = \Illuminate\Support\Facades\Session::get('cart', []);
+        $cartIds = session('cart', []);
         
         if (!in_array($courseId, $cartIds)) {
             $cartIds[] = $courseId;
-            \Illuminate\Support\Facades\Session::put('cart', $cartIds);
+            session(['cart' => $cartIds]);
         }
         
         $this->redirect(route('frontend.cart'), navigate: true);
@@ -101,7 +101,7 @@ new #[Layout('components.layouts.frontend')] class extends Component {
                                 @if($course->price > 0)
                                     <span class="text-xl font-bold text-primary-800">${{ number_format($course->price, 2) }}</span>
                                 @endif
-                                @if(in_array($course->id, \Illuminate\Support\Facades\Session::get('cart', [])))
+                                @if(in_array($course->id, session('cart', [])))
                                     <span class="px-4 py-2 bg-green-50 text-green-700 font-bold rounded-lg text-sm flex items-center">
                                         <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                         In Cart

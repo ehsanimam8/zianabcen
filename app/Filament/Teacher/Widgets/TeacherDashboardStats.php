@@ -15,10 +15,15 @@ class TeacherDashboardStats extends StatsOverviewWidget
             ->where('session_date', '>=', now()->startOfDay())
             ->count();
             
-        // Calculate total students assigned safely through session courses
-        $myStudents = \App\Models\SIS\CourseAccess::whereIn('course_id', function($q) use ($teacherId) {
-            $q->select('course_id')->from('course_sessions')->where('instructor_user_id', $teacherId);
-        })->where('is_active', true)->distinct('enrollment_id')->count();
+        // Count students enrolled in courses this teacher teaches
+        $myCourseIds = \App\Models\LMS\CourseSession::where('instructor_user_id', $teacherId)
+            ->distinct()
+            ->pluck('course_id');
+
+        $myStudents = \App\Models\SIS\Enrollment::active()
+            ->whereIn('course_id', $myCourseIds)
+            ->distinct('user_id')
+            ->count('user_id');
 
         $ungradedSubmissions = \App\Models\LMS\AssessmentSubmission::whereIn('assessment_id', function($q) use ($teacherId) {
             $q->select('id')->from('assessments')->whereIn('course_id', function($subQ) use ($teacherId) {

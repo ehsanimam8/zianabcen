@@ -22,14 +22,12 @@ class MediaStreamController extends Controller
             return $this->generateStreamResponse($lesson->file_url);
         }
 
-        // Students must be actively enrolled
-        // We find the courses that contain this lesson
-        $hasAccess = \App\Models\SIS\CourseAccess::join('enrollments', 'course_access.enrollment_id', '=', 'enrollments.id')
-            ->join('courses', 'course_access.course_id', '=', 'courses.id')
-            ->join('modules', 'courses.id', '=', 'modules.course_id')
-            ->where('enrollments.user_id', $user->id)
-            ->where('course_access.is_active', true)
-            ->where('modules.id', $lesson->module_id)
+        // Students must have an active enrollment in the course containing this lesson
+        $hasAccess = \App\Models\SIS\Enrollment::active()
+            ->where('user_id', $user->id)
+            ->whereHas('course.modules', function ($q) use ($lesson) {
+                $q->where('modules.id', $lesson->module_id);
+            })
             ->exists();
 
         if (!$hasAccess) {

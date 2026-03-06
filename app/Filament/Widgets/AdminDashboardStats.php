@@ -13,7 +13,8 @@ class AdminDashboardStats extends StatsOverviewWidget
             $query->whereIn('name', ['Student', 'student']);
         })->count();
         $activeClasses = \App\Models\SIS\Course::where('is_active', true)->count();
-        $totalPayments = \App\Models\SIS\Enrollment::sum('amount_paid') + \App\Models\CRM\Donation::where('status', 'completed')->sum('amount') + \App\Models\CRM\Sponsorship::where('status', 'active')->sum('amount');
+        $totalPayments = \App\Models\SIS\Enrollment::sum('amount_paid')
+            + \App\Models\CRM\Donation::where('status', 'completed')->sum('amount');
         
         $unpaidStudents = \App\Models\SIS\Enrollment::where('payment_method', 'manual')
             ->whereNull('stripe_payment_intent_id')
@@ -38,7 +39,7 @@ class AdminDashboardStats extends StatsOverviewWidget
                 ->color($unpaidStudents > 0 ? 'danger' : 'success'),
                 
             Stat::make('Total Revenue Collected', '$' . number_format($totalPayments, 2))
-                ->description('Overall revenue (Courses + Donations + Sponsorships)')
+                ->description('Overall revenue (Enrollments + Donations)')
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('success'),
         ];
