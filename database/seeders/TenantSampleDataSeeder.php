@@ -458,7 +458,7 @@ class TenantSampleDataSeeder extends Seeder
             [
                 'letter_grade'        => 'A',
                 'percentage'          => 91,
-                'notes'               => 'Ali has consistently demonstrated strong engagement with the course material.',
+                'comments'            => 'Ali has consistently demonstrated strong engagement with the course material.',
                 'recorded_at'         => Carbon::parse('2025-03-01 12:00:00'),
                 'recorded_by_user_id' => $shaykh->id,
             ]
@@ -469,7 +469,7 @@ class TenantSampleDataSeeder extends Seeder
             [
                 'letter_grade'        => 'B+',
                 'percentage'          => 87,
-                'notes'               => 'Good understanding of isnad methodology. Needs to strengthen knowledge of narrator criticism.',
+                'comments'            => 'Good understanding of isnad methodology. Needs to strengthen knowledge of narrator criticism.',
                 'recorded_at'         => Carbon::parse('2025-03-01 12:30:00'),
                 'recorded_by_user_id' => $shaykh->id,
             ]
