@@ -10,6 +10,7 @@ new #[Layout('components.layouts.frontend', ['title' => 'Latest Announcements | 
     public function mount()
     {
         $this->posts = Post::where('status', 'published')
+            ->where('post_type', 'post')
             ->orderBy('published_at', 'desc')
             ->take(10)
             ->get();
