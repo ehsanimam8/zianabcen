@@ -8,7 +8,7 @@ use App\Filament\Resources\SIS\AcademicYears\Pages\ListAcademicYears;
 use App\Filament\Resources\SIS\AcademicYears\Schemas\AcademicYearForm;
 use App\Filament\Resources\SIS\AcademicYears\Tables\AcademicYearsTable;
 use App\Models\SIS\AcademicYear;
-use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +18,7 @@ class AcademicYearResource extends Resource
 {
     protected static ?string $model = AcademicYear::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function getNavigationGroup(): ?string
     {

@@ -8,7 +8,7 @@ use App\Filament\Resources\CRM\Donations\Pages\ListDonations;
 use App\Filament\Resources\CRM\Donations\Schemas\DonationForm;
 use App\Filament\Resources\CRM\Donations\Tables\DonationsTable;
 use App\Models\CRM\Donation;
-use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +18,7 @@ class DonationResource extends Resource
 {
     protected static ?string $model = Donation::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-banknotes';
+    protected static string|UnitEnum|null $navigationIcon = 'heroicon-o-banknotes';
 
     public static function getNavigationGroup(): ?string
     {

@@ -9,7 +9,7 @@ use App\Filament\Teacher\Resources\LMS\Assessments\Pages\ViewSubmission;
 use App\Filament\Teacher\Resources\LMS\Assessments\Schemas\AssessmentForm;
 use App\Filament\Teacher\Resources\LMS\Assessments\Tables\AssessmentsTable;
 use App\Models\LMS\Assessment;
-use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -20,7 +20,7 @@ class AssessmentResource extends Resource
 {
     protected static ?string $model = Assessment::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function form(Schema $schema): Schema
     {

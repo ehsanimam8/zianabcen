@@ -8,7 +8,7 @@ use App\Filament\Resources\LMS\CourseSessions\Pages\ListCourseSessions;
 use App\Filament\Resources\LMS\CourseSessions\Schemas\CourseSessionForm;
 use App\Filament\Resources\LMS\CourseSessions\Tables\CourseSessionsTable;
 use App\Models\LMS\CourseSession;
-use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +18,7 @@ class CourseSessionResource extends Resource
 {
     protected static ?string $model = CourseSession::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function getNavigationGroup(): ?string
     {

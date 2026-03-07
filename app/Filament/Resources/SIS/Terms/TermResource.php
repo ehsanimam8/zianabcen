@@ -8,7 +8,7 @@ use App\Filament\Resources\SIS\Terms\Pages\ListTerms;
 use App\Filament\Resources\SIS\Terms\Schemas\TermForm;
 use App\Filament\Resources\SIS\Terms\Tables\TermsTable;
 use App\Models\SIS\Term;
-use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +18,7 @@ class TermResource extends Resource
 {
     protected static ?string $model = Term::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function getNavigationGroup(): ?string
     {

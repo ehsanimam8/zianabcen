@@ -17,7 +17,7 @@ class LessonProgressResource extends Resource
 {
     protected static ?string $model = LessonProgress::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
+    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
     public static function getNavigationGroup(): ?string
     {

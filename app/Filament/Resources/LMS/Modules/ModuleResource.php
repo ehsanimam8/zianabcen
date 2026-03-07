@@ -10,7 +10,7 @@ use App\Filament\Resources\LMS\Modules\Schemas\ModuleForm;
 use App\Filament\Resources\LMS\Modules\Schemas\ModuleInfolist;
 use App\Filament\Resources\LMS\Modules\Tables\ModulesTable;
 use App\Models\LMS\Module;
-use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -20,7 +20,7 @@ class ModuleResource extends Resource
 {
     protected static ?string $model = Module::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function getNavigationGroup(): ?string
     {

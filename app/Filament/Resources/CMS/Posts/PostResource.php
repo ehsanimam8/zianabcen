@@ -8,7 +8,7 @@ use App\Filament\Resources\CMS\Posts\Pages\ListPosts;
 use App\Filament\Resources\CMS\Posts\Schemas\PostForm;
 use App\Filament\Resources\CMS\Posts\Tables\PostsTable;
 use App\Models\CMS\Post;
-use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +18,7 @@ class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function getNavigationGroup(): ?string
     {

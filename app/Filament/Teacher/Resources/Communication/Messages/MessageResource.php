@@ -8,7 +8,7 @@ use App\Filament\Teacher\Resources\Communication\Messages\Pages\ListMessages;
 use App\Filament\Teacher\Resources\Communication\Messages\Schemas\MessageForm;
 use App\Filament\Teacher\Resources\Communication\Messages\Tables\MessagesTable;
 use App\Models\Communication\Message;
-use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +18,7 @@ class MessageResource extends Resource
 {
     protected static ?string $model = Message::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'subject';
 

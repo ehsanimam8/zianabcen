@@ -8,7 +8,7 @@ use App\Filament\Resources\LMS\Attendances\Pages\ListAttendances;
 use App\Filament\Resources\LMS\Attendances\Schemas\AttendanceForm;
 use App\Filament\Resources\LMS\Attendances\Tables\AttendancesTable;
 use App\Models\LMS\Attendance;
-use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +18,7 @@ class AttendanceResource extends Resource
 {
     protected static ?string $model = Attendance::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function getNavigationGroup(): ?string
     {

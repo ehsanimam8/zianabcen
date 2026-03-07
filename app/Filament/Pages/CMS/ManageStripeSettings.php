@@ -2,7 +2,7 @@
 
 namespace App\Filament\Pages\CMS;
 
-use BackedEnum;
+use UnitEnum;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
@@ -10,7 +10,7 @@ use Filament\Pages\Page;
 class ManageStripeSettings extends Page
 {
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-credit-card';
+    protected static string|UnitEnum|null $navigationIcon = 'heroicon-o-credit-card';
 
     public static function getNavigationGroup(): ?string
     {

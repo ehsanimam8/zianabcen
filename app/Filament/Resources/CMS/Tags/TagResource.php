@@ -8,7 +8,7 @@ use App\Filament\Resources\CMS\Tags\Pages\ListTags;
 use App\Filament\Resources\CMS\Tags\Schemas\TagForm;
 use App\Filament\Resources\CMS\Tags\Tables\TagsTable;
 use App\Models\CMS\Tag;
-use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +18,7 @@ class TagResource extends Resource
 {
     protected static ?string $model = Tag::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-tag';
+    protected static string|UnitEnum|null $navigationIcon = 'heroicon-o-tag';
 
     public static function getNavigationGroup(): ?string
     {

@@ -8,7 +8,7 @@ use App\Filament\Teacher\Resources\LMS\Grades\Pages\ListGrades;
 use App\Filament\Teacher\Resources\LMS\Grades\Schemas\GradeForm;
 use App\Filament\Teacher\Resources\LMS\Grades\Tables\GradesTable;
 use App\Models\LMS\Grade;
-use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +18,7 @@ class GradeResource extends Resource
 {
     protected static ?string $model = Grade::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function form(Schema $schema): Schema
     {

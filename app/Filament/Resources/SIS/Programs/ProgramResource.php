@@ -8,7 +8,7 @@ use App\Filament\Resources\SIS\Programs\Pages\ListPrograms;
 use App\Filament\Resources\SIS\Programs\Schemas\ProgramForm;
 use App\Filament\Resources\SIS\Programs\Tables\ProgramsTable;
 use App\Models\SIS\Program;
-use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +18,7 @@ class ProgramResource extends Resource
 {
     protected static ?string $model = Program::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function getNavigationGroup(): ?string
     {

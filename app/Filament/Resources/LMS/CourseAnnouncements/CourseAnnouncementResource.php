@@ -8,7 +8,7 @@ use App\Filament\Resources\LMS\CourseAnnouncements\Pages\ListCourseAnnouncements
 use App\Filament\Resources\LMS\CourseAnnouncements\Schemas\CourseAnnouncementForm;
 use App\Filament\Resources\LMS\CourseAnnouncements\Tables\CourseAnnouncementsTable;
 use App\Models\LMS\CourseAnnouncement;
-use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +18,7 @@ class CourseAnnouncementResource extends Resource
 {
     protected static ?string $model = CourseAnnouncement::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function getNavigationGroup(): ?string
     {

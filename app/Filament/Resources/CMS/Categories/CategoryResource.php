@@ -8,7 +8,7 @@ use App\Filament\Resources\CMS\Categories\Pages\ListCategories;
 use App\Filament\Resources\CMS\Categories\Schemas\CategoryForm;
 use App\Filament\Resources\CMS\Categories\Tables\CategoriesTable;
 use App\Models\CMS\Category;
-use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +18,7 @@ class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-folder';
+    protected static string|UnitEnum|null $navigationIcon = 'heroicon-o-folder';
 
     public static function getNavigationGroup(): ?string
     {
