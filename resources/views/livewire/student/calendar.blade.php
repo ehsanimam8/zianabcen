@@ -18,15 +18,13 @@ new #[Layout('components.layouts.app', ['title' => 'Class Calendar'])] class ext
         
         if ($this->student) {
             $enrollments = Enrollment::where('user_id', $this->student->id)
-                ->with(['courseAccess.course'])
+                ->with(['course'])
                 ->get();
                 
             $courseIds = [];
             foreach ($enrollments as $enrollment) {
-                foreach ($enrollment->courseAccess as $access) {
-                    if ($access->is_active && $access->course) {
-                        $courseIds[] = $access->course->id;
-                    }
+                if ($enrollment->course) {
+                    $courseIds[] = $enrollment->course->id;
                 }
             }
             
