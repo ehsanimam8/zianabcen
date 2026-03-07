@@ -14,9 +14,12 @@ new #[Layout('components.layouts.app')] class extends Component {
     public $subject;
     public $body;
 
+    public $availableRecipients = [];
+
     public function mount()
     {
         $this->loadMessages();
+        $this->loadRecipients();
     }
 
     public function loadMessages()
@@ -25,10 +28,11 @@ new #[Layout('components.layouts.app')] class extends Component {
             ->orWhere('sender_id', Auth::id())
             ->with(['sender', 'recipient'])
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->get()
+            ->toArray();
     }
 
-    public function getRecipientsProperty()
+    public function loadRecipients()
     {
         $enrolledCourseIds = \App\Models\SIS\Enrollment::active()
             ->where('user_id', Auth::id())
@@ -39,12 +43,12 @@ new #[Layout('components.layouts.app')] class extends Component {
             ->pluck('instructor_user_id')
             ->unique();
 
-        return User::where('id', '!=', Auth::id())
+        $this->availableRecipients = User::where('id', '!=', Auth::id())
             ->where(function ($query) use ($instructorIds) {
                 $query->whereHas('roles', function ($q) {
                     $q->whereIn('name', ['Admin', 'admin', 'Super Admin', 'super_admin']);
                 })->orWhereIn('id', $instructorIds);
-            })->orderBy('name')->get();
+            })->orderBy('name')->get()->toArray();
     }
 
     public function sendMessage()
@@ -91,8 +95,8 @@ new #[Layout('components.layouts.app')] class extends Component {
                     <label class="block text-sm font-medium text-zinc-700 mb-1">To</label>
                     <select wire:model="recipient_id" class="w-full border-zinc-300 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">Select a user...</option>
-                        @foreach($this->recipients as $user)
-                            <option value="{{ $user->id }}">{{ $user->privacy_name }}</option>
+                        @foreach($availableRecipients as $user)
+                            <option value="{{ $user['id'] }}">{{ $user['name'] ?? 'Staff' }}</option>
                         @endforeach
                     </select>
                     @error('recipient_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
@@ -117,32 +121,40 @@ new #[Layout('components.layouts.app')] class extends Component {
     @endif
 
     <div class="bg-white rounded-xl shadow-sm border border-zinc-200 overflow-hidden">
-        @if($messages->isEmpty())
+        @if(empty($messages))
             <div class="p-8 text-center text-zinc-500">
                 You have no messages yet.
             </div>
         @else
             <ul class="divide-y divide-zinc-200">
                 @foreach($messages as $msg)
+                    @php
+                        $isSender = ($msg['sender_id'] === auth()->id());
+                        $otherPersonName = $isSender 
+                            ? ($msg['recipient']['name'] ?? 'User') 
+                            : ($msg['sender']['name'] ?? 'User');
+                        $initial = substr($otherPersonName, 0, 1) ?: 'U';
+                        $dateStr = \Carbon\Carbon::parse($msg['created_at'])->diffForHumans();
+                    @endphp
                     <li class="p-4 hover:bg-zinc-50 transition">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <span class="h-10 w-10 flex items-center justify-center rounded-full text-white font-bold {{ $msg->sender_id === auth()->id() ? 'bg-zinc-800' : 'bg-primary-600' }}">
-                                    {{ substr($msg->sender_id === auth()->id() ? $msg->recipient?->privacy_name : $msg->sender?->privacy_name, 0, 1) }}
+                                <span class="h-10 w-10 flex items-center justify-center rounded-full text-white font-bold {{ $isSender ? 'bg-zinc-800' : 'bg-primary-600' }}">
+                                    {{ $initial }}
                                 </span>
                                 <div>
                                     <p class="text-sm font-medium text-zinc-900">
-                                        {{ $msg->sender_id === auth()->id() ? 'To: ' . $msg->recipient?->privacy_name : 'From: ' . $msg->sender?->privacy_name }}
+                                        {{ $isSender ? 'To: ' . $otherPersonName : 'From: ' . $otherPersonName }}
                                     </p>
-                                    <p class="text-sm text-zinc-500 truncate">{{ $msg->subject }}</p>
+                                    <p class="text-sm text-zinc-500 truncate">{{ $msg['subject'] ?? '(No subject)' }}</p>
                                 </div>
                             </div>
                             <div class="text-right">
-                                <p class="text-xs text-zinc-400">{{ $msg->created_at->diffForHumans() }}</p>
+                                <p class="text-xs text-zinc-400">{{ $dateStr }}</p>
                             </div>
                         </div>
                         <div class="mt-2 text-sm text-zinc-700">
-                            {{ $msg->body }}
+                            {{ $msg['body'] ?? '' }}
                         </div>
                     </li>
                 @endforeach
