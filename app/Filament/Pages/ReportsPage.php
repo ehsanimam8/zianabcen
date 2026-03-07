@@ -148,7 +148,7 @@ class ReportsPage extends Page implements HasForms
             ->map(fn ($row) => [
                 'course'       => $row->course?->name ?? 'Unknown',
                 'enrollments'  => $row->enrollments_count,
-                'revenue'      => $row->total,
+                'revenue'      => $row->total ?? 0,
             ]);
 
         return [

@@ -28,7 +28,11 @@ class PostForm
                         ->visible(fn ($get) => $get('post_type') === 'page'),
                     \Filament\Forms\Components\TextInput::make('title')->required()->maxLength(255),
                     \Filament\Forms\Components\TextInput::make('slug')->required()->maxLength(255)->unique(ignoreRecord: true),
-                    \Filament\Forms\Components\TextInput::make('featured_image_url')->url()->maxLength(255),
+                    \Filament\Forms\Components\FileUpload::make('featured_image_url')
+                        ->label('Featured Image')
+                        ->image()
+                        ->directory('cms/posts')
+                        ->maxSize(5120),
                     \Filament\Forms\Components\Select::make('status')->options([
                         'draft' => 'Draft',
                         'published' => 'Published',
@@ -58,9 +62,11 @@ class PostForm
                     \Filament\Forms\Components\Textarea::make('meta_description')
                         ->maxLength(500)
                         ->placeholder('Brief description for search result snippets'),
-                    \Filament\Forms\Components\TextInput::make('og_image_url')
-                        ->url()
-                        ->placeholder('URL for social media preview image'),
+                    \Filament\Forms\Components\FileUpload::make('og_image_url')
+                        ->label('OG Image (Social Preview)')
+                        ->image()
+                        ->directory('cms/seo')
+                        ->maxSize(5120),
                 ])->columns(2),
             ]);
     }

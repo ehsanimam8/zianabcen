@@ -11,7 +11,11 @@ class DonationForm
         return $schema
             ->components([
                 \Filament\Schemas\Components\Section::make()->schema([
-                    \Filament\Forms\Components\Select::make('user_id')
+                    \Filament\Forms\Components\Placeholder::make('stripe_link')
+                    ->label('Make a Donation via Stripe')
+                    ->content(new \Illuminate\Support\HtmlString('If you would like to make a donation online, please visit <a href="https://donate.stripe.com/5kA8zk6iFeQo4pOfYY" target="_blank" class="text-primary-600 underline">this Stripe link</a>.')),
+
+                \Filament\Forms\Components\Select::make('user_id')
                         ->relationship('user', 'name')
                         ->searchable()
                         ->label('Donor')
