@@ -6,7 +6,8 @@ use App\Models\SIS\Course;
 use App\Models\SIS\Enrollment;
 use App\Models\User;
 
-new #[Layout('components.layouts.app')] class extends Component {
+#[Layout('components.layouts.app')]
+new class extends Component {
     public $course;
     public $student;
     

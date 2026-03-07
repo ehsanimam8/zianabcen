@@ -6,7 +6,8 @@ use App\Models\Communication\Message;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
-new #[Layout('components.layouts.app')] class extends Component {
+#[Layout('components.layouts.app')]
+new class extends Component {
     public $messages = [];
     public $isComposing = false;
     
