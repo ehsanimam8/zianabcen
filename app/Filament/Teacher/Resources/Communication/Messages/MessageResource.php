@@ -54,4 +54,29 @@ class MessageResource extends Resource
             ->where('sender_id', auth()->id())
             ->orWhere('recipient_id', auth()->id());
     }
+
+    public static function canViewAny(): bool
+    {
+        return true;
+    }
+
+    public static function canCreate(): bool
+    {
+        return true;
+    }
+
+    public static function canView(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return $record->sender_id === auth()->id() || $record->recipient_id === auth()->id();
+    }
+
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return $record->sender_id === auth()->id();
+    }
+
+    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return $record->sender_id === auth()->id();
+    }
 }

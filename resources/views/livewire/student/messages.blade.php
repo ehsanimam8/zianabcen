@@ -7,14 +7,14 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 new #[Layout('components.layouts.app')] class extends Component {
-    public $userMessages = [];
+    public $userMessages;
     public $isComposing = false;
     
     public $recipient_id;
     public $subject;
     public $body;
 
-    public $availableRecipients = [];
+    public $availableRecipients;
 
     public function mount()
     {
@@ -28,8 +28,7 @@ new #[Layout('components.layouts.app')] class extends Component {
             ->orWhere('sender_id', Auth::id())
             ->with(['sender', 'recipient'])
             ->orderBy('created_at', 'desc')
-            ->get()
-            ->toArray();
+            ->get();
     }
 
     public function loadRecipients()
@@ -48,7 +47,7 @@ new #[Layout('components.layouts.app')] class extends Component {
                 $query->whereHas('roles', function ($q) {
                     $q->whereIn('name', ['Admin', 'admin', 'Super Admin', 'super_admin']);
                 })->orWhereIn('id', $instructorIds);
-            })->orderBy('name')->get()->toArray();
+            })->orderBy('name')->get();
     }
 
     public function sendMessage()
@@ -67,9 +66,9 @@ new #[Layout('components.layouts.app')] class extends Component {
         ]);
 
         $this->reset(['recipient_id', 'subject', 'body', 'isComposing']);
-        $this->loadUserMessages();
-        
         session()->flash('message', 'Message sent successfully!');
+        
+        $this->loadUserMessages();
     }
 }; ?>
 
@@ -96,7 +95,7 @@ new #[Layout('components.layouts.app')] class extends Component {
                     <select wire:model="recipient_id" class="w-full border-zinc-300 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">Select a user...</option>
                         @foreach($availableRecipients as $user)
-                            <option value="{{ $user['id'] }}">{{ $user['name'] ?? 'Staff' }}</option>
+                            <option value="{{ $user->id }}">{{ $user->name ?? 'Staff' }}</option>
                         @endforeach
                     </select>
                     @error('recipient_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
@@ -121,7 +120,7 @@ new #[Layout('components.layouts.app')] class extends Component {
     @endif
 
     <div class="bg-white rounded-xl shadow-sm border border-zinc-200 overflow-hidden">
-        @if(empty($userMessages))
+        @if(!$userMessages || $userMessages->isEmpty())
             <div class="p-8 text-center text-zinc-500">
                 You have no messages yet.
             </div>
@@ -129,12 +128,11 @@ new #[Layout('components.layouts.app')] class extends Component {
             <ul class="divide-y divide-zinc-200">
                 @foreach($userMessages as $msg)
                     @php
-                        $isSender = ($msg['sender_id'] === auth()->id());
-                        $otherPersonName = $isSender 
-                            ? ($msg['recipient']['name'] ?? 'User') 
-                            : ($msg['sender']['name'] ?? 'User');
+                        $isSender = ($msg->sender_id === auth()->id());
+                        $otherPerson = $isSender ? $msg->recipient : $msg->sender;
+                        $otherPersonName = $otherPerson?->name ?? 'User';
                         $initial = substr($otherPersonName, 0, 1) ?: 'U';
-                        $dateStr = \Carbon\Carbon::parse($msg['created_at'])->diffForHumans();
+                        $dateStr = \Carbon\Carbon::parse($msg->created_at)->diffForHumans();
                     @endphp
                     <li class="p-4 hover:bg-zinc-50 transition">
                         <div class="flex items-center justify-between">
@@ -146,7 +144,7 @@ new #[Layout('components.layouts.app')] class extends Component {
                                     <p class="text-sm font-medium text-zinc-900">
                                         {{ $isSender ? 'To: ' . $otherPersonName : 'From: ' . $otherPersonName }}
                                     </p>
-                                    <p class="text-sm text-zinc-500 truncate">{{ $msg['subject'] ?? '(No subject)' }}</p>
+                                    <p class="text-sm text-zinc-500 truncate">{{ $msg->subject ?? '(No subject)' }}</p>
                                 </div>
                             </div>
                             <div class="text-right">
@@ -154,7 +152,7 @@ new #[Layout('components.layouts.app')] class extends Component {
                             </div>
                         </div>
                         <div class="mt-2 text-sm text-zinc-700">
-                            {{ $msg['body'] ?? '' }}
+                            {{ $msg->body ?? '' }}
                         </div>
                     </li>
                 @endforeach
