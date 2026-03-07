@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 new #[Layout('components.layouts.app')] class extends Component {
-    public $messages = [];
+    public $userMessages = [];
     public $isComposing = false;
     
     public $recipient_id;
@@ -18,13 +18,13 @@ new #[Layout('components.layouts.app')] class extends Component {
 
     public function mount()
     {
-        $this->loadMessages();
+        $this->loadUserMessages();
         $this->loadRecipients();
     }
 
-    public function loadMessages()
+    public function loadUserMessages()
     {
-        $this->messages = Message::where('recipient_id', Auth::id())
+        $this->userMessages = Message::where('recipient_id', Auth::id())
             ->orWhere('sender_id', Auth::id())
             ->with(['sender', 'recipient'])
             ->orderBy('created_at', 'desc')
@@ -67,7 +67,7 @@ new #[Layout('components.layouts.app')] class extends Component {
         ]);
 
         $this->reset(['recipient_id', 'subject', 'body', 'isComposing']);
-        $this->loadMessages();
+        $this->loadUserMessages();
         
         session()->flash('message', 'Message sent successfully!');
     }
@@ -121,13 +121,13 @@ new #[Layout('components.layouts.app')] class extends Component {
     @endif
 
     <div class="bg-white rounded-xl shadow-sm border border-zinc-200 overflow-hidden">
-        @if(empty($messages))
+        @if(empty($userMessages))
             <div class="p-8 text-center text-zinc-500">
                 You have no messages yet.
             </div>
         @else
             <ul class="divide-y divide-zinc-200">
-                @foreach($messages as $msg)
+                @foreach($userMessages as $msg)
                     @php
                         $isSender = ($msg['sender_id'] === auth()->id());
                         $otherPersonName = $isSender 
