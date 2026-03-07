@@ -7,6 +7,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Notifications\Notification;
 
@@ -84,7 +85,7 @@ class ListCertificates extends ListRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    Tables\Actions\BulkAction::make('bulk_revoke')
+                    BulkAction::make('bulk_revoke')
                         ->label('Revoke Selected')
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
