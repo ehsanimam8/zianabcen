@@ -16,6 +16,7 @@ new #[Layout('components.layouts.app')] class extends Component {
     
     public $isTakingAssessment = false;
     public $answers = [];
+    public $submittedAssessmentIds = [];
 
     public function mount(Course $course)
     {
@@ -60,6 +61,11 @@ new #[Layout('components.layouts.app')] class extends Component {
                 ->whereIn('lesson_id', $this->course->modules->flatMap->lessons->pluck('id'))
                 ->pluck('lesson_id')
                 ->toArray();
+            
+            $this->submittedAssessmentIds = \App\Models\LMS\AssessmentSubmission::where('user_id', $this->student->id)
+                ->whereIn('assessment_id', $this->course->assessments->pluck('id'))
+                ->pluck('assessment_id')
+                ->toArray();
         }
     }
 
@@ -94,9 +100,18 @@ new #[Layout('components.layouts.app')] class extends Component {
         $this->isTakingAssessment = false;
     }
 
+    public function isAlreadySubmitted($assessmentId)
+    {
+        return in_array($assessmentId, $this->submittedAssessmentIds);
+    }
+
     public function beginAssessment()
     {
         if (!$this->activeAssessment) return;
+        if ($this->isAlreadySubmitted($this->activeAssessment->id)) {
+            session()->flash('error', 'You have already submitted this assessment.');
+            return;
+        }
         
         $this->isTakingAssessment = true;
         $this->answers = [];
@@ -235,6 +250,9 @@ new #[Layout('components.layouts.app')] class extends Component {
                                         </span>
                                         <span class="text-xs text-zinc-400 capitalize">{{ $assessment->type }}</span>
                                     </div>
+                                    @if($this->isAlreadySubmitted($assessment->id))
+                                        <svg class="h-4 w-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                    @endif
                                 </div>
                             </button>
                         @endforeach
@@ -397,10 +415,22 @@ new #[Layout('components.layouts.app')] class extends Component {
                 </div>
                 
                 <div class="mt-12">
-                    <button wire:click="beginAssessment" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-md transition-all">
-                        Begin Assessment
-                    </button>
-                    <p class="mt-3 text-sm text-zinc-500">Timer will start immediately.</p>
+                    @if($this->isAlreadySubmitted($activeAssessment->id))
+                        <div class="bg-green-50 border border-green-100 p-6 rounded-xl flex items-center gap-4 text-left max-w-md">
+                            <div class="bg-green-100 p-2 rounded-full">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-green-900">Assessment Completed</h4>
+                                <p class="text-sm text-green-700">You have successfully submitted this assessment. Your instructor will review it shortly.</p>
+                            </div>
+                        </div>
+                    @else
+                        <button wire:click="beginAssessment" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-md transition-all">
+                            Begin Assessment
+                        </button>
+                        <p class="mt-3 text-sm text-zinc-500">Timer will start immediately.</p>
+                    @endif
                 </div>
             </div>
         @else

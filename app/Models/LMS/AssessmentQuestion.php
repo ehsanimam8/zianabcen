@@ -13,8 +13,13 @@ class AssessmentQuestion extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'options' => 'json',
+        'options' => 'array',
     ];
+
+    public function getOptionsAttribute($value)
+    {
+        return json_decode($value, true) ?: [];
+    }
 
     public function assessment()
     {

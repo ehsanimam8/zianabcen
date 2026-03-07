@@ -28,6 +28,12 @@ class AssessmentsTable
                 IconColumn::make('is_published')
                     ->label('Published')
                     ->boolean(),
+                TextColumn::make('submissions_count')
+                    ->label('Submissions')
+                    ->counts('submissions')
+                    ->badge()
+                    ->color('primary')
+                    ->sortable(),
             ])
             ->actions([
                 EditAction::make(),
