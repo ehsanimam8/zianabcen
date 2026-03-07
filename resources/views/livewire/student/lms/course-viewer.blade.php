@@ -3,6 +3,7 @@
 use Livewire\Volt\Component;
 use Livewire\Attributes\Layout;
 use App\Models\SIS\Course;
+use App\Models\SIS\Enrollment;
 use App\Models\User;
 
 new #[Layout('components.layouts.app')] class extends Component {
