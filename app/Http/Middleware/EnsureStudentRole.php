@@ -19,11 +19,11 @@ class EnsureStudentRole
         $user = $request->user();
 
         if ($user && !$user->hasRole('Student')) {
-            if ($user->hasRole(['Admin', 'Super Admin'])) {
-                return redirect('/admin');
+            if ($user->hasRole(['Admin', 'Super Admin', 'admin', 'super_admin'])) {
+                return redirect()->to('/admin');
             }
-            if ($user->hasRole(['Instructor', 'Teacher', 'instructor'])) {
-                return redirect('/teacher');
+            if ($user->hasRole(['Instructor', 'Teacher', 'instructor', 'teacher'])) {
+                return redirect()->to('/teacher');
             }
         }
 

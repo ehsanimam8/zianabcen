@@ -109,7 +109,16 @@
                             Enroll (<span x-data="{ count: {{ count(Session::get('cart', [])) }} }" x-text="count">{{ count(Session::get('cart', [])) }}</span>)
                         </a>
                         @auth
-                            <a href="{{ auth()->user()->hasRole(['Admin', 'Super Admin']) ? '/admin' : (auth()->user()->hasRole(['Instructor', 'Teacher', 'instructor']) ? '/teacher' : route('student.dashboard')) }}" class="text-sm font-medium text-white bg-primary-800 hover:bg-opacity-90 px-4 py-2 rounded-md transition-all">Go to Dashboard</a>
+                            @php
+                                $user = auth()->user();
+                                $dashboardPath = route('student.dashboard');
+                                if ($user->hasRole(['Admin', 'Super Admin', 'admin', 'super_admin'])) {
+                                    $dashboardPath = '/admin';
+                                } elseif ($user->hasRole(['Instructor', 'Teacher', 'instructor', 'teacher'])) {
+                                    $dashboardPath = '/teacher';
+                                }
+                            @endphp
+                            <a href="{{ $dashboardPath }}" class="text-sm font-medium text-white bg-primary-800 hover:bg-opacity-90 px-4 py-2 rounded-md transition-all">Go to Dashboard</a>
                         @else
                             <a href="{{ route('login') }}" class="text-sm font-medium text-white bg-primary-800 hover:bg-opacity-90 px-4 py-2 rounded-md transition-all">Portal Login</a>
                         @endauth

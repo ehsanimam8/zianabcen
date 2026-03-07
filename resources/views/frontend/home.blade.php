@@ -17,7 +17,16 @@
                     Explore Programs
                 </a>
                 @auth
-                    <a href="{{ auth()->user()->hasRole(['Admin', 'Super Admin']) ? '/admin' : (auth()->user()->hasRole(['Instructor', 'Teacher', 'instructor']) ? '/teacher' : route('student.dashboard')) }}" class="px-8 py-3.5 bg-primary-700 hover:bg-primary-800 text-white text-sm font-bold rounded-lg shadow-sm transition-all text-center min-w-[160px]">
+                    @php
+                        $user = auth()->user();
+                        $dashboardPath = route('student.dashboard');
+                        if ($user->hasRole(['Admin', 'Super Admin', 'admin', 'super_admin'])) {
+                            $dashboardPath = '/admin';
+                        } elseif ($user->hasRole(['Instructor', 'Teacher', 'instructor', 'teacher'])) {
+                            $dashboardPath = '/teacher';
+                        }
+                    @endphp
+                    <a href="{{ $dashboardPath }}" class="px-8 py-3.5 bg-primary-700 hover:bg-primary-800 text-white text-sm font-bold rounded-lg shadow-sm transition-all text-center min-w-[160px]">
                         Go to Dashboard &rarr;
                     </a>
                 @else

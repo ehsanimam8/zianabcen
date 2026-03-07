@@ -6,13 +6,17 @@ use App\Models\SIS\Course;
 use App\Models\SIS\Enrollment;
 use App\Models\User;
 
-new #[Layout('components.layouts.app')] class extends Component {
+#[Layout('components.layouts.app')]
+new class extends Component {
     public $course;
     public $student;
     
     public $activeLesson = null;
     public $activeAssessment = null;
     public $completedLessonIds = [];
+    
+    public $isTakingAssessment = false;
+    public $answers = [];
 
     public function mount(Course $course)
     {
@@ -37,7 +41,7 @@ new #[Layout('components.layouts.app')] class extends Component {
                 $q->where('is_published', true)->orderBy('sequence');
             },
             'assessments' => function($q) {
-                $q->where('is_published', true)->orderBy('due_date');
+                $q->where('is_published', true)->with('questions')->orderBy('due_date');
             }
         ])->findOrFail($course->id);
         
@@ -78,13 +82,78 @@ new #[Layout('components.layouts.app')] class extends Component {
         if ($module) {
             $this->activeLesson = $module->lessons->firstWhere('id', $lessonId);
             $this->activeAssessment = null;
+            $this->isTakingAssessment = false;
         }
     }
 
     public function selectAssessment($assessmentId)
     {
+        if ($this->isTakingAssessment) return;
+        
         $this->activeAssessment = $this->course->assessments->firstWhere('id', $assessmentId);
         $this->activeLesson = null;
+        $this->isTakingAssessment = false;
+    }
+
+    public function beginAssessment()
+    {
+        if (!$this->activeAssessment) return;
+        
+        $this->isTakingAssessment = true;
+        $this->answers = [];
+        foreach($this->activeAssessment->questions as $question) {
+            $this->answers[$question->id] = '';
+        }
+    }
+
+    public function submitAssessment()
+    {
+        if (!$this->isTakingAssessment) return;
+
+        $submission = \App\Models\LMS\AssessmentSubmission::create([
+            'user_id' => $this->student->id,
+            'assessment_id' => $this->activeAssessment->id,
+            'submitted_at' => now(),
+            'status' => 'submitted'
+        ]);
+
+        $totalScore = 0;
+        foreach($this->answers as $questionId => $answer) {
+            $question = $this->activeAssessment->questions->firstWhere('id', $questionId);
+            if (!$question) continue;
+
+            $isCorrect = false;
+            $normalizedAnswer = strtolower(trim((string)$answer));
+            
+            if ($question->question_type === 'true_false' || $question->question_type === 'short_answer') {
+                 $isCorrect = ($normalizedAnswer === strtolower(trim((string)$question->correct_answer)));
+            } elseif ($question->question_type === 'multiple_choice') {
+                 $options = $question->options ?? [];
+                 foreach($options as $opt) {
+                     if (($opt['is_correct'] ?? false) && strtolower(trim($opt['text'] ?? '')) === $normalizedAnswer) {
+                         $isCorrect = true;
+                         break;
+                     }
+                 }
+            }
+
+            $awarded = $isCorrect ? $question->points : 0;
+            $totalScore += $awarded;
+
+            \App\Models\LMS\AssessmentAnswer::create([
+                'submission_id' => $submission->id,
+                'question_id' => $questionId,
+                'student_answer' => $answer,
+                'is_correct' => $isCorrect,
+                'points_awarded' => $awarded
+            ]);
+        }
+
+        $submission->update(['total_score' => $totalScore]);
+
+        $this->isTakingAssessment = false;
+        $this->activeAssessment = null;
+        session()->flash('message', 'Assessment submitted successfully! Your instructor will review it soon.');
     }
 }; ?>
 
@@ -178,6 +247,16 @@ new #[Layout('components.layouts.app')] class extends Component {
     
     <!-- Main Content Area: Lesson Viewer -->
     <div class="flex-1 overflow-y-auto bg-white flex flex-col">
+        @if (session()->has('message'))
+            <div class="m-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-xl">
+                {{ session('message') }}
+            </div>
+        @endif
+        @if (session()->has('error'))
+            <div class="m-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl">
+                {{ session('error') }}
+            </div>
+        @endif
         @if($activeLesson)
             <div class="p-8 lg:p-12 max-w-4xl mx-auto w-full">
                 <!-- Lesson Header -->
@@ -239,6 +318,59 @@ new #[Layout('components.layouts.app')] class extends Component {
                     </div>
                 </div>
             </div>
+        @elseif($isTakingAssessment && $activeAssessment)
+            <div class="p-8 lg:p-12 max-w-4xl mx-auto w-full">
+                <div class="mb-8 border-b border-zinc-100 pb-8">
+                    <h2 class="text-3xl font-bold text-zinc-900">{{ $activeAssessment->title }}</h2>
+                    <p class="text-sm text-zinc-500 mt-2">Please answer all questions below and click "Complete Assessment" at the end.</p>
+                </div>
+
+                <div class="space-y-8">
+                    @foreach($activeAssessment->questions as $index => $question)
+                        <div class="bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm">
+                            <h3 class="font-bold text-zinc-900 text-lg mb-4 flex gap-2">
+                                <span class="text-primary-600">Q{{ $index + 1 }}.</span>
+                                {{ $question->question_text }}
+                            </h3>
+                            
+                            @if($question->question_type === 'multiple_choice')
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    @foreach($question->options as $option)
+                                        <label class="flex items-center p-4 border border-zinc-100 rounded-xl hover:bg-zinc-50 cursor-pointer transition-colors relative">
+                                            <input type="radio" wire:model="answers.{{ $question->id }}" value="{{ $option['text'] }}" class="h-5 w-5 text-primary-600 border-zinc-300 focus:ring-primary-500">
+                                            <span class="ml-3 text-zinc-700 font-medium">{{ $option['text'] }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            @elseif($question->question_type === 'true_false')
+                                <div class="flex gap-4">
+                                    <label class="flex items-center p-4 border border-zinc-100 rounded-xl hover:bg-zinc-50 cursor-pointer transition-colors w-full sm:w-40">
+                                        <input type="radio" wire:model="answers.{{ $question->id }}" value="true" class="h-5 w-5 text-primary-600 border-zinc-300 focus:ring-primary-500">
+                                        <span class="ml-3 text-zinc-700 font-medium font-bold">True</span>
+                                    </label>
+                                    <label class="flex items-center p-4 border border-zinc-100 rounded-xl hover:bg-zinc-50 cursor-pointer transition-colors w-full sm:w-40">
+                                        <input type="radio" wire:model="answers.{{ $question->id }}" value="false" class="h-5 w-5 text-primary-600 border-zinc-300 focus:ring-primary-500">
+                                        <span class="ml-3 text-zinc-700 font-medium font-bold">False</span>
+                                    </label>
+                                </div>
+                            @elseif($question->question_type === 'short_answer')
+                                <input type="text" wire:model.blur="answers.{{ $question->id }}" placeholder="Type your answer here..." class="w-full border-zinc-200 rounded-xl shadow-sm focus:border-primary-500 focus:ring-primary-500 p-4">
+                            @elseif($question->question_type === 'essay')
+                                <textarea wire:model.blur="answers.{{ $question->id }}" rows="5" placeholder="Write your response here..." class="w-full border-zinc-200 rounded-xl shadow-sm focus:border-primary-500 focus:ring-primary-500 p-4"></textarea>
+                            @endif
+                        </div>
+                    @endforeach
+
+                    <div class="pt-10 flex flex-col items-center">
+                        <button wire:click="submitAssessment" wire:loading.attr="disabled" class="bg-primary-600 hover:bg-primary-700 text-white px-12 py-4 rounded-xl font-bold transition shadow-xl text-lg flex items-center gap-2">
+                            <span wire:loading.remove>Complete & Submit Assessment</span>
+                            <span wire:loading>Submitting...</span>
+                            <svg wire:loading.remove class="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                        <p class="mt-4 text-xs text-zinc-400">By clicking submit, your answers will be finalized and sent to your instructor.</p>
+                    </div>
+                </div>
+            </div>
         @elseif($activeAssessment)
             <div class="p-8 lg:p-12 max-w-4xl mx-auto w-full flex flex-col justify-center items-center h-full text-center">
                 <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-indigo-50 mb-6">
@@ -266,7 +398,7 @@ new #[Layout('components.layouts.app')] class extends Component {
                 </div>
                 
                 <div class="mt-12">
-                    <button class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-md">
+                    <button wire:click="beginAssessment" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-md transition-all">
                         Begin Assessment
                     </button>
                     <p class="mt-3 text-sm text-zinc-500">Timer will start immediately.</p>

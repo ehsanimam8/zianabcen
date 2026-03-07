@@ -7,7 +7,8 @@ use App\Models\SIS\Enrollment;
 use App\Models\LMS\CourseSession;
 use Carbon\Carbon;
 
-new #[Layout('components.layouts.app', ['title' => 'Class Calendar'])] class extends Component {
+#[Layout('components.layouts.app', ['title' => 'Class Calendar'])]
+new class extends Component {
     public $student;
     public $sessions = [];
     public $upcomingSessions = [];

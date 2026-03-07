@@ -4,7 +4,8 @@ use Livewire\Volt\Component;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Auth;
 
-new #[Layout('components.layouts.frontend', ['title' => 'Portal Login | Zainab Center'])] class extends Component {
+#[Layout('components.layouts.frontend', ['title' => 'Portal Login | Zainab Center'])]
+new class extends Component {
     public $email = '';
     public $password = '';
     public $remember = false;
@@ -20,9 +21,10 @@ new #[Layout('components.layouts.frontend', ['title' => 'Portal Login | Zainab C
             session()->regenerate();
             
             // Redirect based on role
-            if (Auth::user()->hasRole(['Admin', 'Super Admin'])) {
+            $user = Auth::user();
+            if ($user->hasRole(['Admin', 'Super Admin', 'admin', 'super_admin'])) {
                 return redirect()->to('/admin');
-            } elseif (Auth::user()->hasRole(['Instructor'])) {
+            } elseif ($user->hasRole(['Instructor', 'Teacher', 'instructor', 'teacher'])) {
                 return redirect()->to('/teacher');
             }
             
