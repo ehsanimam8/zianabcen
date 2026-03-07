@@ -12,7 +12,7 @@ class EventRegistrationForm
             ->components([
                 \Filament\Schemas\Components\Section::make('Registration Details')->schema([
                     \Filament\Forms\Components\Select::make('event_id')
-                        ->relationship('event', 'id')
+                        ->relationship('event', 'displayName')
                         ->required(),
                     \Filament\Forms\Components\Select::make('contact_id')
                         ->relationship('contact', 'name')

@@ -13,7 +13,7 @@ class EventRegistrationsTable
     {
         return $table
             ->columns([
-                \Filament\Tables\Columns\TextColumn::make('event.post.title')
+                \Filament\Tables\Columns\TextColumn::make('event.displayName')
                     ->label('Event')
                     ->searchable()
                     ->sortable()

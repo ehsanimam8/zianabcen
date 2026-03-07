@@ -16,7 +16,12 @@ class Event extends Model
         'event_end' => 'datetime',
     ];
 
-    protected $appends = ['status'];
+    protected $appends = ['status', 'display_name'];
+
+    public function getDisplayNameAttribute(): string
+    {
+        return $this->post?->title ?? $this->event_code ?? $this->slug ?? 'Unnamed Event';
+    }
 
     public function getStatusAttribute()
     {
