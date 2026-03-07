@@ -20,22 +20,57 @@ class SubmissionsRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                Forms\Components\Select::make('user_id')
-                    ->relationship('user', 'name')
-                    ->disabled()
-                    ->label('Student'),
-                Forms\Components\TextInput::make('total_score')
-                    ->numeric()
-                    ->label('Score'),
-                Forms\Components\Select::make('status')
-                    ->options([
-                        'submitted' => 'Submitted',
-                        'grading' => 'Grading',
-                        'graded' => 'Graded',
-                    ])
-                    ->required(),
+                Forms\Components\Grid::make(3)->schema([
+                    Forms\Components\Select::make('user_id')
+                        ->relationship('user', 'name')
+                        ->disabled()
+                        ->label('Student'),
+                    Forms\Components\TextInput::make('total_score')
+                        ->numeric()
+                        ->label('Total Score'),
+                    Forms\Components\Select::make('status')
+                        ->options([
+                            'submitted' => 'Submitted',
+                            'grading' => 'Grading',
+                            'graded' => 'Graded',
+                        ])
+                        ->required(),
+                ]),
                 Forms\Components\Textarea::make('instructor_feedback')
                     ->columnSpanFull(),
+
+                \Filament\Schemas\Components\Section::make('Student Answers')
+                    ->schema([
+                        Forms\Components\Repeater::make('answers')
+                            ->relationship('answers')
+                            ->schema([
+                                Forms\Components\Placeholder::make('question_text')
+                                    ->label('Question')
+                                    ->content(fn ($record) => $record?->question?->question_text),
+                                Forms\Components\Grid::make(2)->schema([
+                                    Forms\Components\TextInput::make('student_answer')
+                                        ->label('Student Answer')
+                                        ->disabled(),
+                                    Forms\Components\Placeholder::make('reference_answer')
+                                        ->label('Reference Answer')
+                                        ->content(fn ($record) => $record?->question?->correct_answer ?? 'N/A'),
+                                ]),
+                                Forms\Components\Grid::make(2)->schema([
+                                    Forms\Components\Toggle::make('is_correct')
+                                        ->label('Correct'),
+                                    Forms\Components\TextInput::make('points_awarded')
+                                        ->numeric()
+                                        ->label('Points Awarded'),
+                                ]),
+                                Forms\Components\Textarea::make('instructor_comment')
+                                    ->label('Instructor Question Comment')
+                                    ->rows(2),
+                            ])
+                            ->addable(false)
+                            ->deletable(false)
+                            ->reorderable(false)
+                            ->columnSpanFull()
+                    ])
             ]);
     }
 
