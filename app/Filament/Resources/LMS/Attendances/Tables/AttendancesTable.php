@@ -13,7 +13,7 @@ class AttendancesTable
     {
         return $table
             ->columns([
-                \Filament\Tables\Columns\TextColumn::make('courseSession.session_date')->searchable()->sortable()->label('Session Date'),
+                \Filament\Tables\Columns\TextColumn::make('session.session_date')->searchable()->sortable()->label('Session Date'),
                 \Filament\Tables\Columns\TextColumn::make('student.name')->searchable()->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('status')->badge(),
                 \Filament\Tables\Columns\TextColumn::make('marked_at')->dateTime(),

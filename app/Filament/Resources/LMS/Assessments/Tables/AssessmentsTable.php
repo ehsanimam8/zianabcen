@@ -16,8 +16,12 @@ class AssessmentsTable
         return $table
             ->columns([
                 TextColumn::make('id')
-                    ->label('ID'),
-                TextColumn::make('course_id'),
+                    ->label('ID')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('course.name')
+                    ->label('Course')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('title')
                     ->searchable(),
                 TextColumn::make('type')

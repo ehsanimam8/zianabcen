@@ -53,8 +53,8 @@ class NotesRelationManager extends RelationManager
                 CreateAction::make(),
             ])
             ->actions([
-                \Filament\Tables\Actions\EditAction::make(),
-                \Filament\Tables\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

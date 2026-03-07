@@ -46,6 +46,11 @@ class UserForm
                 ])->columns(2),
 
                 \Filament\Schemas\Components\Section::make('System Info')->schema([
+                    \Filament\Forms\Components\Select::make('roles')
+                        ->relationship('roles', 'name')
+                        ->multiple()
+                        ->preload()
+                        ->searchable(),
                     TextInput::make('roll_number')->unique(ignoreRecord: true),
                     TextInput::make('stripe_customer_id')->disabled(),
                     TextInput::make('password')
