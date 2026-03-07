@@ -20,6 +20,7 @@ class Event extends Model
 
     public function getStatusAttribute()
     {
+        if (!$this->event_start) return 'Draft';
         $now = now();
         if ($now->isBefore($this->event_start)) {
             return 'Upcoming';

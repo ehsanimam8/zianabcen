@@ -56,7 +56,7 @@ class GradeForm
                     Select::make('recorded_by_user_id')
                         ->relationship('recorder', 'name')
                         ->searchable()
-                        ->required(),
+                        ->nullable(),
                 ])->columns(2),
             ]);
     }

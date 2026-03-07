@@ -37,6 +37,7 @@ class CourseSchedule extends Model
     public function generateSessions()
     {
         if ($this->pattern_type !== 'weekly_recurring' || empty($this->pattern_config)) {
+            \Illuminate\Support\Facades\Log::warning('CourseSchedule: Unsupported pattern type or empty config', ['id' => $this->id, 'type' => $this->pattern_type]);
             return;
         }
 

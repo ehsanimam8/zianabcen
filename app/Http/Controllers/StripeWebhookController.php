@@ -72,14 +72,16 @@ class StripeWebhookController extends Controller
                 if ($parentUser && strtolower(trim($studentName)) !== strtolower(trim($parentUser->name))) {
                     $childEmail = strtolower(str_replace(' ', '.', trim($studentName))) . '.' . $parentUser->id . '@student.local';
                     
-                    $childUser = \App\Models\User::firstOrCreate(
-                        ['name' => trim($studentName)],
-                        [
+                    $childUser = \App\Models\User::where('email', $childEmail)->first();
+                    
+                    if (!$childUser) {
+                        $childUser = \App\Models\User::create([
+                            'name' => trim($studentName),
                             'email' => $childEmail,
                             'password' => bcrypt(\Illuminate\Support\Str::random(12)),
                             'role' => 'Student'
-                        ]
-                    );
+                        ]);
+                    }
                     
                     if (!$childUser->hasRole('Student')) {
                         $childUser->assignRole('Student');
