@@ -16,12 +16,35 @@ class ReportsPage extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
-    protected static ?string $navigationGroup = 'Reports';
-    protected static ?string $navigationLabel = 'Reports';
-    protected static ?string $title = 'Advanced Reports';
-    protected static ?string $slug = 'reports';
-    protected static ?int $navigationSort = 99;
+    public static function getNavigationIcon(): string|\BackedEnum|null
+    {
+        return 'heroicon-o-chart-bar';
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Reports';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Reports';
+    }
+
+    public static function getTitle(): string|\Illuminate\Contracts\Support\Htmlable
+    {
+        return 'Advanced Reports';
+    }
+
+    public static function getSlug(): string
+    {
+        return 'reports';
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return 99;
+    }
 
     protected static string $view = 'filament.pages.reports-page';
 
