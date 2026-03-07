@@ -53,7 +53,21 @@ Route::middleware([
     })->name('student.logout')->middleware('auth');
 
     // Student Dashboard Routes
-    Route::group(['prefix' => 'portal', 'middleware' => ['auth']], function () {
+    Route::group(['prefix' => 'portal', 'middleware' => [
+        'auth',
+        function ($request, $next) {
+            $user = auth()->user();
+            if ($user && !$user->hasRole('Student')) {
+                if ($user->hasRole(['Admin', 'Super Admin'])) {
+                    return redirect('/admin');
+                }
+                if ($user->hasRole('Instructor', 'Teacher', 'instructor')) {
+                    return redirect('/teacher');
+                }
+            }
+            return $next($request);
+        }
+    ]], function () {
         \Livewire\Volt\Volt::route('/dashboard', 'student.dashboard')->name('student.dashboard');
         \Livewire\Volt\Volt::route('/calendar', 'student.calendar')->name('student.calendar');
         \Livewire\Volt\Volt::route('/grades', 'student.grades')->name('student.grades');
