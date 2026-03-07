@@ -56,6 +56,12 @@ class PdfController extends Controller
             $enrollment = Enrollment::where('user_id', $student->id)
                 ->where('course_id', $entity->id)
                 ->first();
+        } else {
+            // Program level: find ANY enrollment for a course belonging to this program
+            $courseIds = $entity->courses()->pluck('courses.id');
+            $enrollment = Enrollment::where('user_id', $student->id)
+                ->whereIn('course_id', $courseIds)
+                ->first();
         }
 
         // Generate once and store; reuse on subsequent downloads
@@ -66,7 +72,7 @@ class PdfController extends Controller
             }
             $certificateNumber = $enrollment->certificate_number;
         } else {
-            // Fallback for program-level (no direct enrollment row)
+            // Fallback if no enrollment found at all
             $certificateNumber = 'CERT-' . date('Y') . '-' . strtoupper(Str::random(8));
         }
 

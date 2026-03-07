@@ -22,7 +22,6 @@ class NotificationTemplateForm
                             'enrollment.enrolled' => 'New Course Enrollment',
                             'enrollment.completed' => 'Course Completed',
                             'donation.received' => 'Donation Received',
-                            'sponsorship.started' => 'Sponsorship Activated',
                             'event.registered' => 'Event Registration',
                             'assessment.submitted' => 'Assessment Submitted',
                             'assessment.graded' => 'Assessment Graded',

@@ -26,6 +26,7 @@ class Program extends Model
 
     public function enrollments()
     {
-        return $this->hasMany(Enrollment::class);
+        return $this->hasMany(Enrollment::class, 'course_id', 'id')
+            ->whereIn('course_id', $this->courses()->pluck('courses.id'));
     }
 }

@@ -16,6 +16,7 @@ class EnrollmentForm
                     \Filament\Forms\Components\Select::make('term_id')->relationship('term', 'name')->required(),
                     \Filament\Forms\Components\Select::make('status')->options([
                         'Pending' => 'Pending',
+                        'Active' => 'Active',
                         'Enrolled' => 'Enrolled',
                         'Completed' => 'Completed',
                         'Dropped' => 'Dropped',

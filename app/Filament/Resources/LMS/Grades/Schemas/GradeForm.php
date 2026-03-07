@@ -18,13 +18,18 @@ class GradeForm
                 Section::make('Grade Info')->schema([
                     Select::make('enrollment_id')
                         ->relationship('enrollment', 'id')
+                        ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->user->name} - {$record->course->name}")
                         ->searchable()
-                        ->required(),
+                        ->required()
+                        ->live()
+                        ->afterStateUpdated(fn ($state, $set) => $set('course_id', \App\Models\SIS\Enrollment::find($state)?->course_id)),
 
                     Select::make('course_id')
                         ->relationship('course', 'name')
                         ->searchable()
-                        ->required(),
+                        ->required()
+                        ->disabled()
+                        ->dehydrated(),
 
                     Select::make('assessment_id')
                         ->relationship('assessment', 'title')
