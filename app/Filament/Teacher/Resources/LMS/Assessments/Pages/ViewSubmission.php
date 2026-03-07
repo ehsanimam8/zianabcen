@@ -18,7 +18,7 @@ class ViewSubmission extends Page
 {
     protected static string $resource = AssessmentResource::class;
 
-    protected static string $view = 'filament.teacher.resources.assessments.pages.view-submission';
+    protected string $view = 'filament.teacher.resources.assessments.pages.view-submission';
 
     public AssessmentSubmission $submission;
 
