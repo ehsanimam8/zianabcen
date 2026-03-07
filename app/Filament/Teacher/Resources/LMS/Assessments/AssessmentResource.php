@@ -5,6 +5,7 @@ namespace App\Filament\Teacher\Resources\LMS\Assessments;
 use App\Filament\Teacher\Resources\LMS\Assessments\Pages\CreateAssessment;
 use App\Filament\Teacher\Resources\LMS\Assessments\Pages\EditAssessment;
 use App\Filament\Teacher\Resources\LMS\Assessments\Pages\ListAssessments;
+use App\Filament\Teacher\Resources\LMS\Assessments\Pages\ViewSubmission;
 use App\Filament\Teacher\Resources\LMS\Assessments\Schemas\AssessmentForm;
 use App\Filament\Teacher\Resources\LMS\Assessments\Tables\AssessmentsTable;
 use App\Models\LMS\Assessment;
@@ -53,6 +54,7 @@ class AssessmentResource extends Resource
             'index' => ListAssessments::route('/'),
             'create' => CreateAssessment::route('/create'),
             'edit' => EditAssessment::route('/{record}/edit'),
+            'view-submission' => ViewSubmission::route('/{record}/submissions/{submission}'),
         ];
     }
 }
