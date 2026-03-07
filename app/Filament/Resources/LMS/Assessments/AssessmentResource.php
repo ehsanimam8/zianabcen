@@ -8,7 +8,6 @@ use App\Filament\Resources\LMS\Assessments\Pages\ListAssessments;
 use App\Filament\Resources\LMS\Assessments\Schemas\AssessmentForm;
 use App\Filament\Resources\LMS\Assessments\Tables\AssessmentsTable;
 use App\Models\LMS\Assessment;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -19,9 +18,9 @@ class AssessmentResource extends Resource
 {
     protected static ?string $model = Assessment::class;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'LMS';
+    protected static $navigationGroup = 'LMS';
 
-    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
+    protected static $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
 
     public static function form(Schema $schema): Schema
     {

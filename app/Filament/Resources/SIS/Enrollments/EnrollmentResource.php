@@ -8,7 +8,6 @@ use App\Filament\Resources\SIS\Enrollments\Pages\ListEnrollments;
 use App\Filament\Resources\SIS\Enrollments\Schemas\EnrollmentForm;
 use App\Filament\Resources\SIS\Enrollments\Tables\EnrollmentsTable;
 use App\Models\SIS\Enrollment;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +17,7 @@ class EnrollmentResource extends Resource
 {
     protected static ?string $model = Enrollment::class;
 
-    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function getNavigationGroup(): ?string
     {

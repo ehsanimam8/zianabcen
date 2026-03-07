@@ -8,7 +8,6 @@ use App\Filament\Resources\Communication\NotificationTemplates\Pages\ListNotific
 use App\Filament\Resources\Communication\NotificationTemplates\Schemas\NotificationTemplateForm;
 use App\Filament\Resources\Communication\NotificationTemplates\Tables\NotificationTemplatesTable;
 use App\Models\Communication\NotificationTemplate;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +17,7 @@ class NotificationTemplateResource extends Resource
 {
     protected static ?string $model = NotificationTemplate::class;
 
-    protected static string|UnitEnum|null $navigationIcon = 'heroicon-o-envelope-open';
+    protected static $navigationIcon = 'heroicon-o-envelope-open';
 
     public static function getNavigationGroup(): ?string
     {

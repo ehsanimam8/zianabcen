@@ -8,7 +8,6 @@ use App\Filament\Resources\CMS\EventRegistrations\Pages\ListEventRegistrations;
 use App\Filament\Resources\CMS\EventRegistrations\Schemas\EventRegistrationForm;
 use App\Filament\Resources\CMS\EventRegistrations\Tables\EventRegistrationsTable;
 use App\Models\CMS\EventRegistration;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +17,7 @@ class EventRegistrationResource extends Resource
 {
     protected static ?string $model = EventRegistration::class;
 
-    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function getNavigationGroup(): ?string
     {

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\SIS\Certificates;
 
 use App\Models\SIS\Enrollment;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -13,7 +12,7 @@ class CertificateResource extends Resource
 {
     protected static ?string $model = Enrollment::class;
 
-    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedDocumentCheck;
+    protected static $navigationIcon = Heroicon::OutlinedDocumentCheck;
 
     protected static ?string $modelLabel       = 'Certificate';
     protected static ?string $pluralModelLabel = 'Certificates';

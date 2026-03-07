@@ -8,7 +8,6 @@ use App\Filament\Teacher\Resources\LMS\Attendances\Pages\ListAttendances;
 use App\Filament\Teacher\Resources\LMS\Attendances\Schemas\AttendanceForm;
 use App\Filament\Teacher\Resources\LMS\Attendances\Tables\AttendancesTable;
 use App\Models\LMS\Attendance;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +17,7 @@ class AttendanceResource extends Resource
 {
     protected static ?string $model = Attendance::class;
 
-    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'id';
 

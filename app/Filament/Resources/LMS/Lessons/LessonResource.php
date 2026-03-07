@@ -8,7 +8,6 @@ use App\Filament\Resources\LMS\Lessons\Pages\ListLessons;
 use App\Filament\Resources\LMS\Lessons\Schemas\LessonForm;
 use App\Filament\Resources\LMS\Lessons\Tables\LessonsTable;
 use App\Models\LMS\Lesson;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +17,7 @@ class LessonResource extends Resource
 {
     protected static ?string $model = Lesson::class;
 
-    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function getNavigationGroup(): ?string
     {

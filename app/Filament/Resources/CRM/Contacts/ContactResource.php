@@ -8,7 +8,6 @@ use App\Filament\Resources\CRM\Contacts\Pages\ListContacts;
 use App\Filament\Resources\CRM\Contacts\Schemas\ContactForm;
 use App\Filament\Resources\CRM\Contacts\Tables\ContactsTable;
 use App\Models\CRM\Contact;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,9 +17,9 @@ class ContactResource extends Resource
 {
     protected static ?string $model = Contact::class;
 
-    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedUsers;
+    protected static $navigationIcon = Heroicon::OutlinedUsers;
     
-    protected static string|\UnitEnum|null $navigationGroup = 'CRM';
+    protected static $navigationGroup = 'CRM';
 
     public static function form(Schema $schema): Schema
     {

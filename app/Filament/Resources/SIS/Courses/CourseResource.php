@@ -8,7 +8,6 @@ use App\Filament\Resources\SIS\Courses\Pages\ListCourses;
 use App\Filament\Resources\SIS\Courses\Schemas\CourseForm;
 use App\Filament\Resources\SIS\Courses\Tables\CoursesTable;
 use App\Models\SIS\Course;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +17,7 @@ class CourseResource extends Resource
 {
     protected static ?string $model = Course::class;
 
-    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function getNavigationGroup(): ?string
     {

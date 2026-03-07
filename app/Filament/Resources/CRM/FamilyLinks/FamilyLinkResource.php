@@ -8,7 +8,6 @@ use App\Filament\Resources\CRM\FamilyLinks\Pages\ListFamilyLinks;
 use App\Filament\Resources\CRM\FamilyLinks\Schemas\FamilyLinkForm;
 use App\Filament\Resources\CRM\FamilyLinks\Tables\FamilyLinksTable;
 use App\Models\CRM\FamilyLink;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,9 +17,9 @@ class FamilyLinkResource extends Resource
 {
     protected static ?string $model = FamilyLink::class;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'CRM';
+    protected static $navigationGroup = 'CRM';
 
-    protected static string|UnitEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
+    protected static $navigationIcon = Heroicon::OutlinedUserGroup;
 
     public static function form(Schema $schema): Schema
     {

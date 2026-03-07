@@ -8,7 +8,6 @@ use App\Filament\Resources\Payment\DiscountCodes\Pages\ListDiscountCodes;
 use App\Filament\Resources\Payment\DiscountCodes\Schemas\DiscountCodeForm;
 use App\Filament\Resources\Payment\DiscountCodes\Tables\DiscountCodesTable;
 use App\Models\Payment\DiscountCode;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +17,7 @@ class DiscountCodeResource extends Resource
 {
     protected static ?string $model = DiscountCode::class;
 
-    protected static string|UnitEnum|null $navigationIcon = 'heroicon-o-ticket';
+    protected static $navigationIcon = 'heroicon-o-ticket';
 
     public static function getNavigationGroup(): ?string
     {
