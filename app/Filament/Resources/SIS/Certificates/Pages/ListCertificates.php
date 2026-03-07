@@ -6,8 +6,8 @@ use App\Filament\Resources\SIS\Certificates\CertificateResource;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Table;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
 use Filament\Notifications\Notification;
 
 class ListCertificates extends ListRecords
