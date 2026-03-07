@@ -31,22 +31,15 @@ class ReportsPage extends Page implements HasForms
         return 'Reports';
     }
 
-    public static function getTitle(): string|\Illuminate\Contracts\Support\Htmlable
-    {
-        return 'Advanced Reports';
-    }
-
-    public static function getSlug(): string
-    {
-        return 'reports';
-    }
+    protected static ?string $title = 'Advanced Reports';
+    protected static ?string $slug = 'reports';
 
     public static function getNavigationSort(): ?int
     {
         return 99;
     }
 
-    protected static string $view = 'filament.pages.reports-page';
+    protected string $view = 'filament.pages.reports-page';
 
     public string $activeTab = 'attendance';
 
