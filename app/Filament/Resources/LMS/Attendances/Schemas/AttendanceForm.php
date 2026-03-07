@@ -14,6 +14,7 @@ class AttendanceForm
                     \Filament\Forms\Components\Select::make('course_session_id')
                         ->label('Session')
                         ->relationship('session', 'session_date')
+                        ->getOptionLabelFromRecordUsing(fn ($record) => ($record->course->name ?? 'Course') . " - " . $record->session_date->format('M j, Y'))
                         ->required(),
                     \Filament\Forms\Components\Select::make('student_user_id')
                         ->label('Student')

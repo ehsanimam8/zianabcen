@@ -20,7 +20,7 @@ class Event extends Model
 
     public function getDisplayNameAttribute(): string
     {
-        return $this->post?->title ?? $this->event_code ?? $this->slug ?? 'Unnamed Event';
+        return $this->title ?? $this->event_code ?? $this->slug ?? 'Unnamed Event';
     }
 
     public function getStatusAttribute()
@@ -40,14 +40,7 @@ class Event extends Model
         if (is_null($this->capacity)) {
             return true; // No limit
         }
-        return $this->registrations()->count() < $this->capacity;
-    }
-
-
-
-    public function post()
-    {
-        return $this->belongsTo(Post::class);
+        return $this->current_registrations < $this->capacity;
     }
 
     public function registrations()

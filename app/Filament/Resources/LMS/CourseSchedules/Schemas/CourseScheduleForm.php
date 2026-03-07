@@ -55,8 +55,9 @@ class CourseScheduleForm
                             ->required(),
                         \Filament\Forms\Components\Select::make('pattern_config.instructor_user_id')
                             ->label('Instructor')
-                            ->options(\App\Models\User::pluck('name', 'id'))
-                            ->searchable(),
+                            ->relationship('instructor', 'name')
+                            ->searchable()
+                            ->preload(),
                     ])
                     ->visible(fn ($get) => $get('pattern_type') === 'weekly_recurring')
                     ->columns(2),

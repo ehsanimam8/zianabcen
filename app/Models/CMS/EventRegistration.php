@@ -16,6 +16,17 @@ class EventRegistration extends Model
         'custom_fields' => 'json',
     ];
 
+    protected static function booted()
+    {
+        static::created(function ($registration) {
+            $registration->event->increment('current_registrations');
+        });
+
+        static::deleted(function ($registration) {
+            $registration->event->decrement('current_registrations');
+        });
+    }
+
     // ─── Accessors ──────────────────────────────────────────────────────────────
 
     public function getFullNameAttribute(): string

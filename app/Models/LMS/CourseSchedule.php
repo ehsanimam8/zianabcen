@@ -27,6 +27,11 @@ class CourseSchedule extends Model
         return $this->hasMany(CourseSession::class);
     }
 
+    public function instructor()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'pattern_config->instructor_user_id');
+    }
+
     protected static function booted()
     {
         static::created(function (CourseSchedule $schedule) {
