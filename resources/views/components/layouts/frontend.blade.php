@@ -140,7 +140,9 @@
                     <p class="text-xs text-zinc-500 italic mb-4">(Any sponsorship is NOT tax exempt)</p>
                     <div class="flex items-center space-x-2">
                         <svg class="h-8 w-auto text-zinc-400" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4C2.89 4 2.01 4.89 2.01 6L2 18C2 19.11 2.89 20 4 20H20C21.11 20 22 19.11 22 18V6C22 4.89 21.11 4 20 4ZM20 18H4V12H20V18ZM20 8H4V6H20V8Z"></path></svg>
-                        <span class="text-sm font-medium text-zinc-700">Secure Payments via Stripe</span>
+                        <a href="https://stripe.com" target="_blank" rel="noopener noreferrer" class="text-sm font-medium text-primary-600 hover:text-primary-800 transition-colors">
+                            Secure Payments via Stripe
+                        </a>
                     </div>
                 </div>
 

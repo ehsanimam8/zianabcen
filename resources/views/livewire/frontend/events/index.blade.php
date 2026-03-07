@@ -9,9 +9,7 @@ new #[Layout('components.layouts.frontend', ['title' => 'Upcoming Events | Zaina
 
     public function mount()
     {
-        $this->events = Event::where('event_start', '>=', now())
-            ->orderBy('event_start', 'asc')
-            ->get();
+        $this->events = Event::orderBy('event_start', 'desc')->get();
     }
 }; ?>
 

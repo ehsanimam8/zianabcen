@@ -4,8 +4,7 @@ use Livewire\Volt\Component;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Auth;
 
-#[Layout('components.layouts.app')]
-new class extends Component {
+new #[Layout('components.layouts.frontend', ['title' => 'Portal Login | Zainab Center'])] class extends Component {
     public $email = '';
     public $password = '';
     public $remember = false;
