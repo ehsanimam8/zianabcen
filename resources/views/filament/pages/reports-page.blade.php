@@ -1,307 +1,476 @@
 <x-filament-panels::page>
-<div class="space-y-6">
+    <style>
+        .report-card {
+            background-color: rgb(var(--default-bg, 255 255 255));
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(var(--gray-950, 3 7 18), 0.05);
+            padding: 1.5rem;
+            text-align: center;
+        }
 
-    {{-- Tab Bar --}}
-    <div class="border-b border-gray-200 dark:border-white/10">
-        <nav class="-mb-px flex gap-6">
-            @foreach ([
-                'attendance' => ['label' => 'Attendance', 'icon' => 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
-                'grades'     => ['label' => 'Grade Distribution', 'icon' => 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'],
-                'revenue'    => ['label' => 'Revenue Breakdown', 'icon' => 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],
-            ] as $tab => $meta)
-            <button
-                wire:click="$set('activeTab', '{{ $tab }}')"
-                @class([
-                    'group inline-flex items-center gap-2 border-b-2 px-1 pb-4 text-sm font-medium transition-colors',
-                    'border-primary-600 text-primary-600' => $this->activeTab === $tab,
-                    'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300' => $this->activeTab !== $tab,
-                ])>
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="{{ $meta['icon'] }}" />
-                </svg>
-                {{ $meta['label'] }}
-            </button>
-            @endforeach
-        </nav>
-    </div>
+        .dark .report-card {
+            background-color: rgba(var(--gray-900, 17 24 39), 1);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
 
-    {{-- ═══════════════════════════════════════════════════════════════ --}}
-    {{-- ATTENDANCE TAB                                                 --}}
-    {{-- ═══════════════════════════════════════════════════════════════ --}}
-    @if ($this->activeTab === 'attendance')
-    @php $attendance = $this->getAttendanceStats(); @endphp
+        .report-value {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: rgba(var(--gray-900, 17 24 39), 1);
+        }
 
-    {{-- Filters --}}
-    <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 p-4">
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Course</label>
-                <select wire:model.live="attendanceCourseId"
-                    class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-white/5 dark:text-white">
-                    <option value="">All Courses</option>
-                    @foreach ($this->getCourseOptions() as $id => $name)
-                        <option value="{{ $id }}">{{ $name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">From</label>
-                <input type="date" wire:model.live="attendanceDateFrom"
-                    class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-white/5 dark:text-white">
-            </div>
-            <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">To</label>
-                <input type="date" wire:model.live="attendanceDateTo"
-                    class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-white/5 dark:text-white">
-            </div>
-        </div>
-    </div>
+        .dark .report-value {
+            color: white;
+        }
 
-    {{-- Stats Summary --}}
-    <div class="grid grid-cols-2 gap-4 sm:grid-cols-5">
-        @foreach([
-            ['label' => 'Total Records', 'value' => $attendance['total'],   'color' => 'gray'],
-            ['label' => 'Present',       'value' => $attendance['present'], 'color' => 'green'],
-            ['label' => 'Absent',        'value' => $attendance['absent'],  'color' => 'red'],
-            ['label' => 'Late',          'value' => $attendance['late'],    'color' => 'yellow'],
-            ['label' => 'Excused',       'value' => $attendance['excused'], 'color' => 'blue'],
-        ] as $stat)
-        <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 p-4 text-center">
-            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stat['value'] }}</p>
-            <p class="text-xs font-medium text-gray-500 mt-1">{{ $stat['label'] }}</p>
-        </div>
-        @endforeach
-    </div>
+        .report-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: rgba(var(--gray-500, 107 114 128), 1);
+            margin-top: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
 
-    {{-- Attendance Records Table --}}
-    <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-white/10">
-            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Attendance Records (latest 100)</h3>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left">
-                <thead class="bg-gray-50 dark:bg-white/5 text-xs uppercase tracking-wider text-gray-500">
-                    <tr>
-                        <th class="px-4 py-3">Student</th>
-                        <th class="px-4 py-3">Course</th>
-                        <th class="px-4 py-3">Status</th>
-                        <th class="px-4 py-3">Date</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-white/5">
-                    @forelse ($attendance['records'] as $record)
-                    <tr class="hover:bg-gray-50 dark:hover:bg-white/5">
-                        <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $record->student?->name ?? '—' }}</td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $record->session?->course?->name ?? '—' }}</td>
-                        <td class="px-4 py-3">
-                            <span @class([
-                                'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
-                                'bg-green-100 text-green-800' => $record->status === 'present',
-                                'bg-red-100 text-red-800'     => $record->status === 'absent',
-                                'bg-yellow-100 text-yellow-800' => $record->status === 'late',
-                                'bg-blue-100 text-blue-800'   => $record->status === 'excused',
-                                'bg-gray-100 text-gray-800'   => !in_array($record->status, ['present','absent','late','excused']),
-                            ])>{{ ucfirst($record->status) }}</span>
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $record->marked_at?->format('M d, Y H:i') }}</td>
-                    </tr>
-                    @empty
-                    <tr><td colspan="4" class="px-4 py-8 text-center text-gray-400">No attendance records found.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-    @endif
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
 
-    {{-- ═══════════════════════════════════════════════════════════════ --}}
-    {{-- GRADE DISTRIBUTION TAB                                         --}}
-    {{-- ═══════════════════════════════════════════════════════════════ --}}
-    @if ($this->activeTab === 'grades')
-    @php $gradeData = $this->getGradeStats(); @endphp
+        .report-table {
+            width: 100%;
+            text-align: left;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
 
-    <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 p-4">
-        <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Filter by Course</label>
-            <select wire:model.live="gradeCourseId"
-                class="w-full max-w-sm rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-white/5 dark:text-white">
-                <option value="">All Courses</option>
-                @foreach ($this->getCourseOptions() as $id => $name)
-                    <option value="{{ $id }}">{{ $name }}</option>
-                @endforeach
-            </select>
-        </div>
-    </div>
+        .report-table th {
+            padding: 0.75rem 1rem;
+            background-color: rgba(var(--gray-50, 249 250 251), 1);
+            color: rgba(var(--gray-500, 107 114 128), 1);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(var(--gray-200, 229 231 235), 1);
+        }
 
-    {{-- Summary Stats --}}
-    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3">
-        <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 p-6 text-center">
-            <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ $gradeData['total'] }}</p>
-            <p class="text-xs font-medium text-gray-500 mt-1">Total Grades Recorded</p>
-        </div>
-        <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 p-6 text-center">
-            <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ $gradeData['average'] }}%</p>
-            <p class="text-xs font-medium text-gray-500 mt-1">Class Average</p>
-        </div>
-        <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 p-6 text-center col-span-2 sm:col-span-1">
-            <p class="text-3xl font-bold text-gray-900 dark:text-white">
-                {{ $gradeData['total'] > 0 ? round($gradeData['distribution']['F'] / $gradeData['total'] * 100, 1) : 0 }}%
-            </p>
-            <p class="text-xs font-medium text-gray-500 mt-1">Fail Rate</p>
-        </div>
-    </div>
+        .dark .report-table th {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
 
-    {{-- Letter Grade Distribution --}}
-    <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 p-6">
-        <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-4">Grade Distribution</h3>
-        <div class="space-y-3">
-            @foreach([
-                'A' => ['color' => 'bg-green-500',  'label' => 'A (90–100%)'],
-                'B' => ['color' => 'bg-blue-500',   'label' => 'B (80–89%)'],
-                'C' => ['color' => 'bg-yellow-500', 'label' => 'C (70–79%)'],
-                'D' => ['color' => 'bg-orange-500', 'label' => 'D (60–69%)'],
-                'F' => ['color' => 'bg-red-500',    'label' => 'F (< 60%)'],
-            ] as $letter => $meta)
-            @php
-                $count = $gradeData['distribution'][$letter];
-                $pct = $gradeData['total'] > 0 ? round($count / $gradeData['total'] * 100) : 0;
-            @endphp
-            <div class="flex items-center gap-4">
-                <span class="w-20 text-sm font-medium text-gray-700 dark:text-gray-300">{{ $meta['label'] }}</span>
-                <div class="flex-1 bg-gray-100 dark:bg-white/10 rounded-full h-5 overflow-hidden">
-                    <div class="{{ $meta['color'] }} h-5 rounded-full transition-all" style="width: {{ $pct }}%"></div>
+        .report-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(var(--gray-100, 243 244 246), 1);
+        }
+
+        .dark .report-table td {
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .fi-filter-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .fi-filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .fi-filter-item label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #6b7280;
+        }
+
+        .fi-filter-item select,
+        .fi-filter-item input {
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            width: 100%;
+        }
+
+        .dark .fi-filter-item select,
+        .dark .fi-filter-item input {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-green {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-red {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-yellow {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .badge-blue {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-gray {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .bar-chart-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .bar-chart-label {
+            width: 100px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .bar-chart-track {
+            flex: 1;
+            background: #f3f4f6;
+            border-radius: 9999px;
+            height: 1.25rem;
+            overflow: hidden;
+        }
+
+        .dark .bar-chart-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .bar-chart-fill {
+            height: 100%;
+            border-radius: 9999px;
+        }
+
+        .bar-chart-value {
+            width: 80px;
+            text-align: right;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+    </style>
+
+    <div class="space-y-6">
+
+        <x-filament::tabs>
+            <x-filament::tabs.item :active="$activeTab === 'attendance'" wire:click="$set('activeTab', 'attendance')"
+                icon="heroicon-m-clipboard-document-check">
+                Attendance
+            </x-filament::tabs.item>
+            <x-filament::tabs.item :active="$activeTab === 'grades'" wire:click="$set('activeTab', 'grades')"
+                icon="heroicon-m-academic-cap">
+                Grade Distribution
+            </x-filament::tabs.item>
+            <x-filament::tabs.item :active="$activeTab === 'revenue'" wire:click="$set('activeTab', 'revenue')"
+                icon="heroicon-m-banknotes">
+                Revenue Breakdown
+            </x-filament::tabs.item>
+        </x-filament::tabs>
+
+        {{-- ATTENDANCE --}}
+        @if ($activeTab === 'attendance')
+            @php $attendance = $this->getAttendanceStats(); @endphp
+
+            <x-filament::section>
+                <div class="fi-filter-row">
+                    <div class="fi-filter-item">
+                        <label>Course</label>
+                        <select wire:model.live="attendanceCourseId">
+                            <option value="">All Courses</option>
+                            @foreach ($this->getCourseOptions() as $id => $name)
+                                <option value="{{ $id }}">{{ $name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="fi-filter-item">
+                        <label>From Date</label>
+                        <input type="date" wire:model.live="attendanceDateFrom">
+                    </div>
+                    <div class="fi-filter-item">
+                        <label>To Date</label>
+                        <input type="date" wire:model.live="attendanceDateTo">
+                    </div>
                 </div>
-                <span class="w-16 text-right text-sm text-gray-600 dark:text-gray-400">{{ $count }} ({{ $pct }}%)</span>
-            </div>
-            @endforeach
-        </div>
-    </div>
 
-    {{-- Grade Records Table --}}
-    <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-white/10">
-            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Grade Records (latest 100)</h3>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left">
-                <thead class="bg-gray-50 dark:bg-white/5 text-xs uppercase tracking-wider text-gray-500">
-                    <tr>
-                        <th class="px-4 py-3">Student</th>
-                        <th class="px-4 py-3">Course</th>
-                        <th class="px-4 py-3">Grade</th>
-                        <th class="px-4 py-3">%</th>
-                        <th class="px-4 py-3">Recorded</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-white/5">
-                    @forelse ($gradeData['records'] as $grade)
-                    <tr class="hover:bg-gray-50 dark:hover:bg-white/5">
-                        <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $grade->enrollment?->user?->name ?? '—' }}</td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $grade->course?->name ?? '—' }}</td>
-                        <td class="px-4 py-3 font-bold text-gray-900 dark:text-white">{{ $grade->letter_grade ?? '—' }}</td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $grade->percentage ? $grade->percentage . '%' : '—' }}</td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $grade->recorded_at?->format('M d, Y') }}</td>
-                    </tr>
-                    @empty
-                    <tr><td colspan="5" class="px-4 py-8 text-center text-gray-400">No grades recorded.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-    @endif
+                <div class="report-grid">
+                    <div class="report-card">
+                        <div class="report-value">{{ $attendance['total'] }}</div>
+                        <div class="report-label">Total Records</div>
+                    </div>
+                    <div class="report-card">
+                        <div class="report-value" style="color: #16a34a;">{{ $attendance['present'] }}</div>
+                        <div class="report-label">Present</div>
+                    </div>
+                    <div class="report-card">
+                        <div class="report-value" style="color: #dc2626;">{{ $attendance['absent'] }}</div>
+                        <div class="report-label">Absent</div>
+                    </div>
+                    <div class="report-card">
+                        <div class="report-value" style="color: #ca8a04;">{{ $attendance['late'] }}</div>
+                        <div class="report-label">Late</div>
+                    </div>
+                    <div class="report-card">
+                        <div class="report-value" style="color: #2563eb;">{{ $attendance['excused'] }}</div>
+                        <div class="report-label">Excused</div>
+                    </div>
+                </div>
+            </x-filament::section>
 
-    {{-- ═══════════════════════════════════════════════════════════════ --}}
-    {{-- REVENUE TAB                                                    --}}
-    {{-- ═══════════════════════════════════════════════════════════════ --}}
-    @if ($this->activeTab === 'revenue')
-    @php $rev = $this->getRevenueStats(); @endphp
+            <x-filament::section heading="Recent Attendance Records (latest 100)">
+                <div style="overflow-x: auto;">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Course</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($attendance['records'] as $record)
+                                <tr>
+                                    <td><strong>{{ $record->student?->name ?? '—' }}</strong></td>
+                                    <td>{{ $record->session?->course?->name ?? '—' }}</td>
+                                    <td>
+                                        @php
+                                            $badge = match ($record->status) {
+                                                'present' => 'badge-green',
+                                                'absent' => 'badge-red',
+                                                'late' => 'badge-yellow',
+                                                'excused' => 'badge-blue',
+                                                default => 'badge-gray',
+                                            };
+                                        @endphp
+                                        <span class="badge {{ $badge }}">{{ ucfirst($record->status) }}</span>
+                                    </td>
+                                    <td>{{ $record->marked_at?->format('M d, Y H:i') }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" style="text-align: center; padding: 2rem; color: #9ca3af;">No
+                                        attendance records found.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </x-filament::section>
+        @endif
 
-    <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 p-4">
-        <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Year</label>
-            <select wire:model.live="revenueYear"
-                class="w-40 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-white/5 dark:text-white">
-                @foreach ($this->getYearOptions() as $y => $label)
-                    <option value="{{ $y }}">{{ $label }}</option>
-                @endforeach
-            </select>
-        </div>
-    </div>
+        {{-- GRADES --}}
+        @if ($activeTab === 'grades')
+            @php $gradeData = $this->getGradeStats(); @endphp
 
-    {{-- Revenue Summary Cards --}}
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        @foreach([
-            ['label' => 'Total Revenue',      'value' => '$' . number_format($rev['total'], 2),             'icon' => 'banknotes',        'color' => 'text-green-600'],
-            ['label' => 'Enrollment Revenue', 'value' => '$' . number_format($rev['total_enrollments'], 2), 'icon' => 'academic-cap',     'color' => 'text-blue-600'],
-            ['label' => 'Donations Revenue',  'value' => '$' . number_format($rev['total_donations'], 2),   'icon' => 'heart',            'color' => 'text-rose-600'],
-        ] as $card)
-        <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 p-6">
-            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">{{ $card['label'] }}</p>
-            <p class="mt-2 text-2xl font-bold {{ $card['color'] }}">{{ $card['value'] }}</p>
-        </div>
-        @endforeach
-    </div>
+            <x-filament::section>
+                <div class="fi-filter-row">
+                    <div class="fi-filter-item" style="max-width: 300px;">
+                        <label>Filter by Course</label>
+                        <select wire:model.live="gradeCourseId">
+                            <option value="">All Courses</option>
+                            @foreach ($this->getCourseOptions() as $id => $name)
+                                <option value="{{ $id }}">{{ $name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
 
-    {{-- Monthly Breakdown Table --}}
-    <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-white/10">
-            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Monthly Revenue — {{ $this->revenueYear }}</h3>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left">
-                <thead class="bg-gray-50 dark:bg-white/5 text-xs uppercase tracking-wider text-gray-500">
-                    <tr>
-                        <th class="px-4 py-3">Month</th>
-                        <th class="px-4 py-3 text-right">Enrollment Revenue</th>
-                        <th class="px-4 py-3 text-right">Donations</th>
-                        <th class="px-4 py-3 text-right">Total</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-white/5">
-                    @foreach ($rev['monthly'] as $month)
-                    @php $rowTotal = $month['enrollments'] + $month['donations']; @endphp
-                    <tr class="hover:bg-gray-50 dark:hover:bg-white/5">
-                        <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $month['month'] }}</td>
-                        <td class="px-4 py-3 text-right text-gray-700 dark:text-gray-300">${{ number_format($month['enrollments'], 2) }}</td>
-                        <td class="px-4 py-3 text-right text-gray-700 dark:text-gray-300">${{ number_format($month['donations'], 2) }}</td>
-                        <td class="px-4 py-3 text-right font-semibold {{ $rowTotal > 0 ? 'text-green-600' : 'text-gray-400' }}">${{ number_format($rowTotal, 2) }}</td>
-                    </tr>
+                <div class="report-grid">
+                    <div class="report-card">
+                        <div class="report-value">{{ $gradeData['total'] }}</div>
+                        <div class="report-label">Total Grades Recorded</div>
+                    </div>
+                    <div class="report-card">
+                        <div class="report-value">{{ $gradeData['average'] }}%</div>
+                        <div class="report-label">Class Average</div>
+                    </div>
+                    <div class="report-card">
+                        <div class="report-value" style="color: #dc2626;">
+                            {{ $gradeData['total'] > 0 ? round(($gradeData['distribution']['F'] / $gradeData['total']) * 100, 1) : 0 }}%
+                        </div>
+                        <div class="report-label">Fail Rate</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem;">Grade Distribution</h3>
+                    @foreach ([
+        'A' => ['color' => '#22c55e', 'label' => 'A (90–100%)'],
+        'B' => ['color' => '#3b82f6', 'label' => 'B (80–89%)'],
+        'C' => ['color' => '#eab308', 'label' => 'C (70–79%)'],
+        'D' => ['color' => '#f97316', 'label' => 'D (60–69%)'],
+        'F' => ['color' => '#ef4444', 'label' => 'F (< 60%)'],
+    ] as $letter => $meta)
+                        @php
+                            $count = $gradeData['distribution'][$letter];
+                            $pct = $gradeData['total'] > 0 ? round(($count / $gradeData['total']) * 100) : 0;
+                        @endphp
+                        <div class="bar-chart-row">
+                            <div class="bar-chart-label">{{ $meta['label'] }}</div>
+                            <div class="bar-chart-track">
+                                <div class="bar-chart-fill"
+                                    style="width: {{ $pct }}%; background-color: {{ $meta['color'] }};">
+                                </div>
+                            </div>
+                            <div class="bar-chart-value">{{ $count }} ({{ $pct }}%)</div>
+                        </div>
                     @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
+                </div>
+            </x-filament::section>
 
-    {{-- Per-Course Revenue --}}
-    @if ($rev['by_course']->count())
-    <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-white/10">
-            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Revenue by Course</h3>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left">
-                <thead class="bg-gray-50 dark:bg-white/5 text-xs uppercase tracking-wider text-gray-500">
-                    <tr>
-                        <th class="px-4 py-3">Course</th>
-                        <th class="px-4 py-3 text-right">Enrollments</th>
-                        <th class="px-4 py-3 text-right">Revenue</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-white/5">
-                    @foreach ($rev['by_course']->sortByDesc('revenue') as $row)
-                    <tr class="hover:bg-gray-50 dark:hover:bg-white/5">
-                        <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $row['course'] }}</td>
-                        <td class="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{{ $row['enrollments'] }}</td>
-                        <td class="px-4 py-3 text-right font-semibold text-green-600">${{ number_format($row['revenue'], 2) }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
-    @endif
-    @endif
+            <x-filament::section heading="Recent Grade Records (latest 100)">
+                <div style="overflow-x: auto;">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Course</th>
+                                <th>Grade</th>
+                                <th>%</th>
+                                <th>Recorded</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($gradeData['records'] as $grade)
+                                <tr>
+                                    <td><strong>{{ $grade->enrollment?->user?->name ?? '—' }}</strong></td>
+                                    <td>{{ $grade->course?->name ?? '—' }}</td>
+                                    <td><strong>{{ $grade->letter_grade ?? '—' }}</strong></td>
+                                    <td>{{ $grade->percentage ? $grade->percentage . '%' : '—' }}</td>
+                                    <td>{{ $grade->recorded_at?->format('M d, Y') }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 2rem; color: #9ca3af;">No
+                                        grades recorded.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </x-filament::section>
+        @endif
 
-</div>
+        {{-- REVENUE --}}
+        @if ($activeTab === 'revenue')
+            @php $rev = $this->getRevenueStats(); @endphp
+
+            <x-filament::section>
+                <div class="fi-filter-row">
+                    <div class="fi-filter-item" style="max-width: 200px;">
+                        <label>Year</label>
+                        <select wire:model.live="revenueYear">
+                            @foreach ($this->getYearOptions() as $y => $label)
+                                <option value="{{ $y }}">{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="report-grid">
+                    <div class="report-card">
+                        <div class="report-value" style="color: #16a34a;">${{ number_format($rev['total'], 2) }}</div>
+                        <div class="report-label">Total Revenue</div>
+                    </div>
+                    <div class="report-card">
+                        <div class="report-value" style="color: #2563eb;">
+                            ${{ number_format($rev['total_enrollments'], 2) }}</div>
+                        <div class="report-label">Enrollment Revenue</div>
+                    </div>
+                    <div class="report-card">
+                        <div class="report-value" style="color: #e11d48;">
+                            ${{ number_format($rev['total_donations'], 2) }}</div>
+                        <div class="report-label">Donations Revenue</div>
+                    </div>
+                </div>
+            </x-filament::section>
+
+            <x-filament::section heading="Monthly Revenue — {{ $this->revenueYear }}">
+                <div style="overflow-x: auto;">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th style="text-align: right;">Enrollment Revenue</th>
+                                <th style="text-align: right;">Donations</th>
+                                <th style="text-align: right;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($rev['monthly'] as $month)
+                                @php $rowTotal = $month['enrollments'] + $month['donations']; @endphp
+                                <tr>
+                                    <td><strong>{{ $month['month'] }}</strong></td>
+                                    <td style="text-align: right;">${{ number_format($month['enrollments'], 2) }}</td>
+                                    <td style="text-align: right;">${{ number_format($month['donations'], 2) }}</td>
+                                    <td
+                                        style="text-align: right; color: {{ $rowTotal > 0 ? '#16a34a' : 'inherit' }}; font-weight: 700;">
+                                        ${{ number_format($rowTotal, 2) }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </x-filament::section>
+
+            @if ($rev['by_course']->count())
+                <x-filament::section heading="Revenue by Course">
+                    <div style="overflow-x: auto;">
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th>Course</th>
+                                    <th style="text-align: right;">Enrollments</th>
+                                    <th style="text-align: right;">Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($rev['by_course']->sortByDesc('revenue') as $row)
+                                    <tr>
+                                        <td><strong>{{ $row['course'] }}</strong></td>
+                                        <td style="text-align: right;">{{ $row['enrollments'] }}</td>
+                                        <td style="text-align: right; color: #16a34a; font-weight: 700;">
+                                            ${{ number_format($row['revenue'], 2) }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </x-filament::section>
+            @endif
+
+        @endif
+
+    </div>
 </x-filament-panels::page>
