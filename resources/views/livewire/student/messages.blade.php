@@ -9,17 +9,25 @@ use Illuminate\Support\Facades\Auth;
 new #[Layout('components.layouts.app')] class extends Component {
     public $userMessages;
     public $isComposing = false;
-    
+
     public $recipient_id;
     public $subject;
     public $body;
 
     public $availableRecipients;
+    public $debugError = null;
 
     public function mount()
     {
-        $this->loadUserMessages();
-        $this->loadRecipients();
+        try {
+            $this->loadUserMessages();
+            $this->loadRecipients();
+        } catch (\Exception $e) {
+            $this->debugError = $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine();
+            \Log::error('Messages Component Error: ' . $this->debugError);
+            $this->userMessages = collect();
+            $this->availableRecipients = collect();
+        }
     }
 
     public function loadUserMessages()
@@ -33,21 +41,20 @@ new #[Layout('components.layouts.app')] class extends Component {
 
     public function loadRecipients()
     {
-        $enrolledCourseIds = \App\Models\SIS\Enrollment::active()
-            ->where('user_id', Auth::id())
-            ->pluck('course_id');
+        $enrolledCourseIds = \App\Models\SIS\Enrollment::active()->where('user_id', Auth::id())->pluck('course_id');
 
-        $instructorIds = \App\Models\LMS\CourseSession::whereIn('course_id', $enrolledCourseIds)
-            ->whereNotNull('instructor_user_id')
-            ->pluck('instructor_user_id')
-            ->unique();
+        $instructorIds = \App\Models\LMS\CourseSession::whereIn('course_id', $enrolledCourseIds)->whereNotNull('instructor_user_id')->pluck('instructor_user_id')->unique();
 
         $this->availableRecipients = User::where('id', '!=', Auth::id())
             ->where(function ($query) use ($instructorIds) {
-                $query->whereHas('roles', function ($q) {
-                    $q->whereIn('name', ['Admin', 'admin', 'Super Admin', 'super_admin']);
-                })->orWhereIn('id', $instructorIds);
-            })->orderBy('name')->get();
+                $query
+                    ->whereHas('roles', function ($q) {
+                        $q->whereIn('name', ['Admin', 'admin', 'Super Admin', 'super_admin']);
+                    })
+                    ->orWhereIn('id', $instructorIds);
+            })
+            ->orderBy('name')
+            ->get();
     }
 
     public function sendMessage()
@@ -67,7 +74,7 @@ new #[Layout('components.layouts.app')] class extends Component {
 
         $this->reset(['recipient_id', 'subject', 'body', 'isComposing']);
         session()->flash('message', 'Message sent successfully!');
-        
+
         $this->loadUserMessages();
     }
 }; ?>
@@ -75,10 +82,17 @@ new #[Layout('components.layouts.app')] class extends Component {
 <div>
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-2xl font-bold text-zinc-900">Messages</h1>
-        <button wire:click="$toggle('isComposing')" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+        <button wire:click="$toggle('isComposing')"
+            class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
             {{ $isComposing ? 'Cancel Compose' : 'Compose Message' }}
         </button>
     </div>
+
+    @if ($debugError)
+        <div class="mb-6 bg-red-50 text-red-700 border border-red-200 p-4 rounded-lg font-mono text-xs overflow-auto">
+            <strong>Debug Error:</strong> {{ $debugError }}
+        </div>
+    @endif
 
     @if (session()->has('message'))
         <div class="mb-4 bg-green-50 text-green-700 border border-green-200 p-4 rounded-lg">
@@ -86,32 +100,42 @@ new #[Layout('components.layouts.app')] class extends Component {
         </div>
     @endif
 
-    @if($isComposing)
+    @if ($isComposing)
         <div class="bg-white p-6 rounded-xl shadow-sm border border-zinc-200 mb-6">
             <h2 class="text-lg font-semibold text-zinc-900 mb-4">New Message</h2>
             <form wire:submit="sendMessage" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-zinc-700 mb-1">To</label>
-                    <select wire:model="recipient_id" class="w-full border-zinc-300 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                    <select wire:model="recipient_id"
+                        class="w-full border-zinc-300 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">Select a user...</option>
-                        @foreach($availableRecipients as $user)
+                        @foreach ($availableRecipients as $user)
                             <option value="{{ $user->id }}">{{ $user->name ?? 'Staff' }}</option>
                         @endforeach
                     </select>
-                    @error('recipient_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    @error('recipient_id')
+                        <span class="text-red-500 text-xs">{{ $message }}</span>
+                    @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-zinc-700 mb-1">Subject</label>
-                    <input type="text" wire:model="subject" class="w-full border-zinc-300 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500">
-                    @error('subject') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    <input type="text" wire:model="subject"
+                        class="w-full border-zinc-300 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                    @error('subject')
+                        <span class="text-red-500 text-xs">{{ $message }}</span>
+                    @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-zinc-700 mb-1">Message</label>
-                    <textarea wire:model="body" rows="4" class="w-full border-zinc-300 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500"></textarea>
-                    @error('body') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    <textarea wire:model="body" rows="4"
+                        class="w-full border-zinc-300 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500"></textarea>
+                    @error('body')
+                        <span class="text-red-500 text-xs">{{ $message }}</span>
+                    @enderror
                 </div>
                 <div class="flex justify-end pt-2">
-                    <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition">
+                    <button type="submit"
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition">
                         Send Message
                     </button>
                 </div>
@@ -120,15 +144,15 @@ new #[Layout('components.layouts.app')] class extends Component {
     @endif
 
     <div class="bg-white rounded-xl shadow-sm border border-zinc-200 overflow-hidden">
-        @if(!$userMessages || $userMessages->isEmpty())
+        @if (!$userMessages || $userMessages->isEmpty())
             <div class="p-8 text-center text-zinc-500">
                 You have no messages yet.
             </div>
         @else
             <ul class="divide-y divide-zinc-200">
-                @foreach($userMessages as $msg)
+                @foreach ($userMessages as $msg)
                     @php
-                        $isSender = ($msg->sender_id === auth()->id());
+                        $isSender = $msg->sender_id === auth()->id();
                         $otherPerson = $isSender ? $msg->recipient : $msg->sender;
                         $otherPersonName = $otherPerson?->name ?? 'User';
                         $initial = substr($otherPersonName, 0, 1) ?: 'U';
@@ -137,7 +161,8 @@ new #[Layout('components.layouts.app')] class extends Component {
                     <li class="p-4 hover:bg-zinc-50 transition">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <span class="h-10 w-10 flex items-center justify-center rounded-full text-white font-bold {{ $isSender ? 'bg-zinc-800' : 'bg-primary-600' }}">
+                                <span
+                                    class="h-10 w-10 flex items-center justify-center rounded-full text-white font-bold {{ $isSender ? 'bg-zinc-800' : 'bg-primary-600' }}">
                                     {{ $initial }}
                                 </span>
                                 <div>
