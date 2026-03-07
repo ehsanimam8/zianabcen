@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Filament\Teacher\Resources\LMS\Assessments\RelationManagers;
+namespace App\Filament\Resources\LMS\Assessments\RelationManagers;
 
 use Filament\Forms;
 use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SubmissionsRelationManager extends RelationManager
 {

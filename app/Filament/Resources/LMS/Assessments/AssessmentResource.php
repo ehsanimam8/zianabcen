@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use App\Filament\Resources\LMS\Assessments\RelationManagers;
 
 class AssessmentResource extends Resource
 {
@@ -35,7 +36,7 @@ class AssessmentResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\SubmissionsRelationManager::class,
         ];
     }
 

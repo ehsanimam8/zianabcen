@@ -35,7 +35,8 @@ class TeacherDashboardStats extends StatsOverviewWidget
             Stat::make('Upcoming Classes', $myClasses)
                 ->description('Sessions assigned to you')
                 ->descriptionIcon('heroicon-m-calendar-days')
-                ->color('primary'),
+                ->color('primary')
+                ->url(\App\Filament\Teacher\Resources\LMS\CourseSessions\CourseSessionResource::getUrl('index')),
                 
             Stat::make('Total Students', $myStudents)
                 ->description('Active students in your courses')
@@ -45,7 +46,8 @@ class TeacherDashboardStats extends StatsOverviewWidget
             Stat::make('Ungraded Assessments', $ungradedSubmissions)
                 ->description('Requires your attention')
                 ->descriptionIcon('heroicon-m-inbox-stack')
-                ->color($ungradedSubmissions > 0 ? 'warning' : 'success'),
+                ->color($ungradedSubmissions > 0 ? 'warning' : 'success')
+                ->url(\App\Filament\Teacher\Resources\LMS\Assessments\AssessmentResource::getUrl('index')),
         ];
     }
 }
