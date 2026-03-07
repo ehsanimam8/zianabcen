@@ -5,8 +5,7 @@ use Livewire\Attributes\Layout;
 use App\Models\SIS\Enrollment;
 use App\Models\LMS\Grade;
 
-#[Layout('components.layouts.app')]
-new class extends Component {
+new #[Layout('components.layouts.app')] class extends Component {
     public $student;
     public $enrollments;
     public $grades;

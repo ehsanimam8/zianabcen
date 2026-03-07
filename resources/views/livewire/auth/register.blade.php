@@ -7,8 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 
-#[Layout('components.layouts.app')]
-new class extends Component {
+new #[Layout('components.layouts.app')] class extends Component {
     public $name = '';
     public $email = '';
     public $password = '';
