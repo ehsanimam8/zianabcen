@@ -5,8 +5,7 @@ use Livewire\Attributes\Layout;
 use App\Models\User;
 use App\Models\SIS\Enrollment;
 
-#[Layout('components.layouts.app')]
-new class extends Component {
+new #[Layout('components.layouts.app')] class extends Component {
     public $student;
     public $enrollments;
 
