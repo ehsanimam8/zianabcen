@@ -18,6 +18,9 @@ class CourseSessionForm
                     )
                     ->required()
                     ->searchable(),
+                \Filament\Forms\Components\TextInput::make('topic')
+                    ->required()
+                    ->maxLength(255),
                 \Filament\Forms\Components\Hidden::make('instructor_user_id')
                     ->default(fn() => auth()->id()),
                 \Filament\Forms\Components\DatePicker::make('session_date')

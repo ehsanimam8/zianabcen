@@ -16,4 +16,20 @@ class EditAttendance extends EditRecord
             DeleteAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $data['student_user_id'] = (array) ($data['student_user_id'] ?? []);
+        return $data;
+    }
+
+    protected function handleRecordUpdate(\Illuminate\Database\Eloquent\Model $record, array $data): \Illuminate\Database\Eloquent\Model
+    {
+        $studentIds = (array) ($data['student_user_id'] ?? []);
+        $data['student_user_id'] = $studentIds[0] ?? null;
+
+        $record->update($data);
+
+        return $record;
+    }
 }

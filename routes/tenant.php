@@ -24,6 +24,7 @@ Route::middleware([
     PreventAccessFromCentralDomains::class,
 ])->group(function () {
     Route::get('/', [\App\Http\Controllers\FrontendController::class, 'index'])->name('home');
+    Route::redirect('/dashboard', '/portal/dashboard');
     \Livewire\Volt\Volt::route('/programs', 'frontend.programs.index')->name('frontend.programs.index');
     \Livewire\Volt\Volt::route('/programs/{id}', 'frontend.programs.show')->name('frontend.programs.show');
     \Livewire\Volt\Volt::route('/events', 'frontend.events.index')->name('frontend.events.index');

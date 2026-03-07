@@ -13,14 +13,14 @@ class AttendanceForm
                 \Filament\Forms\Components\Select::make('course_session_id')
                     ->label('Lesson / Session')
                     ->relationship('session', 'session_date', modifyQueryUsing: fn ($query) => 
-                        $query->where('instructor_user_id', auth()->id())
+                        $query->with('course')->where('instructor_user_id', auth()->id())
                     )
-                    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->session_date->format('M d, Y')} — {$record->topic}")
+                    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->course?->name} — {$record->topic} ({$record->session_date->format('M d, Y')})")
                     ->required()
                     ->live(),
 
                 \Filament\Forms\Components\Select::make('student_user_id')
-                    ->label('Student')
+                    ->label('Student(s)')
                     ->options(function (callable $get) {
                         $sessionId = $get('course_session_id');
                         if (!$sessionId) return [];
@@ -35,7 +35,9 @@ class AttendanceForm
                             ->pluck('name', 'id');
                     })
                     ->searchable()
-                    ->required(),
+                    ->multiple()
+                    ->required()
+                    ->helperText('You can select multiple students to mark attendance for all of them at once.'),
 
                 \Filament\Forms\Components\Select::make('status')
                     ->options([

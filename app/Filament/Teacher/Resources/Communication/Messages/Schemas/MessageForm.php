@@ -16,7 +16,11 @@ class MessageForm
                 \Filament\Forms\Components\Hidden::make('sender_id')
                     ->default(fn() => auth()->id()),
                 \Filament\Forms\Components\Select::make('recipient_id')
-                    ->relationship('recipient', 'name')
+                    ->options(fn () => \App\Models\User::role(['Student', 'Instructor', 'Admin'])
+                        ->where('id', '!=', auth()->id())
+                        ->get()
+                        ->mapWithKeys(fn ($user) => [$user->id => "{$user->name} ({$user->roles->first()?->name})"])
+                    )
                     ->searchable()
                     ->required()
                     ->label('Recipient'),

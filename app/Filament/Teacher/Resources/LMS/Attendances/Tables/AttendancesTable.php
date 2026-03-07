@@ -13,9 +13,25 @@ class AttendancesTable
     {
         return $table
             ->columns([
-                \Filament\Tables\Columns\TextColumn::make('courseSession.session_date')->sortable(),
-                \Filament\Tables\Columns\TextColumn::make('student.name')->searchable(),
-                \Filament\Tables\Columns\TextColumn::make('status'),
+                \Filament\Tables\Columns\TextColumn::make('session.course.name')
+                    ->label('Course')
+                    ->sortable(),
+                \Filament\Tables\Columns\TextColumn::make('session.session_date')
+                    ->label('Date')
+                    ->date()
+                    ->sortable(),
+                \Filament\Tables\Columns\TextColumn::make('student.name')
+                    ->label('Student')
+                    ->searchable(),
+                \Filament\Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'present' => 'success',
+                        'absent' => 'danger',
+                        'late' => 'warning',
+                        'excused' => 'gray',
+                        default => 'gray',
+                    }),
                 \Filament\Tables\Columns\TextColumn::make('notes')->limit(50),
             ])
             ->filters([
