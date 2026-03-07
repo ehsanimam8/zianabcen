@@ -49,7 +49,7 @@ class ActivitiesRelationManager extends RelationManager
             ->headerActions([
                 //
             ])
-            ->recordActions([
+            ->actions([
                 //
             ])
             ->bulkActions([
