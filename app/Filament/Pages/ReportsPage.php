@@ -129,15 +129,15 @@ class ReportsPage extends Page implements HasForms
                 'enrollments' => Enrollment::whereYear('enrolled_at', $year)
                     ->whereMonth('enrolled_at', $m)
                     ->sum('amount_paid') ?? 0,
-                'donations'   => Donation::whereYear('donated_at', $year)
-                    ->whereMonth('donated_at', $m)
+                'donations'   => Donation::whereYear('created_at', $year)
+                    ->whereMonth('created_at', $m)
                     ->where('status', 'completed')
                     ->sum('amount') ?? 0,
             ];
         }
 
         $totalEnrollments = Enrollment::whereYear('enrolled_at', $year)->sum('amount_paid') ?? 0;
-        $totalDonations   = Donation::whereYear('donated_at', $year)->where('status', 'completed')->sum('amount') ?? 0;
+        $totalDonations   = Donation::whereYear('created_at', $year)->where('status', 'completed')->sum('amount') ?? 0;
 
         // Per-course breakdown
         $byCourse = Enrollment::whereYear('enrolled_at', $year)

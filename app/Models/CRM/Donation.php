@@ -13,7 +13,7 @@ class Donation extends Model
 
     protected $casts = [
         'amount'     => 'decimal:2',
-        'donated_at' => 'datetime',
+        'created_at' => 'datetime',
     ];
 
     public function user()
@@ -34,8 +34,8 @@ class Donation extends Model
     public function scopeThisMonth($query)
     {
         return $query
-            ->whereMonth('donated_at', now()->month)
-            ->whereYear('donated_at', now()->year);
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year);
     }
 
     public function scopeByType($query, string $type)
