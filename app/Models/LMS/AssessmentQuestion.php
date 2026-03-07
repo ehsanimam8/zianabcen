@@ -16,11 +16,6 @@ class AssessmentQuestion extends Model
         'options' => 'array',
     ];
 
-    public function getOptionsAttribute($value)
-    {
-        return json_decode($value, true) ?: [];
-    }
-
     public function assessment()
     {
         return $this->belongsTo(Assessment::class);
