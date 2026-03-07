@@ -17,9 +17,15 @@ class FamilyLinkResource extends Resource
 {
     protected static ?string $model = FamilyLink::class;
 
-    protected static $navigationGroup = 'CRM';
+    public static function getNavigationGroup(): ?string
+    {
+        return 'CRM';
+    }
 
-    protected static $navigationIcon = Heroicon::OutlinedUserGroup;
+    public static function getNavigationIcon(): string|\BackedEnum|null
+    {
+        return Heroicon::OutlinedUserGroup;
+    }
 
     public static function form(Schema $schema): Schema
     {

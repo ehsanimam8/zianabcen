@@ -17,7 +17,10 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static $navigationIcon = Heroicon::OutlinedUsers;
+    public static function getNavigationIcon(): string|\BackedEnum|null
+    {
+        return Heroicon::OutlinedUsers;
+    }
 
     public static function getNavigationGroup(): ?string
     {

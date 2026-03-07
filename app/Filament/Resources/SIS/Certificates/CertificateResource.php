@@ -12,7 +12,10 @@ class CertificateResource extends Resource
 {
     protected static ?string $model = Enrollment::class;
 
-    protected static $navigationIcon = Heroicon::OutlinedDocumentCheck;
+    public static function getNavigationIcon(): string|\BackedEnum|null
+    {
+        return Heroicon::OutlinedDocumentCheck;
+    }
 
     protected static ?string $modelLabel       = 'Certificate';
     protected static ?string $pluralModelLabel = 'Certificates';

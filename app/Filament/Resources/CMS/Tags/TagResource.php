@@ -17,7 +17,10 @@ class TagResource extends Resource
 {
     protected static ?string $model = Tag::class;
 
-    protected static $navigationIcon = 'heroicon-o-tag';
+    public static function getNavigationIcon(): string|\BackedEnum|null
+    {
+        return 'heroicon-o-tag';
+    }
 
     public static function getNavigationGroup(): ?string
     {

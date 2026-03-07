@@ -17,7 +17,10 @@ class MessageResource extends Resource
 {
     protected static ?string $model = Message::class;
 
-    protected static $navigationIcon = Heroicon::OutlinedRectangleStack;
+    public static function getNavigationIcon(): string|\BackedEnum|null
+    {
+        return Heroicon::OutlinedRectangleStack;
+    }
 
     protected static ?string $recordTitleAttribute = 'subject';
 

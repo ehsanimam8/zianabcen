@@ -17,7 +17,10 @@ class DiscountCodeResource extends Resource
 {
     protected static ?string $model = DiscountCode::class;
 
-    protected static $navigationIcon = 'heroicon-o-ticket';
+    public static function getNavigationIcon(): string|\BackedEnum|null
+    {
+        return 'heroicon-o-ticket';
+    }
 
     public static function getNavigationGroup(): ?string
     {

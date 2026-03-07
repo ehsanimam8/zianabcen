@@ -17,7 +17,10 @@ class CourseAnnouncementResource extends Resource
 {
     protected static ?string $model = CourseAnnouncement::class;
 
-    protected static $navigationIcon = Heroicon::OutlinedRectangleStack;
+    public static function getNavigationIcon(): string|\BackedEnum|null
+    {
+        return Heroicon::OutlinedRectangleStack;
+    }
 
     public static function getNavigationGroup(): ?string
     {

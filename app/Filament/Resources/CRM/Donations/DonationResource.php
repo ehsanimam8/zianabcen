@@ -17,7 +17,10 @@ class DonationResource extends Resource
 {
     protected static ?string $model = Donation::class;
 
-    protected static $navigationIcon = 'heroicon-o-banknotes';
+    public static function getNavigationIcon(): string|\BackedEnum|null
+    {
+        return 'heroicon-o-banknotes';
+    }
 
     public static function getNavigationGroup(): ?string
     {

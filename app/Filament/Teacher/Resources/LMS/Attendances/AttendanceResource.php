@@ -17,7 +17,10 @@ class AttendanceResource extends Resource
 {
     protected static ?string $model = Attendance::class;
 
-    protected static $navigationIcon = Heroicon::OutlinedRectangleStack;
+    public static function getNavigationIcon(): string|\BackedEnum|null
+    {
+        return Heroicon::OutlinedRectangleStack;
+    }
 
     protected static ?string $recordTitleAttribute = 'id';
 

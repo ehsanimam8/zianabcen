@@ -9,7 +9,10 @@ use Filament\Pages\Page;
 class ManageStripeSettings extends Page
 {
 
-    protected static $navigationIcon = 'heroicon-o-credit-card';
+    public static function getNavigationIcon(): string|\BackedEnum|null
+    {
+        return 'heroicon-o-credit-card';
+    }
 
     public static function getNavigationGroup(): ?string
     {
